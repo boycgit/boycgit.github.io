@@ -1,0 +1,887 @@
+
+<!DOCTYPE html><html lang="zh">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>速查手册 - TypeScript 高级类型 cheat sheet</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=11f1923694">
+
+    <link rel="shortcut icon" href="../favicon.png" type="image/png">
+    <link rel="canonical" href="https://boycgit.github.io/typescript-advance-cheatsheet/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://boycgit.github.io/typescript-advance-cheatsheet/amp/">
+    
+    <meta property="og:site_name" content="JSCON-简时空">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="速查手册 - TypeScript 高级类型 cheat sheet">
+    <meta property="og:description" content="本文罗列了 TypeScript 常用的高阶类型，包含 官方、以及常用的非官方的高级类型声明，该手册直接硬啃的话有些枯燥，适合平时快速查阅，使用 `Ctrl+F` 来查找关键词来定位即可。">
+    <meta property="og:url" content="https://boycgit.github.io/typescript-advance-cheatsheet/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1555688378-561e90ac6460?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
+    <meta property="article:published_time" content="2019-06-27T02:47:39.000Z">
+    <meta property="article:modified_time" content="2019-06-27T02:47:39.000Z">
+    <meta property="article:tag" content="javascript">
+    <meta property="article:tag" content="typescript">
+    <meta property="article:tag" content="合集">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="速查手册 - TypeScript 高级类型 cheat sheet">
+    <meta name="twitter:description" content="本文罗列了 TypeScript 常用的高阶类型，包含 官方、以及常用的非官方的高级类型声明，该手册直接硬啃的话有些枯燥，适合平时快速查阅，使用 `Ctrl+F` 来查找关键词来定位即可。">
+    <meta name="twitter:url" content="https://boycgit.github.io/typescript-advance-cheatsheet/">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1555688378-561e90ac6460?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="boycgit">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="javascript, typescript, 合集">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="720">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "JSCON-简时空",
+        "logo": "https://boycgit.github.io/content/images/2018/08/logoicon.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "boycgit",
+        "image": {
+            "@type": "ImageObject",
+            "url": "//www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&d=mm&r=x",
+            "width": 250,
+            "height": 250
+        },
+        "url": "https://boycgit.github.io/author/boycgit/",
+        "sameAs": []
+    },
+    "headline": "速查手册 - TypeScript 高级类型 cheat sheet",
+    "url": "https://boycgit.github.io/typescript-advance-cheatsheet/",
+    "datePublished": "2019-06-27T02:47:39.000Z",
+    "dateModified": "2019-06-27T02:47:39.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1555688378-561e90ac6460?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 1080,
+        "height": 720
+    },
+    "keywords": "javascript, typescript, 合集",
+    "description": "本文罗列了 TypeScript 常用的高阶类型，包含 官方、以及常用的非官方的高级类型声明，该手册直接硬啃的话有些枯燥，适合平时快速查阅，使用 &#x60;Ctrl+F&#x60; 来查找关键词来定位即可。",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://boycgit.github.io/"
+    }
+}
+    </script>
+
+    <script src="../public/ghost-sdk.js?v=11f1923694"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "7c2ea2eb9409"
+});
+</script>
+    <meta name="generator" content="Ghost 2.31">
+    <link rel="alternate" type="application/rss+xml" title="JSCON-简时空" href="https://boycgit.github.io/rss/">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-69473481-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-69473481-3');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+<style>
+
+/* 结束 */
+
+  .end-block-wrap{
+        color:#338daf;
+        text-align: center;
+    }
+
+    .end-block-wrap img{
+        border: none;
+        max-width: 100%;
+        margin: 0px auto; display: inline-block;
+    }
+
+    .end-block-wrap img.main{
+        width: 30px;
+    }
+
+
+/* 参考文档 */
+.ref-wrap .line-text{
+    display: flex;justify-content:center;align-items:flex-end;
+}
+
+.ref-wrap .line-text::before, .ref-wrap .line-text::after{
+    content: '';
+    display: inline-block;
+    width: 25%; border-bottom: 1px dashed rgb(51, 51, 51); box-sizing: border-box;
+}
+
+.ref-wrap .text.main{
+    font-size: 14px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 0px 10px; 
+    font-weight: bold; 
+    margin-bottom: -5px; 
+    box-sizing: border-box;
+}
+
+.ref-wrap  .text.second{
+    font-size: 16px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 10px; 
+    text-align: center; 
+    box-sizing: border-box;
+}
+/* 求关注 */
+.qr-wrap{
+    margin-right: auto; 
+    margin-left: auto; 
+    width: 360px; 
+    border: none rgb(255, 129, 36); 
+    background: url(https://mpt.135editor.com/mmbiz_gif/ziadDDQxbCJFA2XMwm7VE1RTcS94u8LqVWSjIasMfzY8aG5HolkBhHhwEp0eUpPCEzPYqXYicbRNtROJibbM9P55g/0?wx_fmt=gif) right 0px no-repeat; 
+    background-size: contain; 
+    box-sizing: border-box;
+}
+
+.qr-image{
+    padding: 10px 3px; 
+    width: 150px; 
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.qr-image img{
+    width: 150px;
+}
+
+
+</style>
+
+</head>
+<body class="post-template tag-javascript tag-typescript tag-he-ji">
+
+    <div class="site-wrapper">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/css/lightbox.min.css">
+
+
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://boycgit.github.io"><img src="../content/images/2018/08/logoicon.png" alt="JSCON-简时空"></a>
+            <ul class="nav" role="menu">
+    <li class="nav-shou-ye" role="menuitem"><a href="https://boycgit.github.io/">首页</a></li>
+    <li class="nav-guan-yu" role="menuitem"><a href="https://boycgit.github.io/about-me/">关于</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://boycgit.github.io/rss/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-javascript tag-typescript tag-he-ji ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2019-06-27">27 June 2019</time>
+                        <span class="date-divider">/</span> <a href="../tag/javascript/">javascript</a>
+                </section>
+                <h1 class="post-full-title">速查手册 - TypeScript 高级类型 cheat sheet</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1555688378-561e90ac6460?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <!--kg-card-begin: markdown--><p>学习 TypeScript 到一定阶段，必须要学会高阶类型的使用，否则一些复杂的场景若是用 <code>any</code> 类型来处理的话，也就失去了 TS 类型检查的意义。</p>
+<p>本文罗列了 TypeScript 常用的高阶类型，包含 <strong>官方</strong> 、以及 <strong>常用的非官方</strong> 的高级类型声明，该手册直接硬啃的话有些枯燥，适合平时快速查阅，使用 <code>Ctrl+F</code> 来查找关键词来定位即可。</p>
+<ul>
+<li><a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html">官方文档 - 高级类型</a>：优先阅读，建议阅读英文文档。附 <a href="https://www.tslang.cn/docs/handbook/advanced-types.html">中文文档</a>，有人做了专门的读书笔记 <a href="https://www.ruphi.cn/archives/266/">Typescript学习记录：高级类型</a></li>
+<li><a href="https://fettblog.eu/typescript-built-in-generics/#bottom-line">TypeScript: Built-in generic types</a>：推荐，用案例详细解释高阶类型的使用；</li>
+<li><a href="https://zhuanlan.zhihu.com/p/40311981">TS 一些工具泛型的使用及其实现</a>：TS 内置工具泛型高阶使用</li>
+<li><a href="https://zhuanlan.zhihu.com/p/24267683">TypeScript 2.1 新特性一览</a>：查找/映射类型及 any 类型的推断 都是在 2.1 版本引入的</li>
+<li><a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html">TypeScript 2.8</a>：Exclude 等条件类型是在 2.8 版本引入的，附中文 <a href="https://www.infoq.cn/article/2018%2F04%2Ftypescript-2-8-conditional-types">TypeScript 2.8 引入条件类型</a></li>
+<li><a href="https://github.com/Microsoft/TypeScript/blob/master/lib/lib.es2015.d.ts">lib.es2015.d.ts</a>：大部分的声明在这个文件中可以找到</li>
+<li><a href="https://juejin.im/post/5c2f87ce5188252593122c98">TypeScript 强大的类型别名</a>：行文结构比较合理，也比较完善，可以当手册来查</li>
+</ul>
+<h2 id="1">1、基础</h2>
+<h2 id="11">1.1、交叉类型</h2>
+<p>交叉类型是将 <strong>多个类型合并为一个类型</strong>。 这让我们可以把现有的多种类型叠加到一起成为一种类型，它包含了所需的所有类型的特性。</p>
+<pre><code class="language-js">Person &amp; Serializable &amp; Loggable
+</code></pre>
+<ul>
+<li>同时是 Person 和 Serializable 和 Loggable。</li>
+<li>就是说这个类型的对象同时拥有了这三种类型的成员</li>
+</ul>
+<p><strong>示例</strong>：<code>extend</code> 融合方法</p>
+<pre><code class="language-js">function extend&lt;T, U&gt;(first: T, second: U): T &amp; U {
+    let result = &lt;T &amp; U&gt;{};
+    for (let id in first) {
+        (&lt;any&gt;result)[id] = (&lt;any&gt;first)[id];
+    }
+    for (let id in second) {
+        if (!result.hasOwnProperty(id)) {
+            (&lt;any&gt;result)[id] = (&lt;any&gt;second)[id];
+        }
+    }
+    return result;
+}
+</code></pre>
+<p>特殊情况：<br>
+T | never = T<br>
+T &amp; never = never (which <a href="https://github.com/Microsoft/TypeScript/pull/16446">#16446</a> provides)</p>
+<h3 id="12extends">1.2、extends 关键字</h3>
+<pre><code class="language-js">T extends U ? X : Y
+</code></pre>
+<p>表示，如果 T 可以赋值给 U （类型兼容），则返回 X，否则返回 Y；</p>
+<h3 id="13keyofin">1.3、使用 <code>keyof</code> 和 <code>in</code></h3>
+<p><code>keyof</code> 可以用来取得一个对象接口的所有 key 值：</p>
+<pre><code class="language-js">interface Foo {
+  name: string;
+  age: number
+}
+type T = keyof Foo // -&gt; "name" | "age"
+</code></pre>
+<p>而 <code>in</code> 则可以遍历枚举类型, 例如：</p>
+<pre><code class="language-js">type Keys = "a" | "b"
+type Obj =  {
+  [p in Keys]: any
+} // -&gt; { a: any, b: any }
+</code></pre>
+<p><code>keyof</code> 产生联合类型, <code>in</code> 则可以遍历枚举类型, 所以他们经常一起使用。</p>
+<h3 id="14infer">1.4、<code>infer</code> 关键字</h3>
+<p><code>infer</code> 这个关键字是在 TS 2.8 版本引入的, 在条件类型语句中，该关键字用于<strong>替代手动获取类型</strong>。</p>
+<p>TypeScript 为此提供了一个示例，他们创建了一个叫作 <code>Flatten</code> 的类型，用于将数组转成他们需要的元素类型：</p>
+<pre><code class="language-js">type Flatten&lt;T&gt; = T extends any[] ? T[number] : T;
+</code></pre>
+<p>如果使用关键字 infer 就可以将上面的代码简化成：</p>
+<pre><code class="language-js">type Flatten&lt;T&gt; = T extends Array&lt;infer U&gt; ? U : T;
+
+</code></pre>
+<h2 id="2">2、映射类型</h2>
+<h3 id="21partial">2.1、Partial（官方）</h3>
+<p><strong>作用</strong>：将传入的属性变为可选项</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type Partial&lt;T&gt; = { [P in keyof T]?: T[P] };
+</code></pre>
+<p><strong>解释</strong>：</p>
+<ul>
+<li><code>keyof T</code> 拿到 <code>T</code> 所有属性名</li>
+<li>然后 <code>in</code> 进行遍历, 将值赋给 <code>P</code>, 最后 <code>T[P]</code> 取得相应属性的值.</li>
+<li>结合中间的 <code>?</code> 我们就明白了 Partial 的含义了.</li>
+</ul>
+<p><strong>扩展</strong>：内置的 <code>Partial</code> 有个局限性，就是只支持处理第一层的属性，如果是嵌套多层的就没有效果了，不过可以如下自定义：</p>
+<pre><code class="language-js">type PowerPartial&lt;T&gt; = {
+    // 如果是 object，则递归类型
+    [U in keyof T]?: T[U] extends object
+      ? PowerPartial&lt;T[U]&gt;
+      : T[U]
+};
+</code></pre>
+<h3 id="22required">2.2、Required（官方）</h3>
+<p><strong>作用</strong>：将传入的属性变为必选项</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type Required&lt;T&gt; = { [P in keyof T]-?: T[P] };
+</code></pre>
+<p><strong>解释</strong>：</p>
+<ul>
+<li>我们发现一个有意思的用法 <code>-?</code>， 这里很好理解就是将可选项代表的 <code>?</code> 去掉， 从而让这个类型变成必选项</li>
+<li>与之对应的还有个 <code>+?</code> , 这个含义自然与 <code>-?</code> 之前相反, 它是用来把属性变成可选项的</li>
+</ul>
+<h3 id="23readonly">2.3、Readonly（官方）</h3>
+<p><strong>作用</strong>：将传入的属性变为只读选项</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type Readonly&lt;T&gt; = { readonly [P in keyof T]: T[P] };
+</code></pre>
+<p><strong>扩展</strong>：在 <a href="https://zhuanlan.zhihu.com/p/39620591">巧用 Typescript</a> 中，作者创建了 <code>DeepReadonly</code> 的声明，使用 <strong>递归</strong> 的思想让任何子属性都不可更改</p>
+<pre><code class="language-js">type DeepReadonly&lt;T&gt; = {
+  readonly [P in keyof T]: DeepReadonly&lt;T[P]&gt;;
+}
+
+const a = { foo: { bar: 22 } }
+const b = a as DeepReadonly&lt;typeof a&gt;
+b.foo.bar = 33 // Hey, stop!
+</code></pre>
+<h3 id="24mutable">2.4、Mutable（第三方）</h3>
+<p><strong>作用</strong>：将 <code>T</code> 的所有属性的 <code>readonly</code> 移除</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type Mutable&lt;T&gt; = {
+  -readonly [P in keyof T]: T[P]
+}
+</code></pre>
+<p><strong>解释</strong>：</p>
+<ul>
+<li>这一对加减符号操作符 <code>+</code> 和 <code>-</code>, 进行的不是变量的之间的进行加减而是对 <code>readonly</code> 属性进行加减</li>
+</ul>
+<h3 id="25record">2.5、Record（官方）</h3>
+<p><strong>作用</strong>：将 <code>K</code> 中所有的属性的值转化为 <code>T</code> 类型</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type Record&lt;K extends keyof any, T&gt; = { [P in K]: T };
+</code></pre>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">// 对所有 T 类型的属性 K, 将它转换为 U
+function mapObject&lt;K extends string | number, T, U&gt;(obj: Record&lt;K, T&gt;, f: (x: T) =&gt; U): Record&lt;K, U&gt;;
+
+const names = { foo: "hello", bar: "world", baz: "bye" };
+const lengths = mapObject(names, s =&gt; s.length);  // { foo: number, bar: number, baz: number }
+</code></pre>
+<h3 id="26pick">2.6、Pick（官方）</h3>
+<p><strong>作用</strong>：从 T 中取出 一系列 K 的属性</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type Pick&lt;T, K extends keyof T&gt; = { [P in K]: T[P] };
+</code></pre>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">// 从 T 挑选一些属性 K
+declare function pick&lt;T, K extends keyof T&gt;(obj: T, ...keys: K[]): Pick&lt;T, K&gt;;
+
+const nameAndAgeOnly = pick(person, "name", "age");  // { name: string, age: number }
+</code></pre>
+<h2 id="3">3、条件类型</h2>
+<h3 id="31exclude">3.1、Exclude（官方）</h3>
+<blockquote>
+<p>某些地方也称为 <code>Diff</code></p>
+</blockquote>
+<p><strong>作用</strong>：从 <code>T</code> 中剔除可以赋值给 <code>U</code> 的类型，换言之就是从<code>T</code> 中排除 <code>U</code></p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type Exclude&lt;T, U&gt; = T extends U ? never : T;
+</code></pre>
+<p><strong>解释</strong>：</p>
+<ul>
+<li>在 ts 2.8 中引入了一个条件类型, <code>T extends U ? X : Y</code> 表示如果 <code>T</code> 是 <code>U</code> 的子类型的话，那么就会返回 <code>X</code>，否则返回 <code>Y</code></li>
+<li>对于联合类型来说会自动分发条件，例如 <code>T extends U ? X : Y</code>, <code>T</code> 可能是 <code>A | B</code> 的联合类型, 那实际情况就变成<code>(A extends U ? X : Y) | (B extends U ? X : Y)</code></li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">type T = Exclude&lt;1 | 2, 1 | 3&gt; // -&gt; 2
+</code></pre>
+<p><strong>参考文档</strong>：</p>
+<ul>
+<li><a href="https://github.com/Microsoft/TypeScript/issues/12215#issuecomment-307871458">Add support for literal type subtraction</a></li>
+<li><a href="https://juejin.im/post/5a8f67b05188257a5e5758af">TypeScript在React高阶组件中的使用技巧</a></li>
+</ul>
+<h3 id="32extract">3.2、Extract（官方）</h3>
+<p><strong>作用</strong>：从 <code>T</code> 中提取出包含在 <code>U</code> 的类型，换言之就是从<code>T</code> 中提取出 <code>U</code> 子集</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type Extract&lt;T, U&gt; = T extends U ? T : never;
+</code></pre>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">type T = Extract&lt;1 | 2, 1 | 3&gt; // -&gt; 1
+</code></pre>
+<h3 id="33omit">3.3、Omit (第三方)</h3>
+<p><strong>作用</strong>：从 <code>T</code> 中忽略在 <code>K</code> 中的属性名 ，实现忽略对象某些属性功能，多在高阶组件中使用</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type Omit&lt;T, K&gt; = Pick&lt;T, Exclude&lt;keyof T, K&gt;&gt;
+</code></pre>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">type Foo = Omit&lt;{name: string, age: number}, 'name'&gt; // -&gt; { age: number }
+</code></pre>
+<h3 id="34overwrite">3.4、Overwrite（第三方）</h3>
+<p><strong>作用</strong>： <code>T</code> 中的定义被在 <code>K</code> 中的内容所覆盖，多在高阶组件中使用，内部借助 Diff 操作实现</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type Overwrite&lt;T, U&gt; = { [P in Exclude&lt;keyof T, keyof U&gt;]: T[P] } &amp; U;
+</code></pre>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">type Item1 = { a: string, b: number, c: boolean };
+type Item2 = { a: number };
+type T3 = Overwrite&lt;Item1, Item2&gt; // { a: number, b: number, c: boolean };
+</code></pre>
+<h3 id="35returntype">3.5、ReturnType (官方)</h3>
+<p><strong>作用</strong>：从 <code>T</code> 中忽略在 <code>K</code> 中的属性名 ，实现忽略对象某些属性功能，多在高阶组件中使用</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">type ReturnType&lt;T&gt; = T extends (
+  ...args: any[]
+) =&gt; infer R
+  ? R
+  : any;
+</code></pre>
+<p><strong>解释</strong>：</p>
+<ul>
+<li>我们可以用 <code>infer</code> 声明一个类型变量，是<strong>用它获取函数的返回类型</strong>，简单说就是用它取到函数返回值的类型方便之后使用.</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">function foo(x: number): Array&lt;number&gt; {
+  return [x];
+}
+type fn = ReturnType&lt;typeof foo&gt;;
+</code></pre>
+<h2 id="4">4、函数相关</h2>
+<h3 id="41thistype">4.1、ThisType(官方)</h3>
+<p><strong>作用</strong>：用于指定上下文对象类型的</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">// node_modules/typescript/lib/lib.es5.d.ts
+interface ThisType&lt;T&gt; { }
+</code></pre>
+<p><strong>解释</strong>：</p>
+<ul>
+<li>可以看到声明中只有一个接口，没有任何的实现</li>
+<li>说明这个类型是在 TS 源码层面支持的，而不是通过类型变换。</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">interface Person {
+    name: string;
+    age: number;
+}
+
+const obj: ThisType&lt;Person&gt; = {
+  dosth() {
+    this.name // string
+  }
+}
+</code></pre>
+<p>这样的话，就可以指定 <code>obj</code> 里的所有方法里的上下文对象改成 <code>Person</code> 这个类型了</p>
+<h3 id="42instancetype">4.2、InstanceType(官方)</h3>
+<p><strong>作用</strong>：用于获取构造函数类型的实例类型</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">// node_modules/typescript/lib/lib.es5.d.ts
+
+type InstanceType&lt;T extends new (...args: any[]) =&gt; any&gt; = T extends new (...args: any[]) =&gt; infer R ? R : any;
+</code></pre>
+<p><strong>解释</strong>：</p>
+<ul>
+<li>使用 <code>infer</code> 和 <code>extends</code> 条件判断完成</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">class C {
+    x = 0;
+    y = 0;
+}
+
+type T20 = InstanceType&lt;typeof C&gt;;  // C
+type T21 = InstanceType&lt;any&gt;;  // any
+type T22 = InstanceType&lt;never&gt;;  // any
+type T23 = InstanceType&lt;string&gt;;  // Error
+type T24 = InstanceType&lt;Function&gt;;  // Error
+</code></pre>
+<p>这样的话，就可以指定 <code>obj</code> 里的所有方法里的上下文对象改成 <code>Person</code> 这个类型了</p>
+<h3 id="43nonnullable">4.3、NonNullable(官方)</h3>
+<p><strong>作用</strong>：这个类型可以用来过滤类型中的 null 及 undefined 类型。</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">// node_modules/typescript/lib/lib.es5.d.ts
+
+type NonNullable&lt;T&gt; = T extends null | undefined ? never : T;
+</code></pre>
+<p><strong>解释</strong>：</p>
+<ul>
+<li>使用 <code>extends</code> 条件判断完成</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">type T22 = string | number | null;
+type T23 = NonNullable&lt;T22&gt;; // -&gt; string | number;
+</code></pre>
+<h3 id="44parameters">4.4、Parameters(官方)</h3>
+<p><strong>作用</strong>：该类型可以获得函数的参数类型组成的元组类型。</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">// node_modules/typescript/lib/lib.es5.d.ts
+
+type Parameters&lt;T extends (...args: any[]) =&gt; any&gt; = T extends (...args: infer P) =&gt; any ? P : never;
+
+</code></pre>
+<p><strong>解释</strong>：</p>
+<ul>
+<li>使用 <code>infer</code> 和 <code>extends</code> 条件判断完成</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">function foo(x: number): Array&lt;number&gt; {
+  return [x];
+}
+
+type P = Parameters&lt;typeof foo&gt;; // -&gt; [number]
+</code></pre>
+<p>此时 <code>P</code> 的真实类型就是 <code>foo</code> 的参数组成的元组类型 <code>[number]</code></p>
+<h3 id="45constructorparameters">4.5、ConstructorParameters(官方)</h3>
+<p><strong>作用</strong>：获得类的参数类型组成的元组类型。</p>
+<p><strong>源码</strong>：</p>
+<pre><code class="language-js">// node_modules/typescript/lib/lib.es5.d.ts
+
+type ConstructorParameters&lt;T extends new (...args: any[]) =&gt; any&gt; = T extends new (...args: infer P) =&gt; any ? P : never;
+
+</code></pre>
+<p><strong>解释</strong>：</p>
+<ul>
+<li>使用 <code>infer</code> 和 <code>extends</code> 条件判断完成</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<pre><code class="language-js">class Person {
+  private firstName: string;
+  private lastName: string;
+  
+  constructor(firstName: string, lastName: string) {
+      this.firstName = firstName;
+      this.lastName = lastName;
+  }
+}
+
+type P = ConstructorParameters&lt;typeof Person&gt;; // -&gt; [string, string]
+</code></pre>
+<p>此时 <code>P</code> 就是 <code>Person</code> 中 <code>constructor</code> 的参数 <code>firstName</code> 和 <code>lastName</code> 的类型所组成的元组类型 <code>[string, string]</code>。</p>
+<!--kg-card-end: markdown-->
+                </div>
+            </section>
+            <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
+            <section style="text-align: center"><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg"></section>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js" integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js" integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous"></script>
+
+
+            <section id="gitalk-component-wrap"></section>
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit">
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/boycgit/">boycgit</a></h4>
+            <p>阅读此作者的<a href="../author/boycgit/">更多文章</a>.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/boycgit/">阅读更多</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+                <article class="read-next-card" style="background-image: url(https://casper.ghost.org/v1.0.0/images/blog-cover.jpg)">
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">— JSCON-简时空 —</small>
+                        <h3 class="read-next-card-header-title"><a href="../tag/javascript/">javascript</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"></path></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="../debugging-with-ts-jest/">在 ts + Jest 单元测试中 debugging</a></li>
+                            <li><a href="../react-hooks-capture-value/">理解 React Hooks 的 Capture Value 特性</a></li>
+                            <li><a href="../ss-heap/">前端学数据结构 - 堆（Heap）</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="../tag/javascript/">查看所有13篇文章 →</a>
+                    </footer>
+                </article>
+
+                <article class="post-card post tag-webpack tag-jing-yan-zong-jie">
+        <a class="post-card-image-link" href="../webpack-alias-main-fields/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1562315708-25134d003e0f?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../webpack-alias-main-fields/">
+            <header class="post-card-header">
+                    <span class="post-card-tags">Webpack</span>
+                <h2 class="post-card-title">Webpack 技巧 - 联合 alias 和 mainFields 提高多库联调效率</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>使用 Webpack 开发大型工程时，在联调功能模块时除了 npm link 之外，还可使用 resolve.alias 和 resolve.mainFields 来指定具体源码位置</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 5 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-javascript tag-react tag-jiao-cheng">
+        <a class="post-card-image-link" href="../react-hooks-capture-value/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1444807170760-4577a415e754?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../react-hooks-capture-value/">
+            <header class="post-card-header">
+                    <span class="post-card-tags">javascript</span>
+                <h2 class="post-card-title">理解 React Hooks 的 Capture Value 特性</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>本文以简单的示例帮助用户理解 React hooks 中的 Capture Value 特性</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 6 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://boycgit.github.io">
+                <img src="../content/images/2018/08/logo.png" alt="JSCON-简时空 icon">
+            <span>JSCON-简时空</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">—</span>
+    <div class="floating-header-title">速查手册 - TypeScript 高级类型 cheat sheet</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
+</svg>
+</div>
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8A%E9%80%9F%E6%9F%A5%E6%89%8B%E5%86%8C%20-%20TypeScript%20%E9%AB%98%E7%BA%A7%E7%B1%BB%E5%9E%8B%20cheat%20sheet%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/typescript-advance-cheatsheet/" onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+            <?xml version="1.0" standalone="no"?><svg t="1534600204727" class="icon" style="" viewbox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/typescript-advance-cheatsheet/&amp;mhid=txbODQq7nZkhMHcqI9xROqg" onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+            <?xml version="1.0" standalone="no"?><svg t="1534604253879" class="icon" style="" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.min.js"></script>
+
+<script>
+    (function () {
+        /**
+         * Get Node
+         * @param  {String|Element} el
+         * @param  {Boolean} noCache
+         * @return {Element}
+         */
+        var cacheNode = {};
+        function getNode(el, noCache) {
+            if (noCache === void 0) noCache = false;
+
+            if (typeof el === 'string') {
+                if (typeof window.Vue !== 'undefined') {
+                    return find(el);
+                }
+                el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el));
+            }
+
+            return el;
+        }
+
+        /**
+         * Find element
+         * @example
+         * find('nav') => document.querySelector('nav')
+         * find(nav, 'a') => nav.querySelector('a')
+         */
+        function find(el, node) {
+            return node ? el.querySelector(node) : document.querySelector(el);
+        }
+        function create(node, tpl) {
+            node = document.createElement(node);
+            if (tpl) {
+                node.innerHTML = tpl;
+            }
+            return node;
+        }
+        function appendTo(target, el) {
+            return target.appendChild(el);
+        }
+
+        function renderGitalkContainer() {
+            var div = create('div');
+            div.id = 'gitalk-container';
+            var main = getNode('#site-main');
+            div.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            appendTo(find('#gitalk-component-wrap'), div);
+            var script = create('script');
+            var content = "gitalk.render('gitalk-container')";
+        }
+        renderGitalkContainer();
+
+        var gitalk = new Gitalk({
+            clientID: 'a65ee9e3ea5168da1470',
+            clientSecret: 'ebfd520679d1ad61929b1887b2efccd4872389e3',
+            repo: 'boycgit.github.io',
+            owner: 'boycgit',
+            admin: [
+                'boycgit'
+            ],
+            id: location.pathname,
+            // facebook-like distraction free mode
+            distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container');
+
+
+
+        var postImages = document.querySelectorAll('.post-content img');
+        Array.prototype.forEach.call(postImages, function (el, i) {
+            el.outerHTML = `<aholder href="${el.src}" data-lightbox="postImages" data-title="${el.alt}">${el.outerHTML}</aholder>`.replace(/aholder/g, 'a');
+        });
+
+        // 动态添加 js 脚本
+        setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/js/lightbox.min.js";
+            document.getElementsByTagName('body')[0].appendChild(script);
+
+            script.onload = function () {
+
+                console.log('load success');
+            }
+        }, 1000);
+
+    })();
+</script>
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://boycgit.github.io">JSCON-简时空</a> © 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="https://boycgit.github.io">最新文章</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=11f1923694"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });
+</script>
+
+</body>
+</html>

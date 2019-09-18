@@ -1,0 +1,627 @@
+
+<!DOCTYPE html><html lang="zh">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Webpack 技巧 - 联合 alias 和 mainFields 提高多库联调效率</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=11f1923694">
+
+    <meta name="description" content="使用 Webpack 开发大型工程时，在联调功能模块时除了 npm link 之外，还可使用 resolve.alias 和 resolve.mainFields 来指定具体源码位置">
+    <link rel="shortcut icon" href="../favicon.png" type="image/png">
+    <link rel="canonical" href="https://boycgit.github.io/webpack-alias-main-fields/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://boycgit.github.io/webpack-alias-main-fields/amp/">
+    
+    <meta property="og:site_name" content="JSCON-简时空">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Webpack 技巧 - 联合 alias 和 mainFields 提高多库联调效率">
+    <meta property="og:description" content="使用 Webpack 开发大型工程时，在联调功能模块时除了 npm link 之外，还可使用 resolve.alias 和 resolve.mainFields 来指定具体源码位置">
+    <meta property="og:url" content="https://boycgit.github.io/webpack-alias-main-fields/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1562315708-25134d003e0f?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
+    <meta property="article:published_time" content="2019-07-07T04:28:35.000Z">
+    <meta property="article:modified_time" content="2019-07-07T04:28:35.000Z">
+    <meta property="article:tag" content="Webpack">
+    <meta property="article:tag" content="经验总结">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Webpack 技巧 - 联合 alias 和 mainFields 提高多库联调效率">
+    <meta name="twitter:description" content="使用 Webpack 开发大型工程时，在联调功能模块时除了 npm link 之外，还可使用 resolve.alias 和 resolve.mainFields 来指定具体源码位置">
+    <meta name="twitter:url" content="https://boycgit.github.io/webpack-alias-main-fields/">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1562315708-25134d003e0f?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="boycgit">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Webpack, 经验总结">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="1631">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "JSCON-简时空",
+        "logo": "https://boycgit.github.io/content/images/2018/08/logoicon.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "boycgit",
+        "image": {
+            "@type": "ImageObject",
+            "url": "//www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&d=mm&r=x",
+            "width": 250,
+            "height": 250
+        },
+        "url": "https://boycgit.github.io/author/boycgit/",
+        "sameAs": []
+    },
+    "headline": "Webpack 技巧 - 联合 alias 和 mainFields 提高多库联调效率",
+    "url": "https://boycgit.github.io/webpack-alias-main-fields/",
+    "datePublished": "2019-07-07T04:28:35.000Z",
+    "dateModified": "2019-07-07T04:28:35.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1562315708-25134d003e0f?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 1080,
+        "height": 1631
+    },
+    "keywords": "Webpack, 经验总结",
+    "description": "使用 Webpack 开发大型工程时，在联调功能模块时除了 npm link 之外，还可使用 resolve.alias 和 resolve.mainFields 来指定具体源码位置",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://boycgit.github.io/"
+    }
+}
+    </script>
+
+    <script src="../public/ghost-sdk.js?v=11f1923694"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "7c2ea2eb9409"
+});
+</script>
+    <meta name="generator" content="Ghost 2.31">
+    <link rel="alternate" type="application/rss+xml" title="JSCON-简时空" href="https://boycgit.github.io/rss/">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-69473481-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-69473481-3');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+<style>
+
+/* 结束 */
+
+  .end-block-wrap{
+        color:#338daf;
+        text-align: center;
+    }
+
+    .end-block-wrap img{
+        border: none;
+        max-width: 100%;
+        margin: 0px auto; display: inline-block;
+    }
+
+    .end-block-wrap img.main{
+        width: 30px;
+    }
+
+
+/* 参考文档 */
+.ref-wrap .line-text{
+    display: flex;justify-content:center;align-items:flex-end;
+}
+
+.ref-wrap .line-text::before, .ref-wrap .line-text::after{
+    content: '';
+    display: inline-block;
+    width: 25%; border-bottom: 1px dashed rgb(51, 51, 51); box-sizing: border-box;
+}
+
+.ref-wrap .text.main{
+    font-size: 14px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 0px 10px; 
+    font-weight: bold; 
+    margin-bottom: -5px; 
+    box-sizing: border-box;
+}
+
+.ref-wrap  .text.second{
+    font-size: 16px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 10px; 
+    text-align: center; 
+    box-sizing: border-box;
+}
+/* 求关注 */
+.qr-wrap{
+    margin-right: auto; 
+    margin-left: auto; 
+    width: 360px; 
+    border: none rgb(255, 129, 36); 
+    background: url(https://mpt.135editor.com/mmbiz_gif/ziadDDQxbCJFA2XMwm7VE1RTcS94u8LqVWSjIasMfzY8aG5HolkBhHhwEp0eUpPCEzPYqXYicbRNtROJibbM9P55g/0?wx_fmt=gif) right 0px no-repeat; 
+    background-size: contain; 
+    box-sizing: border-box;
+}
+
+.qr-image{
+    padding: 10px 3px; 
+    width: 150px; 
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.qr-image img{
+    width: 150px;
+}
+
+
+</style>
+
+</head>
+<body class="post-template tag-webpack tag-jing-yan-zong-jie">
+
+    <div class="site-wrapper">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/css/lightbox.min.css">
+
+
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://boycgit.github.io"><img src="../content/images/2018/08/logoicon.png" alt="JSCON-简时空"></a>
+            <ul class="nav" role="menu">
+    <li class="nav-shou-ye" role="menuitem"><a href="https://boycgit.github.io/">首页</a></li>
+    <li class="nav-guan-yu" role="menuitem"><a href="https://boycgit.github.io/about-me/">关于</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://boycgit.github.io/rss/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-webpack tag-jing-yan-zong-jie ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2019-07-07">7 July 2019</time>
+                        <span class="date-divider">/</span> <a href="../tag/webpack/">Webpack</a>
+                </section>
+                <h1 class="post-full-title">Webpack 技巧 - 联合 alias 和 mainFields 提高多库联调效率</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1562315708-25134d003e0f?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <!--kg-card-begin: markdown--><h2 id="1">1、多库联调场景</h2>
+<p>目前在开发一个工程项目，考虑到可扩展性和功能解耦，将每个功能模块都单独拆分出来。在正式使用、单独维护某个功能包的时候没什么问题，最为头疼的是联调两个功能模块的时候，就比较掣肘了。</p>
+<p>我们举下面的场景为例来说明：</p>
+<ul>
+<li>工程项目中有 A、B、C 这 3 个功能模块，每个功能模块都是单独的一个 npm 包；</li>
+<li>其中 A 是基础工具包，B、C 是业务功能模块；C 包依赖 A 包的功能</li>
+</ul>
+<p>工程目录及引用关系如下图所示：<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blogwebpack-%E5%A4%A7%E5%9E%8B%E5%B7%A5%E7%A8%8B-%E6%A8%A1%E5%9D%97.jpg" alt="功能模块"></p>
+<h3 id="11">1.1、联调的难题</h3>
+<p>当我们开发 C 模块的时候，需要 <strong>同时联调</strong> A 模块的功能，而由于 A 模块是以 npm 包放在在 node_modules 中，所以我们直接修改 A 模块并没有什么用，修改的效果并不会出现的 C 模块的调试内容中。</p>
+<h3 id="12">1.2、通常的解决方案</h3>
+<p>通常我们的解决方法是采用 <code>npm link</code> 方式解决：先在 A 模块下执行 <code>npm link</code>；然后去 C 模块中执行 <code>npm link A</code>，这样我们就能方便联调这两个模块。</p>
+<p>然而这种 npm link 的方式在某些场景还是有限制：</p>
+<ol>
+<li>如果你使用 Typescript 开发，<code>npm link</code> 后有可能会报错找不到 A 模块中的 xx 类型定义；这个目前我也没有找到好的解决方案。。。</li>
+<li>如果 A 包只以压缩版本发行（即 dist 目录只存 index.min.js 文件），那么你每次修改 A 文件后必须手动打包一次，那么 C 模块才会感知文件的变化触发 hot reload</li>
+</ol>
+<p>如果没有上述这两个问题，我以往我都直接使用 <code>npm link</code> 的方式联合开发，联调地也是蛮开心的。</p>
+<p>然而正在开发的工程项目中却恰恰遇到上述这两个问题，避无可避。总不能每修改一次 A 后发一个 npm 包，然后去 C 模块下重新安装 A 包（万一 A 包修改得不对，又得重来一次）。。。<strong>这种感觉就是好比你去某陌生小区找朋友，只能靠猜、问路人来定位到具体xx单元</strong>（有些小区布局奇葩一些的，连号的单元楼可能隔着很远很远）</p>
+<p>想想就抓狂，这种非人的开发体验、落后的联调效率，简直是在浪费生命；</p>
+<p>好吧，那就只能想办法解决喽~</p>
+<h2 id="2">2、优化的解决方案</h2>
+<p>一般是到网上寻现有方案，拿来就用最好；可这次到网上找了半天，也没有搜索到我这种方案的解法，不得不去 webpack 官方上找合理配置项来解决我的问题 —— 毕竟 Webpack 那么强大，方案总是有的。</p>
+<p>在 Webpack 的官方文档里摸爬滚打了一番，发现配合 <code>resolve.alias</code>、<code>resolve.mainFields</code> 就能解决上述两则难题，相比 <code>npm link</code> 感觉这种方案更加适合大型工程项目联调：</p>
+<p>首先给 A 模块目录下的 package.json 新增 <code>idebug</code> 字段，指向该模块的入口文件（假设为 <code>src/index.ts</code> ）</p>
+<pre><code class="language-js">   //...
+  "browser": "dist/index.umd.js",
+  "idebug": "src/index.tsx",
+  // ...
+</code></pre>
+<p>其次在 C 模块目录里的 webpack 配置项更改 <code>resolve</code> 配置，将新增的 <code>idebug</code> 字段作为 <code>mainFields</code> 数组的第一个属性：</p>
+<pre><code class="language-js">module.exports = {
+  //...
+  resolve: {
+    alias: {
+      'A$': path.resolve(__dirname, '../A/'),
+    },
+    mainFields: ['idebug', 'browser', 'module', 'main']
+    //...
+  }
+};
+</code></pre>
+<blockquote>
+<p>上述 <code>idebug</code> 名字可以自定义，只要保证 A 模块中的 package.json 和 C 模块的 webpack 配置项中的 <code>mainFields</code> 中的名字一致即可；</p>
+</blockquote>
+<p>这样在运行 C 模块的 Webpack 时，就不会去找本目录下的 node_modules 中的 A 模块，而是去加载 <code>../A/src/index.ts</code> 文件，达到了 C 模块和 A 模块源码联调的目的；</p>
+<p>一些说明：</p>
+<ul>
+<li>一般使用 <code>path.resolve()</code> 来获取绝对路径</li>
+<li>配置 <code>alias</code> 的时候，可以用 <code>$</code> 结尾，兼容引入子包的问题</li>
+<li>一般来讲，webpack 项目都有 <strong>dev</strong> 和 <strong>production</strong> 两套配置流程，我们只在 <strong>dev</strong> 的时候采用上述方案， <strong>production</strong> 还是保持原有的配置。</li>
+</ul>
+<p>no npm link, no pains~</p>
+<h2 id="">参考文档</h2>
+<ul>
+<li><a href="https://webpack.js.org/configuration/resolve/">官网 - Resolve</a>：官方网站中对 <code>resolve</code> 的解释，附<a href="https://webpack.docschina.org/configuration/resolve/">中文版</a></li>
+<li><a href="https://juejin.im/post/5afe33d6f265da0b7d0b9be6">深入理解webpack如何解析代码路径</a>：推荐阅读，本文详细讲解了 webpack 中的 <code>resolve</code> 配置项中各个属性的功能含义，诸如 <code>resolve.modules</code>、<code>resolve.alias</code>、<code>resolve.mainFields</code> 等</li>
+<li><a href="https://juejin.im/post/5bbc759bf265da0a867c53e0">webpack之路径彻底吃透</a>：本文细细梳理了 <code>resolve</code> 和 <code>resolveLoader</code> 对路径的规则</li>
+</ul>
+<!--kg-card-end: markdown-->
+                </div>
+            </section>
+            <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
+            <section style="text-align: center"><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg"></section>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js" integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js" integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous"></script>
+
+
+            <section id="gitalk-component-wrap"></section>
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit">
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/boycgit/">boycgit</a></h4>
+            <p>阅读此作者的<a href="../author/boycgit/">更多文章</a>.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/boycgit/">阅读更多</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+                <article class="read-next-card" style="background-image: url(https://casper.ghost.org/v1.0.0/images/blog-cover.jpg)">
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">— JSCON-简时空 —</small>
+                        <h3 class="read-next-card-header-title"><a href="../tag/webpack/">Webpack</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"></path></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="../webpack-externals-experience/">Webpack 踩坑记 - 配置 externals 和 output</a></li>
+                            <li><a href="../webpack-how-to-read/">Webpack 源码（二）—— 如何阅读源码</a></li>
+                            <li><a href="../webpack-source-tapble/">Webpack 源码（一）—— Tapable 和 事件流</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="../tag/webpack/">查看所有4篇文章 →</a>
+                    </footer>
+                </article>
+
+                <article class="post-card post tag-za-shi tag-css tag-jing-yan-zong-jie">
+        <a class="post-card-image-link" href="../customize-antd-css/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1513151233558-d860c5398176?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../customize-antd-css/">
+            <header class="post-card-header">
+                    <span class="post-card-tags">杂事</span>
+                <h2 class="post-card-title">快速定制 Ant Design 主题 CSS 文件</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>作为前端流行库，Antd 却只提供了 LESS 样式定制的功能。本文介绍了一种定制生成 Antd 主题 CSS 样式文件的方法，简单易操作且灵活度高。</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 5 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-javascript tag-typescript tag-he-ji">
+        <a class="post-card-image-link" href="../typescript-advance-cheatsheet/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1555688378-561e90ac6460?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../typescript-advance-cheatsheet/">
+            <header class="post-card-header">
+                    <span class="post-card-tags">javascript</span>
+                <h2 class="post-card-title">速查手册 - TypeScript 高级类型 cheat sheet</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>本文罗列了 TypeScript 常用的高阶类型，包含 官方、以及常用的非官方的高级类型声明，该手册直接硬啃的话有些枯燥，适合平时快速查阅，使用 `Ctrl+F` 来查找关键词来定位即可。</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 9 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://boycgit.github.io">
+                <img src="../content/images/2018/08/logo.png" alt="JSCON-简时空 icon">
+            <span>JSCON-简时空</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">—</span>
+    <div class="floating-header-title">Webpack 技巧 - 联合 alias 和 mainFields 提高多库联调效率</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
+</svg>
+</div>
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8AWebpack%20%E6%8A%80%E5%B7%A7%20-%20%E8%81%94%E5%90%88%20alias%20%E5%92%8C%20mainFields%20%E6%8F%90%E9%AB%98%E5%A4%9A%E5%BA%93%E8%81%94%E8%B0%83%E6%95%88%E7%8E%87%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/webpack-alias-main-fields/" onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+            <?xml version="1.0" standalone="no"?><svg t="1534600204727" class="icon" style="" viewbox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/webpack-alias-main-fields/&amp;mhid=txbODQq7nZkhMHcqI9xROqg" onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+            <?xml version="1.0" standalone="no"?><svg t="1534604253879" class="icon" style="" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.min.js"></script>
+
+<script>
+    (function () {
+        /**
+         * Get Node
+         * @param  {String|Element} el
+         * @param  {Boolean} noCache
+         * @return {Element}
+         */
+        var cacheNode = {};
+        function getNode(el, noCache) {
+            if (noCache === void 0) noCache = false;
+
+            if (typeof el === 'string') {
+                if (typeof window.Vue !== 'undefined') {
+                    return find(el);
+                }
+                el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el));
+            }
+
+            return el;
+        }
+
+        /**
+         * Find element
+         * @example
+         * find('nav') => document.querySelector('nav')
+         * find(nav, 'a') => nav.querySelector('a')
+         */
+        function find(el, node) {
+            return node ? el.querySelector(node) : document.querySelector(el);
+        }
+        function create(node, tpl) {
+            node = document.createElement(node);
+            if (tpl) {
+                node.innerHTML = tpl;
+            }
+            return node;
+        }
+        function appendTo(target, el) {
+            return target.appendChild(el);
+        }
+
+        function renderGitalkContainer() {
+            var div = create('div');
+            div.id = 'gitalk-container';
+            var main = getNode('#site-main');
+            div.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            appendTo(find('#gitalk-component-wrap'), div);
+            var script = create('script');
+            var content = "gitalk.render('gitalk-container')";
+        }
+        renderGitalkContainer();
+
+        var gitalk = new Gitalk({
+            clientID: 'a65ee9e3ea5168da1470',
+            clientSecret: 'ebfd520679d1ad61929b1887b2efccd4872389e3',
+            repo: 'boycgit.github.io',
+            owner: 'boycgit',
+            admin: [
+                'boycgit'
+            ],
+            id: location.pathname,
+            // facebook-like distraction free mode
+            distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container');
+
+
+
+        var postImages = document.querySelectorAll('.post-content img');
+        Array.prototype.forEach.call(postImages, function (el, i) {
+            el.outerHTML = `<aholder href="${el.src}" data-lightbox="postImages" data-title="${el.alt}">${el.outerHTML}</aholder>`.replace(/aholder/g, 'a');
+        });
+
+        // 动态添加 js 脚本
+        setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/js/lightbox.min.js";
+            document.getElementsByTagName('body')[0].appendChild(script);
+
+            script.onload = function () {
+
+                console.log('load success');
+            }
+        }, 1000);
+
+    })();
+</script>
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://boycgit.github.io">JSCON-简时空</a> © 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="https://boycgit.github.io">最新文章</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=11f1923694"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,735 @@
+
+<!DOCTYPE html><html lang="zh">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>前端学数据结构 - 堆（Heap）</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=11f1923694">
+
+    <meta name="description" content="前端学数据结构系列 - 堆（heap）。本文收集了堆的参考文章、代码实现和实际应用等等，通过本文能基本掌握堆这类数据结构">
+    <link rel="shortcut icon" href="../favicon.png" type="image/png">
+    <link rel="canonical" href="https://boycgit.github.io/ss-heap/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://boycgit.github.io/ss-heap/amp/">
+    
+    <meta property="og:site_name" content="JSCON-简时空">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="前端学数据结构 - 堆（Heap）">
+    <meta property="og:description" content="前端学数据结构系列 - 堆（heap）。本文收集了堆的参考文章、代码实现和实际应用等等，通过本文能基本掌握堆这类数据结构">
+    <meta property="og:url" content="https://boycgit.github.io/ss-heap/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1520352823777-923f7151a680?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=1da4c8a7ea8cf4a11d88502ea44009d6">
+    <meta property="article:published_time" content="2018-10-08T13:19:50.000Z">
+    <meta property="article:modified_time" content="2018-10-08T13:19:50.000Z">
+    <meta property="article:tag" content="数据结构">
+    <meta property="article:tag" content="javascript">
+    <meta property="article:tag" content="合集">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="前端学数据结构 - 堆（Heap）">
+    <meta name="twitter:description" content="前端学数据结构系列 - 堆（heap）。本文收集了堆的参考文章、代码实现和实际应用等等，通过本文能基本掌握堆这类数据结构">
+    <meta name="twitter:url" content="https://boycgit.github.io/ss-heap/">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1520352823777-923f7151a680?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=1da4c8a7ea8cf4a11d88502ea44009d6">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="boycgit">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="数据结构, javascript, 合集">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="721">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "JSCON-简时空",
+        "logo": "https://boycgit.github.io/content/images/2018/08/logoicon.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "boycgit",
+        "image": {
+            "@type": "ImageObject",
+            "url": "//www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&d=mm&r=x",
+            "width": 250,
+            "height": 250
+        },
+        "url": "https://boycgit.github.io/author/boycgit/",
+        "sameAs": []
+    },
+    "headline": "前端学数据结构 - 堆（Heap）",
+    "url": "https://boycgit.github.io/ss-heap/",
+    "datePublished": "2018-10-08T13:19:50.000Z",
+    "dateModified": "2018-10-08T13:19:50.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1520352823777-923f7151a680?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ&s=1da4c8a7ea8cf4a11d88502ea44009d6",
+        "width": 1080,
+        "height": 721
+    },
+    "keywords": "数据结构, javascript, 合集",
+    "description": "前端学数据结构系列 - 堆（heap）。本文收集了堆的参考文章、代码实现和实际应用等等，通过本文能基本掌握堆这类数据结构",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://boycgit.github.io/"
+    }
+}
+    </script>
+
+    <script src="../public/ghost-sdk.js?v=11f1923694"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "7c2ea2eb9409"
+});
+</script>
+    <meta name="generator" content="Ghost 2.31">
+    <link rel="alternate" type="application/rss+xml" title="JSCON-简时空" href="https://boycgit.github.io/rss/">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-69473481-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-69473481-3');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+<style>
+
+/* 结束 */
+
+  .end-block-wrap{
+        color:#338daf;
+        text-align: center;
+    }
+
+    .end-block-wrap img{
+        border: none;
+        max-width: 100%;
+        margin: 0px auto; display: inline-block;
+    }
+
+    .end-block-wrap img.main{
+        width: 30px;
+    }
+
+
+/* 参考文档 */
+.ref-wrap .line-text{
+    display: flex;justify-content:center;align-items:flex-end;
+}
+
+.ref-wrap .line-text::before, .ref-wrap .line-text::after{
+    content: '';
+    display: inline-block;
+    width: 25%; border-bottom: 1px dashed rgb(51, 51, 51); box-sizing: border-box;
+}
+
+.ref-wrap .text.main{
+    font-size: 14px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 0px 10px; 
+    font-weight: bold; 
+    margin-bottom: -5px; 
+    box-sizing: border-box;
+}
+
+.ref-wrap  .text.second{
+    font-size: 16px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 10px; 
+    text-align: center; 
+    box-sizing: border-box;
+}
+/* 求关注 */
+.qr-wrap{
+    margin-right: auto; 
+    margin-left: auto; 
+    width: 360px; 
+    border: none rgb(255, 129, 36); 
+    background: url(https://mpt.135editor.com/mmbiz_gif/ziadDDQxbCJFA2XMwm7VE1RTcS94u8LqVWSjIasMfzY8aG5HolkBhHhwEp0eUpPCEzPYqXYicbRNtROJibbM9P55g/0?wx_fmt=gif) right 0px no-repeat; 
+    background-size: contain; 
+    box-sizing: border-box;
+}
+
+.qr-image{
+    padding: 10px 3px; 
+    width: 150px; 
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.qr-image img{
+    width: 150px;
+}
+
+
+</style>
+
+</head>
+<body class="post-template tag-shu-ju-jie-gou tag-javascript tag-he-ji">
+
+    <div class="site-wrapper">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/css/lightbox.min.css">
+
+
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://boycgit.github.io"><img src="../content/images/2018/08/logoicon.png" alt="JSCON-简时空"></a>
+            <ul class="nav" role="menu">
+    <li class="nav-shou-ye" role="menuitem"><a href="https://boycgit.github.io/">首页</a></li>
+    <li class="nav-guan-yu" role="menuitem"><a href="https://boycgit.github.io/about-me/">关于</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://boycgit.github.io/rss/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-shu-ju-jie-gou tag-javascript tag-he-ji ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2018-10-08">8 October 2018</time>
+                        <span class="date-divider">/</span> <a href="../tag/shu-ju-jie-gou/">数据结构</a>
+                </section>
+                <h1 class="post-full-title">前端学数据结构 - 堆（Heap）</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1520352823777-923f7151a680?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=1da4c8a7ea8cf4a11d88502ea44009d6)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <h1 id="a">A. 参考文档</h1>
+<h2 id="1">1、教程类</h2>
+<ul>
+<li><a href="https://github.com/trekhleb/javascript-algorithms/tree/master/src/data-structures/heap">Heap</a> ：数据结构专辑仓库，有代码有实现，言简意赅；</li>
+<li><a href="https://www.zhihu.com/question/36134980">堆和树有什么区别？堆为什么要叫堆，不叫树呢？</a>：知乎问答</li>
+<li><a href="http://www.cnblogs.com/vamei/archive/2013/03/20/2966612.html">纸上谈兵: 堆 (heap)</a>：用实际的例子来帮助你理解；</li>
+<li><a href="https://www.geeksforgeeks.org/binary-heap/">Binary Heap</a>：geeksforgeeks 有关二叉堆的入门文章</li>
+<li><a href="http://www.cppblog.com/guogangj/archive/2009/10/29/99729.html">二叉堆（Binary Heap）</a>：较为严谨的文章，也有不少的图示；</li>
+<li><a href="http://pkxpp.github.io/2016/11/05/%E5%A0%86%E7%9A%84JavaScript%E5%AE%9E%E7%8E%B0/">堆的javascript实现</a>：言简意赅，使用 js 实现，具有较高参考价值；</li>
+<li><a href="https://codeburst.io/implementing-a-complete-binary-heap-in-javascript-the-priority-queue-7d85bd256ecf">Implementing a Complete Binary Heap in JavaScript: The Priority Queue</a>：手把手教你实现完全二叉堆</li>
+<li><a href="https://blog.csdn.net/juanqinyang/article/details/51418629">数据结构-堆（heap）</a>：主要是介绍了“上滤” 和 “下滤” 的概念</li>
+<li><a href="https://blog.csdn.net/hrn1216/article/details/51465270">最小堆 构建、插入、删除的过程图解</a>：用图详细讲解最小堆的建立和删除操作过程</li>
+</ul>
+<h2 id="2">2、应用</h2>
+<ul>
+<li><a href="https://www.geeksforgeeks.org/heap-data-structure/">Heap Data Structure</a>：来自 geeksforgeeks，有关 heap 的 awesome 列表，罗列了有关堆 相关的原理和相关算法题；并有<a href="https://www.geeksforgeeks.org/data-structure-gq/heap-gq/">试题</a> 可供测试，看看你能得几分；</li>
+<li><a href="https://blog.csdn.net/u010224394/article/details/8834969">常用数据结构与算法：二叉堆(binary heap)</a>：从二叉堆的概念到实现，然后还有实例;</li>
+<li><a href="http://eloquentjavascript.net/1st_edition/chapter7.html">Searching</a>：具体的二叉堆在搜索中的应用；</li>
+<li><a href="https://www.geeksforgeeks.org/heap-sort/">HeapSort</a>：geeksforgeeks文章，文字 + 视频讲解堆排序的实现，很直观；</li>
+</ul>
+<h1 id="b">B. 正文</h1>
+<h2 id="1">1、下标关系式</h2>
+<p>堆都能用树来表示，并且一般树的实现都是利用链表。<br>
+而二叉堆是一种特殊的堆，它用完全二叉树表示，却可以利用数组实现。</p>
+<blockquote>
+<p>也就说堆并不一定是完全二叉树。平时使用最多的是二叉堆，它可以用完全二叉树表示，二叉堆易于存储，并且便于索引</p>
+</blockquote>
+<p>在堆的实现时，需要注意：</p>
+<ul>
+<li>因为是数组，所以父子节点的关系就不需要特殊的结构去维护了，索引之间通过计算就可以得到，省掉了很多麻烦。如果是链表结构，就会复杂很多；</li>
+<li>完全二叉树要求叶子节点从左往右填满，才能开始填充下一层，这就保证了不需要对数组整体进行大片的移动。这也是随机存储结构（数组）的短板：删除一个元素之后，整体往前移是比较费时的。这个特性也导致堆在删除元素的时候，要把最后一个叶子节点补充到树根节点的缘由</li>
+</ul>
+<p>二叉堆想树的样子我可以理解，但为什么将它们安排在数组里的话，通过当前下标就能找到父节点和子节点的下标呢？</p>
+<p>对于第 i 个节点，即 arr[i]：</p>
+<ul>
+<li>父节点位置是：<code>arr[(i-1)/2]</code></li>
+<li>左子节点：<code>arr[2*i + 1]</code></li>
+<li>右子节点：<code>arr[2*i + 2]</code></li>
+</ul>
+<p>为了辅助理解，我们来画个图。按照二叉堆的定义，每个节点下只有 2 个子节点，根据这个特性我们绘制出 N 层情况下这个二叉堆的样子：<br>
+<img src="https://img.alicdn.com/tfs/TB1g0H.dYvpK1RjSZPiXXbmwXXa-263-403.png" alt="heap index"></p>
+<ul>
+<li>为方便理解，节点里的数存储的就是数组的下标，从 0 开始按顺序递增</li>
+<li>通过示意图就能一眼看出下标之间的关系</li>
+</ul>
+<p>然后我们将其扁平化放在数组里：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1JX66dZbpK1RjSZFyXXX_qFXa-472-50.png" alt="array"></p>
+<p>恰好无缝变成一个数组，就成下面那个样子，真的很奇特。</p>
+<blockquote>
+<p>也可以参考文章 <a href="https://www.geeksforgeeks.org/binary-heap/">Binary Heap</a></p>
+</blockquote>
+<h2 id="2">2、下标关系式推导</h2>
+<p>逆向思维一下，为什么非得用这个数组来表示二叉堆？为什么恰好根节点安排在数组的第 0 个位置，安排在其他的位置可不可以？</p>
+<p>好，那我们假设根节点从 5 开始的话，那么问题就变成了，序号下标为 i 的元素，其子元素的下标分别是多少？</p>
+<p><img src="https://img.alicdn.com/tfs/TB1V2j.d4TpK1RjSZR0XXbEwXXa-263-403.png" alt="base5"></p>
+<p>很明显这个数学系采用归纳法就能获得结论。先画出这种情况下的二叉堆图示，相比之前的图加了额外的标注：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1vSAXd3HqK1RjSZFgXXa7JXXa-946-437.png" alt="base analysis"></p>
+<p>从图中可以观察获得基本信息：</p>
+<ul>
+<li>首先我们设根节点的索引值是 <code>BASE</code>（此例子中， <code>BASE = 5</code>）</li>
+<li>因为每个节点有 2 个子节点，所以下一层节点个数是当前层个数的 2 倍</li>
+<li>层数也从 0 开始标识，计算每层的个数：
+<ul>
+<li>第 0 层就是根节点，该层共有 1 个节点；</li>
+<li>第 1 层有 2 个节点</li>
+<li>....</li>
+<li>第 n 层就有 2^n 个节点；</li>
+</ul>
+</li>
+<li>计算当前层数 <strong>之前</strong> 累计节点的个数：
+<ul>
+<li>第 0 层（根节点），该层之前累计 0 个节点</li>
+<li>第 1 层之前累积 1 个节点</li>
+<li>第 2 层之前累积 3 个节点</li>
+<li>...</li>
+<li>第 n 层之前累积 2^n - 1 个节点</li>
+</ul>
+</li>
+</ul>
+<p>然后我们来推导：对于第 n 层中下标为 i 的节点，其对应的子节点的下标的值；</p>
+<p>首先令 i 节点在第 n 层的第 k 个位置，将上图中只抽取第 n 层的节点情况，我们这里只关注个数的情况：</p>
+<p><img src="https://img.alicdn.com/tfs/TB106wldYPpK1RjSZFFXXa5PpXa-1068-151.png" alt="kth"></p>
+<ul>
+<li>下标为 i 的节点在第 n 层的第 k 个位置；</li>
+<li>该节点之前存在 k - 1 个节点</li>
+<li>该节点之后存在 2^n - 1 个节点</li>
+</ul>
+<p>加上之前的结论，我们能用 k、n、BASE 推导出来下标 i 的表达式：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1qxcrd7voK1RjSZFwXXciCFXa-423-106.png" alt="i formula"></p>
+<p>即（后面称之为 <strong>下标公式</strong>）：</p>
+<pre><code class="language-js">i = 2^n + (BASE-2) + k
+</code></pre>
+<p>如果看得比较晕的话，我们以 BASE = 5 为例，获得第 2 (=n) 层节点、第 3(=k) 个点的情况如下：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1HtUGd4YaK1RjSZFnXXa80pXa-928-82.png" alt="2th"></p>
+<p>其下标：</p>
+<pre><code class="language-js">i = 2^n + (BASE-2) + k = 10
+</code></pre>
+<p>我们看 i 节点的右子节点的表达式是怎么样的。</p>
+<p>假设其右节点的下标值为 j，那么不难获得，j 节点是在<strong>第 n+1 层的第 2k</strong> 的位置，用图说话：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1UP3td7voK1RjSZFDXXXY3pXa-1140-375.png" alt="2k"></p>
+<p>将 n+1、2k 带入到下标公式，就能获得 j 的表达式为：</p>
+<pre><code class="language-js">j = 2^(n+1) + (BASE-2) + 2k
+</code></pre>
+<p>好了，我们就能获得 j 和 i 之间的关系：</p>
+<pre><code class="language-js">j = 2i + (2 - BASE)
+</code></pre>
+<p>所以说，<strong>无论 <code>BASE</code> 设置成多少都可以用数组来表示出来，父子节点下标关系都有固定表达式</strong>；</p>
+<p>既然如此，为何不把 BASE 设置成 0 呢？这样就可以数组下标 0 开始填充数据，而且 <strong>不浪费数组空间</strong> 了。令 BASE = 0，就能获得熟悉的下标关系表达式；对于第 i 个节点，即 <code>arr[i]</code>：</p>
+<ul>
+<li>左子节点：<code>arr[2*i + 1]</code></li>
+<li>右子节点：<code>arr[2*i + 2]</code></li>
+</ul>
+<h2 id="3">3、堆的操作</h2>
+<blockquote>
+<p>来自文章 <a href="http://www.cnblogs.com/vamei/archive/2013/03/20/2966612.html">纸上谈兵: 堆 (heap)</a></p>
+</blockquote>
+<blockquote>
+<p>在 visualgo 网站上有非常好的 <a href="https://visualgo.net/zh/heap">可视化操作演示</a>，强烈推荐</p>
+</blockquote>
+<p>堆和队列比较相似，有两个固定的操作：插入和删除。</p>
+<h3 id="31">3.1、插入</h3>
+<p>在插入操作的时候，会破坏上述堆的性质，所以需要进行名为 <strong>上滤</strong>（percolate up） 的操作，以进行恢复：</p>
+<ol>
+<li>将新元素增加到堆的末尾；</li>
+<li>按照优先顺序，将新元素与其父节点比较，如果新元素小于父节点则将两者交换位置；</li>
+<li>不断进行第2步操作，直到不需要交换新元素和父节点，或者达到堆顶；</li>
+<li>最后通过得到一个最小堆。</li>
+</ol>
+<p>这样得到的树，就恢复了堆的性质。我们插入节点 2 为例：</p>
+<p><img src="https://img.alicdn.com/tfs/TB15x5zegTqK1RjSZPhXXXfOFXa-754-307.png" alt="percolate up"></p>
+<h3 id="32">3.2、删除</h3>
+<p>堆的删除操作与插入操作相反，插入操作从下往上调整堆，而<strong>删除操作则从上往下调整堆</strong>，该调整的方法称为 <strong>下滤</strong>（percolate down）：</p>
+<ol>
+<li>删除堆顶元素</li>
+<li>让最后一个 <code>last</code> 节点成为新的节点，从而构成一个新的二叉树</li>
+<li>将 <code>last</code> 节点和两个子节点比较，将小的元素上调。</li>
+<li>不断进行步骤，直到 <code>last</code> 节点不大于任一子节点，或者 <code>last</code> 节点成为叶节点</li>
+</ol>
+<p><img src="https://img.alicdn.com/tfs/TB12Nm8ebPpK1RjSZFFXXa5PpXa-793-342.png" alt="remove"></p>
+<h2 id="4">4、堆的应用</h2>
+<h3 id="41binomialheap">4.1、二项堆（Binomial Heap）</h3>
+<ul>
+<li><a href="https://www.cnblogs.com/skywang12345/p/3655900.html">二项堆(一)之 图文解析 和 C语言的实现</a>：本文会先对二项堆的理论知识进行简单介绍，然后给出C语言的实现。后续再分别给出C++和Java版本的实现；有着非常详细的图解过程；</li>
+<li><a href="https://www.geeksforgeeks.org/binomial-heap-2/">Binomial Heap</a>：geeksforgeeks 教程文章</li>
+<li><a href="http://www.math.tau.ac.il/~haimk/adv-ds-2004/fibo.ppt">Binomial heaps &amp; Fibonacci Heaps</a>：很不错的 PPT ，总结了两种堆的具体操作细节；</li>
+</ul>
+<p>二项堆是可合并堆，它的合并操作的复杂度是<code>O(log n)</code>。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fw12ce3c69j30zf0rdjtt.jpg" alt="bionomial tree"></p>
+<h3 id="42fibonacciheap">4.2、斐波那契堆（Fibonacci Heap）</h3>
+<ul>
+<li><a href="https://www.cnblogs.com/skywang12345/p/3659060.html">斐波那契堆(一)之 图文解析 和 C语言的实现</a>：本文会先对斐波那契堆的理论知识进行简单介绍，然后给出C语言的实现；斐波那契堆比二项堆具有更好的平摊分析性能，它的合并操作的时间复杂度是O(1)</li>
+<li><a href="https://www.geeksforgeeks.org/fibonacci-heap-set-1-introduction/">Fibonacci Heap | Set 1 (Introduction)</a></li>
+<li><a href="https://blog.csdn.net/gqtcgq/article/details/45602407">算法导论笔记：19斐波那契堆</a>：总结了这种堆的性质和用途</li>
+<li><a href="https://blog.csdn.net/yzf0011/article/details/60574388">斐波那契堆（Fibonacci Heap）</a>：较为严谨刻板的教程；</li>
+<li><a href="https://www.cs.princeton.edu/~wayne/teaching/fibonacci-heap.pdf">Fibonacci Heaps</a>：来自普林斯顿大学的 PPT 中大量图示展示具体的堆操作，附带 <a href="http://www.cs.princeton.edu/~wayne/cs423/lectures/fibonacci">课程PPT</a>，更多的资料参考 <a href="https://cse.google.com/cse?cx=005649317310637734940%3Ayeomcaujqdw&amp;q=heap&amp;oq=heap">普林斯顿大学官网搜索</a></li>
+</ul>
+<p>斐波那契堆对于 SEARCH 操作的支持比较低效，所以，设计给定元素的操作均需要一个指针指向这个元素</p>
+<h3 id="43pairingheaps">4.3、配对堆（Pairing Heaps）</h3>
+<ul>
+<li><a href="https://waautomaton.tk/2018/05/13/%E9%85%8D%E5%AF%B9%E5%A0%86/">配对堆</a>：阅读成本较低的科普文章，推荐</li>
+</ul>
+<h3 id="44leftistheap">4.4、左偏树/堆（Leftist Heap）</h3>
+<ul>
+<li><a href="https://www.geeksforgeeks.org/leftist-tree-leftist-heap/">Leftist Tree / Leftist Heap</a>：geeksforgeeks 文章</li>
+<li><a href="https://cloud.tencent.com/developer/article/1023685">纸上谈兵: 左倾堆 (leftist heap)</a>：通俗易懂，推荐阅读；</li>
+<li><a href="https://blog.csdn.net/theprinceofelf/article/details/7247454">【数据结构与算法】左偏树（堆）的实现</a>：左式堆由于使用二叉链表的存储结构，对动态操作支持良好，在需要合并操作的场合，是极佳的选择。</li>
+</ul>
+
+                </div>
+            </section>
+            <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
+            <section style="text-align: center"><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg"></section>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js" integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js" integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous"></script>
+
+
+            <section id="gitalk-component-wrap"></section>
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit">
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/boycgit/">boycgit</a></h4>
+            <p>阅读此作者的<a href="../author/boycgit/">更多文章</a>.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/boycgit/">阅读更多</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+                <article class="read-next-card" style="background-image: url(https://casper.ghost.org/v1.0.0/images/blog-cover.jpg)">
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">— JSCON-简时空 —</small>
+                        <h3 class="read-next-card-header-title"><a href="../tag/shu-ju-jie-gou/">数据结构</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"></path></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="../algorithm-shunting-yard/">算法 - 调度场算法（Shunting Yard Algorithm）</a></li>
+                            <li><a href="../ss-stack/">前端学数据结构 - 栈（Stack）和 队列（Queue）</a></li>
+                            <li><a href="../ds-linked-list/">前端学数据结构 - 链表（Linked List）</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="../tag/shu-ju-jie-gou/">查看所有3篇文章 →</a>
+                    </footer>
+                </article>
+
+                <article class="post-card post tag-jing-yan-zong-jie tag-ji-suan-ji-wang-luo tag-ruan-jian">
+        <a class="post-card-image-link" href="../charles-proxy-https/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1508416163602-e4eb39645e86?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=df89fd00920df727218842cce7113c14)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../charles-proxy-https/">
+            <header class="post-card-header">
+                    <span class="post-card-tags">经验总结</span>
+                <h2 class="post-card-title">【经验总结】charles +  SwitchyOmega 代理 https</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>为了能让 Charles 代理 HTTPS，之前到网上看了很多教程，曾经自己捣鼓过，不过一直都没能成功，索性就不弄了。 这两天为了debug，不得不代理 https 的请求，经过半天的折腾竟然成功了。为了让以后自己不那么费劲，就写了这篇文章总结。</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 4 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-suan-fa tag-javascript tag-shu-ju-jie-gou">
+        <a class="post-card-image-link" href="../algorithm-shunting-yard/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1516437202929-3e06ed03f0b0?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=95145a369b4060b4e92c923a92d71196)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../algorithm-shunting-yard/">
+            <header class="post-card-header">
+                    <span class="post-card-tags">算法</span>
+                <h2 class="post-card-title">算法 - 调度场算法（Shunting Yard Algorithm）</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>有一种中缀转后缀的算法称为调度场算法（Shunting Yard Algorithm）。算法核心就在于用栈暂存符号以备“调度”，比较新符号和栈顶原有的符号，选择其中更容易结合的（根据优先级、结合方向）出栈，其算法思想和树的后续遍历一致</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 21 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://boycgit.github.io">
+                <img src="../content/images/2018/08/logo.png" alt="JSCON-简时空 icon">
+            <span>JSCON-简时空</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">—</span>
+    <div class="floating-header-title">前端学数据结构 - 堆（Heap）</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
+</svg>
+</div>
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8A%E5%89%8D%E7%AB%AF%E5%AD%A6%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%20-%20%E5%A0%86%EF%BC%88Heap%EF%BC%89%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/ss-heap/" onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+            <?xml version="1.0" standalone="no"?><svg t="1534600204727" class="icon" style="" viewbox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/ss-heap/&amp;mhid=txbODQq7nZkhMHcqI9xROqg" onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+            <?xml version="1.0" standalone="no"?><svg t="1534604253879" class="icon" style="" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.min.js"></script>
+
+<script>
+    (function () {
+        /**
+         * Get Node
+         * @param  {String|Element} el
+         * @param  {Boolean} noCache
+         * @return {Element}
+         */
+        var cacheNode = {};
+        function getNode(el, noCache) {
+            if (noCache === void 0) noCache = false;
+
+            if (typeof el === 'string') {
+                if (typeof window.Vue !== 'undefined') {
+                    return find(el);
+                }
+                el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el));
+            }
+
+            return el;
+        }
+
+        /**
+         * Find element
+         * @example
+         * find('nav') => document.querySelector('nav')
+         * find(nav, 'a') => nav.querySelector('a')
+         */
+        function find(el, node) {
+            return node ? el.querySelector(node) : document.querySelector(el);
+        }
+        function create(node, tpl) {
+            node = document.createElement(node);
+            if (tpl) {
+                node.innerHTML = tpl;
+            }
+            return node;
+        }
+        function appendTo(target, el) {
+            return target.appendChild(el);
+        }
+
+        function renderGitalkContainer() {
+            var div = create('div');
+            div.id = 'gitalk-container';
+            var main = getNode('#site-main');
+            div.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            appendTo(find('#gitalk-component-wrap'), div);
+            var script = create('script');
+            var content = "gitalk.render('gitalk-container')";
+        }
+        renderGitalkContainer();
+
+        var gitalk = new Gitalk({
+            clientID: 'a65ee9e3ea5168da1470',
+            clientSecret: 'ebfd520679d1ad61929b1887b2efccd4872389e3',
+            repo: 'boycgit.github.io',
+            owner: 'boycgit',
+            admin: [
+                'boycgit'
+            ],
+            id: location.pathname,
+            // facebook-like distraction free mode
+            distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container');
+
+
+
+        var postImages = document.querySelectorAll('.post-content img');
+        Array.prototype.forEach.call(postImages, function (el, i) {
+            el.outerHTML = `<aholder href="${el.src}" data-lightbox="postImages" data-title="${el.alt}">${el.outerHTML}</aholder>`.replace(/aholder/g, 'a');
+        });
+
+        // 动态添加 js 脚本
+        setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/js/lightbox.min.js";
+            document.getElementsByTagName('body')[0].appendChild(script);
+
+            script.onload = function () {
+
+                console.log('load success');
+            }
+        }, 1000);
+
+    })();
+</script>
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://boycgit.github.io">JSCON-简时空</a> © 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="https://boycgit.github.io">最新文章</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=11f1923694"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });
+</script>
+
+</body>
+</html>

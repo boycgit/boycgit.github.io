@@ -1,0 +1,1069 @@
+
+<!DOCTYPE html><html lang="zh">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>【资源集合】 ES6 元编程（Proxy &amp; Reflect &amp; Symbol）</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=11f1923694">
+
+    <meta name="description" content="本文总结了自己学习 ES6 元编程相关知识（Symbols &amp; Proxy &amp; Reflect）的理解、教程文档 和 代码片段，所以本文并非是一篇传统意义上的教程，更类似于 github awesome 这样列表文章。
+
+由于教程文档和代码片段将随着学习的进行将增多，所以后续还会不定期更新。">
+    <link rel="shortcut icon" href="../favicon.png" type="image/png">
+    <link rel="canonical" href="https://boycgit.github.io/es6-mataprogram-list/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://boycgit.github.io/es6-mataprogram-list/amp/">
+    
+    <meta property="og:site_name" content="JSCON-简时空">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="【资源集合】 ES6 元编程（Proxy &amp; Reflect &amp; Symbol）">
+    <meta property="og:description" content="本文总结了自己学习 ES6 元编程相关知识（Symbols &amp; Proxy &amp; Reflect）的理解、教程文档 和 代码片段，所以本文并非是一篇传统意义上的教程，更类似于 github awesome 这样列表文章。
+
+由于教程文档和代码片段将随着学习的进行将增多，所以后续还会不定期更新。">
+    <meta property="og:url" content="https://boycgit.github.io/es6-mataprogram-list/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1518117648702-79b0cc9ff9e6?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=efa58b6149cc481fb8fc5f7556449df8">
+    <meta property="article:published_time" content="2018-08-23T09:50:22.000Z">
+    <meta property="article:modified_time" content="2018-09-22T02:37:12.000Z">
+    <meta property="article:tag" content="教程">
+    <meta property="article:tag" content="合集">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="【资源集合】 ES6 元编程（Proxy &amp; Reflect &amp; Symbol）">
+    <meta name="twitter:description" content="本文总结了自己学习 ES6 元编程相关知识（Symbols &amp; Proxy &amp; Reflect）的理解、教程文档 和 代码片段，所以本文并非是一篇传统意义上的教程，更类似于 github awesome 这样列表文章。
+
+由于教程文档和代码片段将随着学习的进行将增多，所以后续还会不定期更新。">
+    <meta name="twitter:url" content="https://boycgit.github.io/es6-mataprogram-list/">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1518117648702-79b0cc9ff9e6?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=efa58b6149cc481fb8fc5f7556449df8">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="boycgit">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="教程, 合集">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="720">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "JSCON-简时空",
+        "logo": "https://boycgit.github.io/content/images/2018/08/logoicon.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "boycgit",
+        "image": {
+            "@type": "ImageObject",
+            "url": "//www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&d=mm&r=x",
+            "width": 250,
+            "height": 250
+        },
+        "url": "https://boycgit.github.io/author/boycgit/",
+        "sameAs": []
+    },
+    "headline": "【资源集合】 ES6 元编程（Proxy &amp; Reflect &amp; Symbol）",
+    "url": "https://boycgit.github.io/es6-mataprogram-list/",
+    "datePublished": "2018-08-23T09:50:22.000Z",
+    "dateModified": "2018-09-22T02:37:12.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1518117648702-79b0cc9ff9e6?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ&s=efa58b6149cc481fb8fc5f7556449df8",
+        "width": 1080,
+        "height": 720
+    },
+    "keywords": "教程, 合集",
+    "description": "本文总结了自己学习 ES6 元编程相关知识（Symbols &amp; Proxy &amp; Reflect）的理解、教程文档 和 代码片段，所以本文并非是一篇传统意义上的教程，更类似于 github awesome 这样列表文章。\n\n由于教程文档和代码片段将随着学习的进行将增多，所以后续还会不定期更新。",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://boycgit.github.io/"
+    }
+}
+    </script>
+
+    <script src="../public/ghost-sdk.js?v=11f1923694"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "7c2ea2eb9409"
+});
+</script>
+    <meta name="generator" content="Ghost 2.31">
+    <link rel="alternate" type="application/rss+xml" title="JSCON-简时空" href="https://boycgit.github.io/rss/">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-69473481-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-69473481-3');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+<style>
+
+/* 结束 */
+
+  .end-block-wrap{
+        color:#338daf;
+        text-align: center;
+    }
+
+    .end-block-wrap img{
+        border: none;
+        max-width: 100%;
+        margin: 0px auto; display: inline-block;
+    }
+
+    .end-block-wrap img.main{
+        width: 30px;
+    }
+
+
+/* 参考文档 */
+.ref-wrap .line-text{
+    display: flex;justify-content:center;align-items:flex-end;
+}
+
+.ref-wrap .line-text::before, .ref-wrap .line-text::after{
+    content: '';
+    display: inline-block;
+    width: 25%; border-bottom: 1px dashed rgb(51, 51, 51); box-sizing: border-box;
+}
+
+.ref-wrap .text.main{
+    font-size: 14px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 0px 10px; 
+    font-weight: bold; 
+    margin-bottom: -5px; 
+    box-sizing: border-box;
+}
+
+.ref-wrap  .text.second{
+    font-size: 16px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 10px; 
+    text-align: center; 
+    box-sizing: border-box;
+}
+/* 求关注 */
+.qr-wrap{
+    margin-right: auto; 
+    margin-left: auto; 
+    width: 360px; 
+    border: none rgb(255, 129, 36); 
+    background: url(https://mpt.135editor.com/mmbiz_gif/ziadDDQxbCJFA2XMwm7VE1RTcS94u8LqVWSjIasMfzY8aG5HolkBhHhwEp0eUpPCEzPYqXYicbRNtROJibbM9P55g/0?wx_fmt=gif) right 0px no-repeat; 
+    background-size: contain; 
+    box-sizing: border-box;
+}
+
+.qr-image{
+    padding: 10px 3px; 
+    width: 150px; 
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.qr-image img{
+    width: 150px;
+}
+
+
+</style>
+
+</head>
+<body class="post-template tag-jiao-cheng tag-he-ji">
+
+    <div class="site-wrapper">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/css/lightbox.min.css">
+
+
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://boycgit.github.io"><img src="../content/images/2018/08/logoicon.png" alt="JSCON-简时空"></a>
+            <ul class="nav" role="menu">
+    <li class="nav-shou-ye" role="menuitem"><a href="https://boycgit.github.io/">首页</a></li>
+    <li class="nav-guan-yu" role="menuitem"><a href="https://boycgit.github.io/about-me/">关于</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://boycgit.github.io/rss/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-jiao-cheng tag-he-ji ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2018-08-23">23 August 2018</time>
+                        <span class="date-divider">/</span> <a href="../tag/jiao-cheng/">教程</a>
+                </section>
+                <h1 class="post-full-title">【资源集合】 ES6 元编程（Proxy &amp; Reflect &amp; Symbol）</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1518117648702-79b0cc9ff9e6?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=efa58b6149cc481fb8fc5f7556449df8)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <h2 id="">导读</h2>
+<p>几年前 ES6 刚出来的时候接触过 <strong>元编程</strong>（Metaprogramming）的概念，不过当时还没有深究。今天在应用和学习中不断接触到这概念，比如 <a href="https://segmentfault.com/a/1190000015875144#mobx-proxy">mobx 5</a> 中就用到了 Proxy 重写了 Observable 对象，觉得有必要梳理总结一下。</p>
+<p><strong>本文不生产代码，只当代码、文档的搬运工</strong>。所以本文并非是一篇传统意义上的教程，更类似于 <a href="https://github.com/sindresorhus/awesome">github awesome</a> 这样列表文章。</p>
+<h2 id="1">1、理解元编程</h2>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol">Symbol</a>、<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/reflect">Reflect</a> 和 <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy">Proxy</a> 是属于 ES6 元编程范畴的，能“介入”的对象底层操作进行的过程中，并加以影响。元编程中的 <strong>元</strong> 的概念可以理解为 <strong>程序</strong> 本身。</p>
+<p>”元编程能让你拥有可以扩展程序自身能力“。这句话还是很抽象，初学者该怎么理解呢？</p>
+<p>我也理解了半天，想到了下面的例子：</p>
+<p>就好比你原本是公司的部门的大主管，虽然你能力很强，但也必须按照规章制度做事，比如早上 8 点必须到公司，否则你就要扣绩效；而后来公司基本规定灵活了，每个部门可以自己制定打卡制度，此时身为主管的你，依据公司该基本规定，制定自己部门的考勤制度，本部门的职工可以 9 点来公司，还可以不打卡！（当然还可以制定其他规定）</p>
+<p>在这个例子中：</p>
+<ul>
+<li>”<strong>整个公司</strong>“就相当于 JS 引擎</li>
+<li>”<strong>公司的基本规章制度</strong>“就相当于 JS 运行机制和语法，员工办事最低要求就是遵照公司的规章制度</li>
+<li>”<strong>在此基础上，你拥有管理部门的权力，负责开发并维护一些产品</strong>“，这种行为就相当于平时普通的编程；</li>
+<li>公司的基本规定变灵活之后，你除了拥有以前管理员工的权力之外，”<strong>还拥有更改制度（针对该部门）的能力，这样就可以从制度层面影响员工的最低要求行为</strong>“，这里更改规章制度就相当于 <strong>元编程</strong> 了；</li>
+</ul>
+<p>这里的例子不一定准确，是我个人的理解，权做参考，也可以去看看知乎上 <a href="https://www.zhihu.com/question/23856985">怎么理解元编程？</a> 的问答。</p>
+<p>借助这个例子理解元编程，我们能感知在没有元编程能力的时候，就算你编程能力很厉害，但终究“孙悟空翻不出五指山”；而掌握了元编程能力之后，就差上天了，“给你一个支点，你就能撬动地球”，能力大大扩增。</p>
+<p>简言之，元编程让你具备一定程度上改变现有的程序规则层面的能力。或者说，元编程可以让你以某种形式去影响或更改程序运行所依赖的基础功能，以此获得一些维护性、效率上的好处。</p>
+<p>Javascript 中，<code>eval</code>、<code>new Function()</code>便是两个可以用来进行元编程的特性。不过因为性能和可维护的角度上，这两个特性还是不要用为妙。</p>
+<p>在 ES6 之后，标准引入了 Proxy &amp; Reflect &amp; Symbols，从而提供比较完善的元编程能力。</p>
+<h2 id="2es6">2、学习 ES6 元编程的资源</h2>
+<p>我原本也想仔细讲讲 ES6 中 <code>Symbol</code>、<code>Proxy</code> 和 <code>Reflect</code> 的基本概念和使用的，但网上这方面的文章不要太多，觉得重复码字也没有太必要。这里着重推荐几篇，分为教程类和手册类，通读完之后应该就掌握差不多了。</p>
+<p>元编程在 ES6 体现最为突出的是 <code>Proxy</code> 的应用，目前我所找的文章也多偏向 <code>Proxy</code>。</p>
+<p><strong>原理教程类</strong>：</p>
+<ul>
+<li><a href="http://www.infoq.com/cn/articles/es6-in-depth-proxies-and-reflect/">深入浅出ES6（十二）：代理 Proxies</a>：ES6 深入浅出系列，个人推荐认真读完该文章。本文的作者实现了 ES6 的 Reflect 特性，所以他对 ES6 这两个特性理解是最为深刻的，他的文章自然要深度阅读。</li>
+<li><a href="https://ponyfoo.com/articles/es6-proxies-in-depth">ES6 Proxies in Depth</a>：和其他教程相比，该文章篇幅稍微短一些，能较为快速得掌握概念和一些实际应用。</li>
+<li><a href="http://exploringjs.com/es6/ch_proxies.html">Metaprogramming with proxies</a>：来自 《<a href="http://exploringjs.com/es6/index.html#toc_ch_proxies">Exploring ES6</a>》书籍摘选，基础入门。</li>
+<li><a href="https://github.com/getify/You-Dont-Know-JS/blob/master/es6%20%26%20beyond/ch7.md">Chapter 7: Meta Programming</a>：经典的 《You Don't Know JS》系列文章，深入浅出，文章够长，需要一些耐心。</li>
+<li><a href="https://www.keithcirkel.co.uk/metaprogramming-in-es6-symbols/">Metaprogramming in ES6: Symbols and why they're awesome</a>：本篇就是基于 Symbols、Reflect、Proxy 等实现元编程的教程系列教程，内容也足够详实。</li>
+<li><a href="https://www.w3cplus.com/javascript/es6-proxy-reflect.html">ES6学习笔记： 代理和反射</a>：非常详实地整理了 <code>Proxy</code> 和 <code>Reflect</code> 相关的知识点，只是阅读起来略微枯燥。</li>
+</ul>
+<p><strong>应用教程类</strong>：</p>
+<ul>
+<li><a href="http://dealwithjs.io/es6-features-10-use-cases-for-proxy/">ES6 Features - 10 Use Cases for Proxy</a>：收集了 10 个 proxy 的具体应用场景，具体的代码放在 <a href="https://github.com/gergob/jsProxy">jsProxy</a> 仓库中</li>
+<li><a href="https://segmentfault.com/a/1190000015800703">从ES6重新认识JavaScript设计模式(五): 代理模式和Proxy</a>：本文从设计模式上去理解 Proxy 的应用</li>
+<li><a href="https://juejin.im/post/5a3cb0846fb9a044fb07f36c">使用 Javascript 原生的 Proxy 优化应用</a> ：文章涉及到 Proxy 的基本用法、如何使用 Proxy 创建代理模式，以及如何对应用进行优化。</li>
+</ul>
+<p><strong>手册类</strong>：</p>
+<ul>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy">MDN - Proxy</a>：MDN 上的 Proxy 官方文档</li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy">MDN - Reflect</a>：MDN 上的 Reflect 官方文档</li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Meta_programming">MDN - 元编程</a>：MDN 官方文档教程，介绍了元编程的概念，应该算是比较抽象的，当手册翻翻不错；</li>
+<li><a href="http://es6.ruanyifeng.com/#docs/proxy">ECMAScript 6 入门 - Proxy</a>：阮一峰翻译的 《ECMAScript 6 入门》 教程</li>
+<li><a href="https://itbilu.com/javascript/js/EkOtcbSf-.html">ES6 自定义JavaScript语言行为的 Proxy 对象</a>：算是简明版的中文版的 API 手册</li>
+</ul>
+<blockquote>
+<p>在没充分理解元编程之前翻手册还是挺枯燥的，建议平时使用的时候再从这里补漏</p>
+</blockquote>
+<p>随着时间的推移，上面收集的文章可能会显得陈旧，又有可能出现新的好文章，推荐在搜索引擎中使用 <code>js Metaprogramming</code> 或者 <code>es6 proxy</code> 进行搜索相关文章；</p>
+<h2 id="3">3、代码片段</h2>
+<p>下面摘抄一些代码片段，方便自己后续在应用 JS 元编程的时候快速 "借鉴"。你们如果也有觉得不错的代码片段，欢迎在 <a href="https://github.com/boycgit/boycgit.github.io/issues/12">issue</a> 中回复，我将不定期更新到这儿。</p>
+<p><i id="catalog"></i></p>
+<h3 id="">目录</h3>
+<ul>
+<li><a href="index.html#schema-valid">Schema 校验</a></li>
+<li><a href="index.html#auto-fill">自动填充对象</a></li>
+<li><a href="index.html#base-convert">进制转换</a></li>
+<li><a href="index.html#cache-proxy">缓存代理</a></li>
+<li><a href="index.html#private-prop">实现私有属性</a></li>
+<li><a href="index.html#fn-throttle">函数节流</a></li>
+<li><a href="index.html#image-lazy">图片懒加载</a></li>
+<li><a href="index.html#attr-onchange">监听属性更改</a></li>
+<li><a href="index.html#single-pattern">实现单例模式</a></li>
+<li><a href="index.html#python-slice">Python 那样截取数组</a></li>
+</ul>
+<p><i id="schema-valid"></i></p>
+<h3 id="schema">Schema 校验  <a href="index.html#catalog">↑</a></h3>
+<blockquote>
+<p>示例来自 <a href="https://ponyfoo.com/articles/es6-proxies-in-depth">ES6 Proxies in Depth</a></p>
+</blockquote>
+<p><strong>场景</strong>：<code>person</code> 是一个普通对象，包含一个 <code>age</code> 属性，当我们给它赋值的时候确保是大于零的数值，否则赋值失败并抛出异常。</p>
+<pre><code class="language-js">var person = { age: 27 };
+</code></pre>
+<p><strong>思路</strong>：通过设置 <code>set</code> trap，其中包含了对 <code>age</code> 字段的校验逻辑。</p>
+<p><strong>代码</strong>：</p>
+<pre><code class="language-js">var validator = {
+  set (target, key, value) {
+    if (key === 'age') {
+      if (typeof value !== 'number' || Number.isNaN(value)) {
+        throw new TypeError('Age must be a number')
+      }
+      if (value &lt;= 0) {
+        throw new TypeError('Age must be a positive number')
+      }
+    }
+    return true
+  }
+}
+var proxy = new Proxy(person, validator)
+proxy.age = 'foo'
+// &lt;- TypeError: Age must be a number
+proxy.age = NaN
+// &lt;- TypeError: Age must be a number
+proxy.age = 0
+// &lt;- TypeError: Age must be a positive number
+proxy.age = 28
+console.log(person.age)
+// &lt;- 28
+</code></pre>
+<p><i id="auto-fill"></i></p>
+<h3 id="">自动填充对象 <a href="index.html#catalog">↑</a></h3>
+<blockquote>
+<p>示例来自 <a href="http://www.infoq.com/cn/articles/es6-in-depth-proxies-and-reflect/">深入浅出ES6（十二）：代理 Proxies</a></p>
+</blockquote>
+<p><strong>场景</strong>：创建一个Tree()函数来实现以下特性，当我们需要时，所有中间对象 <code>branch1</code>、<code>branch2</code> 和 <code>branch3</code> 都可以自动创建。</p>
+<pre><code class="language-js">var tree = Tree();
+tree
+//    { }
+tree.branch1.branch2.twig = "green";
+// { branch1: { branch2: { twig: "green" } } }
+
+tree.branch1.branch3.twig = "yellow";
+
+// { branch1: { branch2: { twig: "green" },
+//                 branch3: { twig: "yellow" }}}
+</code></pre>
+<p><strong>思路</strong>：Tree 返回的就是一个 proxy 实例，通过 <code>get</code> trap ，当不存在属性的时候自动创建一个子树。</p>
+<p><strong>代码</strong>：</p>
+<pre><code class="language-js">  function Tree() {
+    return new Proxy({}, handler);
+  }
+  var handler = {
+    get: function (target, key, receiver) {
+      if (!(key in target)) {
+        target[key] = Tree();  // 自动创建一个子树
+      }
+      return Reflect.get(target, key, receiver);
+    }
+  };
+</code></pre>
+<p><i id="base-convert"></i></p>
+<h3 id="">进制转换  <a href="index.html#catalog">↑</a></h3>
+<blockquote>
+<p>示例来自 <a href="http://www.infoq.com/cn/articles/es6-in-depth-proxies-and-reflect/">深入浅出ES6（十二）：代理 Proxies</a></p>
+</blockquote>
+<p><strong>场景</strong>：比如将 2 进制转换成 16 进制或者 8 进制，反之也能转换。</p>
+<p><strong>思路</strong>：由于大部分的功能是相同的，我们通过函数名字将变量提取出来，然后通过 <code>get</code> trap 完成进制转换。</p>
+<p><strong>代码</strong>：</p>
+<pre><code class="language-js">const baseConvertor = new Proxy({}, {
+  get: function baseConvert(object, methodName) {
+    var methodParts = methodName.match(/base(\d+)toBase(\d+)/);
+    var fromBase = methodParts &amp;&amp; methodParts[1];
+    var toBase = methodParts &amp;&amp; methodParts[2];
+    if (!methodParts || fromBase &gt; 36 || toBase &gt; 36 || fromBase &lt; 2 || toBase &lt; 2) {
+      throw new Error('TypeError: baseConvertor' + methodName + ' is not a function');
+    }
+    return function (fromString) {
+      return parseInt(fromString, fromBase).toString(toBase);
+    }
+  }
+});
+
+baseConvertor.base16toBase2('deadbeef') === '11011110101011011011111011101111';
+baseConvertor.base2toBase16('11011110101011011011111011101111') === 'deadbeef';
+</code></pre>
+<p><i id="cache-proxy"></i></p>
+<h3 id="">缓存代理  <a href="index.html#catalog">↑</a></h3>
+<blockquote>
+<p>示例来自 <a href="https://segmentfault.com/a/1190000015800703">从ES6重新认识JavaScript设计模式(五): 代理模式和Proxy</a></p>
+</blockquote>
+<p><strong>场景</strong>：以没有经过任何优化的计算斐波那契数列的函数来假设为开销很大的方法，这种递归调用在计算 40 以上的斐波那契项时就能明显的感到延迟感。希望通过缓存来改善。</p>
+<pre><code class="language-js">const getFib = (number) =&gt; {
+  if (number &lt;= 2) {
+    return 1;
+  } else {
+    return getFib(number - 1) + getFib(number - 2);
+  }
+}
+</code></pre>
+<blockquote>
+<p>注：这只是演示缓存的写法，递归调用本身就有问题，容易导致内存泄露，在实际应用中需要改写上述的 <code>getFib</code> 函数。</p>
+</blockquote>
+<p><strong>思路</strong>：因为是函数调用，所以需使用 <code>apply</code> trap，利用 Map 或者普通对象存储每次计算的结果，在执行运算前先去 Map 查询计算值是否被缓存。（相当于以空间换时间，获得性能提升）</p>
+<p><strong>代码</strong>：</p>
+<pre><code class="language-js">const getCacheProxy = (fn, cache = new Map()) =&gt; {
+  return new Proxy(fn, {
+    apply(target, context, args) {
+      const argsString = args.join(' ');
+      if (cache.has(argsString)) {
+        // 如果有缓存,直接返回缓存数据
+        console.log(`输出${args}的缓存结果: ${cache.get(argsString)}`);
+        
+        return cache.get(argsString);
+      }
+      const result = Reflect.apply(target, undefined, args);
+      cache.set(argsString, result);
+
+      return result;
+    }
+  })
+}
+
+const getFibProxy = getCacheProxy(getFib);
+getFibProxy(40); // 102334155
+getFibProxy(40); // 输出40的缓存结果: 102334155
+</code></pre>
+<p>在实际应用中数据量越大、计算过程越复杂，优化效果越好，否则有可能会得不偿失。</p>
+<p><i id="private-prop"></i></p>
+<h3 id="">实现私有属性 <a href="index.html#catalog">↑</a></h3>
+<blockquote>
+<p>示例来自 <a href="https://segmentfault.com/a/1190000015800703">从ES6重新认识JavaScript设计模式(五): 代理模式和Proxy</a></p>
+</blockquote>
+<p><strong>场景</strong>：众所周知，JavaScript是没有私有属性这一个概念的，私有属性一般是以 <code>_</code> 下划线开头，请通过 Proxy 限制以 <code>_</code> 开头的属性的访问。</p>
+<pre><code class="language-js">const myObj = {
+  public: 'hello',
+  _private: 'secret',
+  method: function () {
+    console.log(this._private);
+  }
+},
+</code></pre>
+<p><strong>思路</strong>：看上去比较简单，貌似使用 <code>get</code>、<code>set</code> 这两个 trap 就可以，但实际上并不是。实际上还需要实现 <code>has</code>, <code>ownKeys</code> , <code>getOwnPropertyDescriptor</code> 这些 trap，这样就能最大限度的限制私有属性的访问。</p>
+<p><strong>代码</strong>：</p>
+<pre><code class="language-js">function getPrivateProps(obj, filterFunc) {
+  return new Proxy(obj, {
+    get(obj, prop) {
+      if (!filterFunc(prop)) {
+        let value = Reflect.get(obj, prop);
+        // 如果是方法, 将this指向修改原对象
+        if (typeof value === 'function') {
+          value = value.bind(obj);
+        }
+        return value;
+      }
+    },
+    set(obj, prop, value) {
+      if (filterFunc(prop)) {
+        throw new TypeError(`Can't set property "${prop}"`);
+      }
+      return Reflect.set(obj, prop, value);
+    },
+    has(obj, prop) {
+      return filterFunc(prop) ? false : Reflect.has(obj, prop);
+    },
+    ownKeys(obj) {
+      return Reflect.ownKeys(obj).filter(prop =&gt; !filterFunc(prop));
+    },
+    getOwnPropertyDescriptor(obj, prop) {
+      return filterFunc(prop) ? undefined : Reflect.getOwnPropertyDescriptor(obj, prop);
+    }
+  });
+}
+
+function propFilter(prop) {
+  return prop.indexOf('_') === 0;
+}
+
+myProxy = getPrivateProps(myObj, propFilter);
+
+console.log(JSON.stringify(myProxy)); // {"public":"hello"}
+console.log(myProxy._private); // undefined
+console.log('_private' in myProxy); // false
+console.log(Object.keys(myProxy)); // ["public", "method"]
+for (let prop in myProxy) { console.log(prop); }    // public  method
+myProxy._private = 1; // Uncaught TypeError: Can't set property "_private"
+</code></pre>
+<p>注意：其中在 <code>get</code> 方法的内部，我们有个判断，如果访问的是对象方法使将 <code>this</code> 指向被代理对象，这是在使用 Proxy 需要十分注意的，如果不这么做方法内部的 this 会指向 Proxy 代理。</p>
+<blockquote>
+<p>一般来讲，<code>set</code> trap 都会默认触发 <code>getOwnPropertyDescriptor</code> 和 <code>defineProperty</code></p>
+</blockquote>
+<p><i id="fn-throttle"></i></p>
+<h3 id="">函数节流 <a href="index.html#catalog">↑</a></h3>
+<blockquote>
+<p>示例来自 <a href="https://juejin.im/post/5a3cb0846fb9a044fb07f36c">使用 Javascript 原生的 Proxy 优化应用</a></p>
+</blockquote>
+<p><strong>场景</strong>：控制函数调用的频率.</p>
+<pre><code class="language-js">const handler = () =&gt; console.log('Do something...');
+document.addEventListener('scroll', handler);
+</code></pre>
+<p><strong>思路</strong>：涉及到函数的调用，所以使用 <code>apply</code> trap 即可。</p>
+<p><strong>代码</strong>：</p>
+<pre><code class="language-js">const createThrottleProxy = (fn, rate) =&gt; {
+  let lastClick = Date.now() - rate;
+  return new Proxy(fn, {
+    apply(target, context, args) {
+      if (Date.now() - lastClick &gt;= rate) {
+        fn.bind(target)(args);
+        lastClick = Date.now();
+      }
+    }
+  });
+};
+
+const handler = () =&gt; console.log('Do something...');
+const handlerProxy = createThrottleProxy(handler, 1000);
+document.addEventListener('scroll', handlerProxy);
+</code></pre>
+<p>同样需要注意使用 <code>bind</code> 绑定上下文，不过这里的示例使用了箭头函数，不用 <code>bind</code> 也没啥问题。</p>
+<p><i id="image-lazy"></i></p>
+<h3 id="">图片懒加载 <a href="index.html#catalog">↑</a></h3>
+<blockquote>
+<p>示例来自 <a href="https://juejin.im/post/5a3cb0846fb9a044fb07f36c">使用 Javascript 原生的 Proxy 优化应用</a></p>
+</blockquote>
+<p><strong>场景</strong>：为了更好的用户体验，在加载图片的时候，使用 <code>loading</code> 占位图，等真正图片加载完毕之后再显示出来。原始的写法如下：</p>
+<pre><code class="language-js">const img = new Image();
+img.src = '/some/big/size/image.jpg';
+document.body.appendChild(img);
+</code></pre>
+<p><strong>思路</strong>：加载图片的时候，会读取 <code>img.src</code> 属性，我们使用 <code>constructor</code> trap 控制在创建的时候默认使用 loading 图，等加载完毕再将真实地址赋给 <code>img</code>;</p>
+<p><strong>代码</strong>：</p>
+<pre><code class="language-js"> const IMG_LOAD = 'https://img.alicdn.com/tfs/TB11rDdclLoK1RjSZFuXXXn0XXa-300-300.png';
+
+  const imageProxy = (loadingImg) =&gt; {
+      return new Proxy(Image, {
+          construct(target, args){
+              const instance = Reflect.construct(target, args);
+              instance.src = loadingImg;
+              return instance;
+          }
+      });
+  };
+
+  const ImageProxy = imageProxy(IMG_LOAD);
+
+  const createImageProxy = (realImg) =&gt;{
+      const img = new ImageProxy();
+      const virtualImg = new Image();
+      virtualImg.src = realImg;
+      virtualImg.onload = () =&gt; {
+          hasLoaded = true;
+          img.src = realImg;
+      };
+      return img;
+  }
+  var img = createImageProxy('https://cdn.dribbble.com/users/329207/screenshots/5289734/bemocs_db_dribbble_03_gold_leaf.jpg');
+  document.body.appendChild(img);
+</code></pre>
+<p><i id="attr-onchange"></i></p>
+<h3 id="">监听属性更改  <a href="index.html#catalog">↑</a></h3>
+<blockquote>
+<p>示例来自 <a href="http://dealwithjs.io/es6-features-10-use-cases-for-proxy/">ES6 Features - 10 Use Cases for Proxy</a></p>
+</blockquote>
+<p><strong>场景</strong>：当普通对象属性更改后，触发所绑定的 <code>onChange</code> 回调；</p>
+<p><strong>思路</strong>：能更改属性的有 <code>set</code> 和 <code>deleteProperty</code> 这两个 trap，在其中调用 onChange 方法即可</p>
+<pre><code class="language-js">function trackChange(obj, onChange) {
+    const handler = {
+        set (obj, prop, value) {
+            const oldVal = obj[prop];
+            Reflect.set(obj, prop, value);
+            onChange(obj, prop, oldVal, value);
+        },
+        deleteProperty (obj, prop) {
+            const oldVal = obj[prop];
+            Reflect.deleteProperty(obj, prop);
+            onChange(obj, prop, oldVal, undefined);
+        }
+    };
+    return new Proxy(obj, handler);
+}
+
+// 应用在对象上
+let myObj = trackChange({a: 1, b: 2}, function (obj, prop, oldVal, newVal) {
+    console.log(`myObj.${prop} changed from ${oldVal} to ${newVal}`);
+});
+
+myObj.a = 5;     // myObj.a changed from 1 to 5
+delete myObj.b;  // myObj.b changed from 2 to undefined
+myObj.c = 6;     // myObj.c changed from undefined to 6
+
+// 应用在数组上
+let myArr = trackChange([1,2,3], function (obj, prop, oldVal, newVal) {
+    let propFormat = isNaN(parseInt(prop)) ? `.${prop}` : `[${prop}]`,
+        arraySum = myArr.reduce((a,b) =&gt; a + b);
+    console.log(`myArr${propFormat} changed from ${oldVal} to ${newVal}`);
+    console.log(`  sum [${myArr}] = ${arraySum}`);
+});
+
+myArr[0] = 4;      // myArr[0] changed from 1 to 4         
+                   //   sum [4,2,3] = 9
+delete myArr[2];   // myArr[2] changed from 3 to undefined                
+                   //   sum [4,2,] = 6
+myArr.length = 1;  // myArr.length changed from 3 to 1                
+                   //   sum [4] = 4
+
+</code></pre>
+<p><i id="single-pattern"></i></p>
+<h3 id="">实现单例模式 <a href="index.html#catalog">↑</a></h3>
+<blockquote>
+<p>示例来自 <a href="http://dealwithjs.io/es6-features-10-use-cases-for-proxy/">ES6 Features - 10 Use Cases for Proxy</a></p>
+</blockquote>
+<p><strong>场景</strong>：实现单例设计模式；</p>
+<p><strong>思路</strong>：和创建有关的，是 <code>construct</code> 这个 trap，每次我们返回相同的实例即可。</p>
+<p><strong>代码</strong>：</p>
+<pre><code class="language-js">// makes a singleton proxy for a constructor function
+function makeSingleton(func) {
+    let instance,
+        handler = {
+            construct: function (target, args) {
+                if (!instance) {
+                    instance = new func();
+                }
+                return instance;
+            }
+        };
+    return new Proxy(func, handler);
+}
+
+
+// 以这个为 constructor 为例
+function Test() {
+    this.value = 0;
+}
+
+// 普通创建实例
+const t1 = new Test(),
+    t2 = new Test();
+t1.value = 123;
+console.log('Normal:', t2.value);  // 0 - 因为 t1、t2 是不同的实例
+
+// 使用 Proxy 来 trap 构造函数, 完成单例模式
+const TestSingleton = makeSingleton(Test),
+    s1 = new TestSingleton(),
+    s2 = new TestSingleton();
+s1.value = 123;
+console.log('Singleton:', s2.value);  // 123 - 现在 s1、s2 是相同的实例。
+</code></pre>
+<p><i id="python-slice"></i></p>
+<h3 id="python">像 Python 那样截取数组 <a href="index.html#catalog">↑</a></h3>
+<blockquote>
+<p>示例来自 <a href="http://dealwithjs.io/es6-features-10-use-cases-for-proxy/">ES6 Features - 10 Use Cases for Proxy</a></p>
+</blockquote>
+<p><strong>场景</strong>：在 python 中，你可以使用 <code>list[10:20:3]</code> 来获取 10 到 20 索性中每隔 3 个的元素组成的数组（也支持负数索引）。</p>
+<p><strong>思路</strong>：由于在 JS 中，数组方括号语法中不支持冒号，只能曲线救国，使用这样 <code>list["10:20:3"]</code> 的形式。只需要实现 <code>get</code> trap 即可。</p>
+<pre><code class="language-js">// Python-like array slicing
+
+function pythonIndex(array) {
+
+    function parse(value, defaultValue, resolveNegative) {
+        if (value === undefined || isNaN(value)) {
+            value = defaultValue;
+        } else if (resolveNegative &amp;&amp; value &lt; 0) {
+            value += array.length;
+        }
+        return value;
+    }
+    
+    function slice(prop) {
+        if (typeof prop === 'string' &amp;&amp; prop.match(/^[+-\d:]+$/)) {
+            // no ':', return a single item
+            if (prop.indexOf(':') === -1) {
+                let index = parse(parseInt(prop, 10), 0, true);
+                console.log(prop, '\t\t', array[index]);
+                return array[index];
+            }                
+            // otherwise: parse the slice string
+            let [start, end, step] = prop.split(':').map(part =&gt; parseInt(part, 10));
+            step = parse(step, 1, false);
+            if (step === 0) {
+                throw new RangeError('Step can\'t be zero');
+            }
+            if (step &gt; 0) {
+                start = parse(start, 0, true);
+                end = parse(end, array.length, true);
+            } else {
+                start = parse(start, array.length - 1, true);
+                end = parse(end, -1, true);
+            }
+            // slicing
+            let result = [];
+            for (let i = start; start &lt;= end ? i &lt; end : i &gt; end; i += step) {
+                result.push(array[i]);
+            }
+            console.log(prop, '\t', JSON.stringify(result));
+            return result;
+        }
+    }
+
+    const handler = {
+        get (arr, prop) {
+            return slice(prop) || Reflect.get(array, prop);
+        }
+    };
+    return new Proxy(array, handler);
+}
+
+
+// try it out
+let values = [0,1,2,3,4,5,6,7,8,9],
+    pyValues = pythonIndex(values);
+
+console.log(JSON.stringify(values));
+
+pyValues['-1'];      // 9
+pyValues['0:3'];     // [0,1,2]    
+pyValues['8:5:-1'];  // [8,7,6]
+pyValues['-8::-1'];  // [2,1,0]
+pyValues['::-1'];    // [9,8,7,6,5,4,3,2,1,0]
+pyValues['4::2'];    // [4,6,8]
+
+// 不影响正常的索引
+pyValues[3];         // 3
+</code></pre>
+<h2 id="">小结</h2>
+<p>本文总结了自己学习 ES6 元编程相关知识（Symbols &amp; Proxy &amp; Reflect）的理解、教程文档 和 代码片段。</p>
+<p>由于教程文档和代码片段将随着学习的进行将增多，所以后续还会不定期更新。如果你也有好的资源，欢迎到 <a href="https://github.com/boycgit/boycgit.github.io/issues/12">issue</a> 中回复共享。</p>
+
+                </div>
+            </section>
+            <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
+            <section style="text-align: center"><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg"></section>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js" integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js" integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous"></script>
+
+
+            <section id="gitalk-component-wrap"></section>
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit">
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/boycgit/">boycgit</a></h4>
+            <p>阅读此作者的<a href="../author/boycgit/">更多文章</a>.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/boycgit/">阅读更多</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+                <article class="read-next-card" style="background-image: url(https://casper.ghost.org/v1.0.0/images/blog-cover.jpg)">
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">— JSCON-简时空 —</small>
+                        <h3 class="read-next-card-header-title"><a href="../tag/jiao-cheng/">教程</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"></path></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="../debugging-with-ts-jest/">在 ts + Jest 单元测试中 debugging</a></li>
+                            <li><a href="../react-hooks-capture-value/">理解 React Hooks 的 Capture Value 特性</a></li>
+                            <li><a href="../implement-websocket-protocol/">Node.js -  200 多行代码实现 Websocket 协议</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="../tag/jiao-cheng/">查看所有5篇文章 →</a>
+                    </footer>
+                </article>
+
+                <article class="post-card post tag-shu-ju-jie-gou tag-lian-biao tag-he-ji tag-javascript">
+        <a class="post-card-image-link" href="../ds-linked-list/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1488272690691-2636704d6000?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=aa0b60f6056e9e2a3d120b63239f8355)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../ds-linked-list/">
+            <header class="post-card-header">
+                    <span class="post-card-tags">数据结构</span>
+                <h2 class="post-card-title">前端学数据结构 - 链表（Linked List）</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>前端学数据结构系列 - 链表。本文收集了链表相关的参考文章、链表类型、代码实现和实际应用等等，通过本文能基本掌握链表这一数据结构</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 7 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-ae tag-jiao-cheng tag-te-xiao">
+        <a class="post-card-image-link" href="../ae-text-trace/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1522119923992-e7090449fcd7?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=b7c88b8ac9dd2de222497adfed9b4ba7)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../ae-text-trace/">
+            <header class="post-card-header">
+                    <span class="post-card-tags">AE</span>
+                <h2 class="post-card-title">AE教程 - 字幕追踪</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>我随手拍了一段直升飞机的视频，想要新增的文字可以跟随运动。本文基于 AE CC 2018 软件，完成此项教程大致需要 10 分钟</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 3 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://boycgit.github.io">
+                <img src="../content/images/2018/08/logo.png" alt="JSCON-简时空 icon">
+            <span>JSCON-简时空</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">—</span>
+    <div class="floating-header-title">【资源集合】 ES6 元编程（Proxy &amp; Reflect &amp; Symbol）</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
+</svg>
+</div>
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8A%E3%80%90%E8%B5%84%E6%BA%90%E9%9B%86%E5%90%88%E3%80%91%20ES6%20%E5%85%83%E7%BC%96%E7%A8%8B%EF%BC%88Proxy%20%26%20Reflect%20%26%20Symbol%EF%BC%89%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/es6-mataprogram-list/" onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+            <?xml version="1.0" standalone="no"?><svg t="1534600204727" class="icon" style="" viewbox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/es6-mataprogram-list/&amp;mhid=txbODQq7nZkhMHcqI9xROqg" onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+            <?xml version="1.0" standalone="no"?><svg t="1534604253879" class="icon" style="" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.min.js"></script>
+
+<script>
+    (function () {
+        /**
+         * Get Node
+         * @param  {String|Element} el
+         * @param  {Boolean} noCache
+         * @return {Element}
+         */
+        var cacheNode = {};
+        function getNode(el, noCache) {
+            if (noCache === void 0) noCache = false;
+
+            if (typeof el === 'string') {
+                if (typeof window.Vue !== 'undefined') {
+                    return find(el);
+                }
+                el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el));
+            }
+
+            return el;
+        }
+
+        /**
+         * Find element
+         * @example
+         * find('nav') => document.querySelector('nav')
+         * find(nav, 'a') => nav.querySelector('a')
+         */
+        function find(el, node) {
+            return node ? el.querySelector(node) : document.querySelector(el);
+        }
+        function create(node, tpl) {
+            node = document.createElement(node);
+            if (tpl) {
+                node.innerHTML = tpl;
+            }
+            return node;
+        }
+        function appendTo(target, el) {
+            return target.appendChild(el);
+        }
+
+        function renderGitalkContainer() {
+            var div = create('div');
+            div.id = 'gitalk-container';
+            var main = getNode('#site-main');
+            div.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            appendTo(find('#gitalk-component-wrap'), div);
+            var script = create('script');
+            var content = "gitalk.render('gitalk-container')";
+        }
+        renderGitalkContainer();
+
+        var gitalk = new Gitalk({
+            clientID: 'a65ee9e3ea5168da1470',
+            clientSecret: 'ebfd520679d1ad61929b1887b2efccd4872389e3',
+            repo: 'boycgit.github.io',
+            owner: 'boycgit',
+            admin: [
+                'boycgit'
+            ],
+            id: location.pathname,
+            // facebook-like distraction free mode
+            distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container');
+
+
+
+        var postImages = document.querySelectorAll('.post-content img');
+        Array.prototype.forEach.call(postImages, function (el, i) {
+            el.outerHTML = `<aholder href="${el.src}" data-lightbox="postImages" data-title="${el.alt}">${el.outerHTML}</aholder>`.replace(/aholder/g, 'a');
+        });
+
+        // 动态添加 js 脚本
+        setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/js/lightbox.min.js";
+            document.getElementsByTagName('body')[0].appendChild(script);
+
+            script.onload = function () {
+
+                console.log('load success');
+            }
+        }, 1000);
+
+    })();
+</script>
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://boycgit.github.io">JSCON-简时空</a> © 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="https://boycgit.github.io">最新文章</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=11f1923694"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });
+</script>
+
+</body>
+</html>

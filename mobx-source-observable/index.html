@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="zh">
+<!DOCTYPE html><html lang="zh">
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>【用故事解读 MobX 源码（五）】 Observable</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=11f1923694" />
+
+    <meta name="description" content="网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析源码中有关 Observable 的执行逻辑" />
+    <link rel="shortcut icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="https://boycgit.github.io/mobx-source-observable/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <link rel="amphtml" href="https://boycgit.github.io/mobx-source-observable/amp/" />
+    
+    <meta property="og:site_name" content="JSCON-简时空" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="【用故事解读 MobX 源码（五）】 Observable" />
+    <meta property="og:description" content="网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析源码中有关 Observable 的执行逻辑" />
+    <meta property="og:url" content="https://boycgit.github.io/mobx-source-observable/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1525433752067-f98594fb10f4?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;0294b05c2cb04b4032abcd4b937e3bbf" />
+    <meta property="article:published_time" content="2018-08-03T12:33:00.000Z" />
+    <meta property="article:modified_time" content="2019-06-23T05:15:42.000Z" />
+    <meta property="article:tag" content="mobx" />
+    <meta property="article:tag" content="javascript" />
+    <meta property="article:tag" content="源码分析" />
+    <meta property="article:tag" content="源码" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="【用故事解读 MobX 源码（五）】 Observable" />
+    <meta name="twitter:description" content="网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析源码中有关 Observable 的执行逻辑" />
+    <meta name="twitter:url" content="https://boycgit.github.io/mobx-source-observable/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1525433752067-f98594fb10f4?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;0294b05c2cb04b4032abcd4b937e3bbf" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="boycgit" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="mobx, javascript, 源码分析, 源码" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="1440" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "JSCON-简时空",
+        "logo": "https://boycgit.github.io/content/images/2018/08/logoicon.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "boycgit",
+        "image": {
+            "@type": "ImageObject",
+            "url": "//www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&d=mm&r=x",
+            "width": 250,
+            "height": 250
+        },
+        "url": "https://boycgit.github.io/author/boycgit/",
+        "sameAs": []
+    },
+    "headline": "【用故事解读 MobX 源码（五）】 Observable",
+    "url": "https://boycgit.github.io/mobx-source-observable/",
+    "datePublished": "2018-08-03T12:33:00.000Z",
+    "dateModified": "2019-06-23T05:15:42.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1525433752067-f98594fb10f4?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ&s=0294b05c2cb04b4032abcd4b937e3bbf",
+        "width": 1080,
+        "height": 1440
+    },
+    "keywords": "mobx, javascript, 源码分析, 源码",
+    "description": "网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析源码中有关 Observable 的执行逻辑",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://boycgit.github.io/"
+    }
+}
+    </script>
+
+    <script src="../public/ghost-sdk.js?v=11f1923694"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "7c2ea2eb9409"
+});
+</script>
+    <meta name="generator" content="Ghost 2.31" />
+    <link rel="alternate" type="application/rss+xml" title="JSCON-简时空" href="https://boycgit.github.io/rss/" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-69473481-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-69473481-3');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+<style>
+
+/* 结束 */
+
+  .end-block-wrap{
+        color:#338daf;
+        text-align: center;
+    }
+
+    .end-block-wrap img{
+        border: none;
+        max-width: 100%;
+        margin: 0px auto; display: inline-block;
+    }
+
+    .end-block-wrap img.main{
+        width: 30px;
+    }
+
+
+/* 参考文档 */
+.ref-wrap .line-text{
+    display: flex;justify-content:center;align-items:flex-end;
+}
+
+.ref-wrap .line-text::before, .ref-wrap .line-text::after{
+    content: '';
+    display: inline-block;
+    width: 25%; border-bottom: 1px dashed rgb(51, 51, 51); box-sizing: border-box;
+}
+
+.ref-wrap .text.main{
+    font-size: 14px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 0px 10px; 
+    font-weight: bold; 
+    margin-bottom: -5px; 
+    box-sizing: border-box;
+}
+
+.ref-wrap  .text.second{
+    font-size: 16px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 10px; 
+    text-align: center; 
+    box-sizing: border-box;
+}
+/* 求关注 */
+.qr-wrap{
+    margin-right: auto; 
+    margin-left: auto; 
+    width: 360px; 
+    border: none rgb(255, 129, 36); 
+    background: url(https://mpt.135editor.com/mmbiz_gif/ziadDDQxbCJFA2XMwm7VE1RTcS94u8LqVWSjIasMfzY8aG5HolkBhHhwEp0eUpPCEzPYqXYicbRNtROJibbM9P55g/0?wx_fmt=gif) right 0px no-repeat; 
+    background-size: contain; 
+    box-sizing: border-box;
+}
+
+.qr-image{
+    padding: 10px 3px; 
+    width: 150px; 
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.qr-image img{
+    width: 150px;
+}
+
+
+</style>
+
+</head>
+<body class="post-template tag-mobx tag-javascript tag-yuan-ma-fen-xi tag-yuan-ma">
+
+    <div class="site-wrapper">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/css/lightbox.min.css">
+
+
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://boycgit.github.io"><img src="../content/images/2018/08/logoicon.png" alt="JSCON-简时空" /></a>
+            <ul class="nav" role="menu">
+    <li class="nav-shou-ye" role="menuitem"><a href="https://boycgit.github.io/">首页</a></li>
+    <li class="nav-guan-yu" role="menuitem"><a href="https://boycgit.github.io/about-me/">关于</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://boycgit.github.io/rss/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-mobx tag-javascript tag-yuan-ma-fen-xi tag-yuan-ma ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2018-08-03">3 August 2018</time>
+                        <span class="date-divider">/</span> <a href="../tag/mobx/index.html">mobx</a>
+                </section>
+                <h1 class="post-full-title">【用故事解读 MobX 源码（五）】 Observable</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1525433752067-f98594fb10f4?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;0294b05c2cb04b4032abcd4b937e3bbf)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <!--kg-card-begin: markdown--><p><code>==========前言============</code></p>
+<ul>
+<li>
+<p><strong>初衷</strong>：以系列故事的方式展现 MobX 源码逻辑，尽可能以易懂的方式讲解源码；</p>
+</li>
+<li>
+<p><strong>本系列文章</strong>：</p>
+<ul>
+<li>《<a href="https://segmentfault.com/a/1190000013682735">【用故事解读 MobX源码（一）】 autorun</a>》</li>
+<li>《<a href="https://segmentfault.com/a/1190000014238836">【用故事解读 MobX源码（二）】 computed</a>》</li>
+<li>《<a href="https://segmentfault.com/a/1190000014726483">【用故事解读 MobX源码（三）】 shouldCompute</a>》</li>
+<li>《<a href="https://segmentfault.com/a/1190000015481998">【用故事解读 MobX 源码（四）】装饰器 和 Enhancer</a>》</li>
+<li>《<a href="https://segmentfault.com/a/1190000015875144">【用故事解读 MobX 源码（五）】 Observable</a>》👈 you are here</li>
+</ul>
+</li>
+<li>
+<p><strong>文章编排</strong>：每篇文章分成两大段，第一大段以简单的侦探系列故事的形式讲解（<strong>所涉及人物、场景都以 MobX 中的概念为原型创建</strong>），第二大段则是源码讲解。</p>
+</li>
+<li>
+<p><strong>本文基于 MobX 4 源码讲解</strong><br>
+<code>===========================</code></p>
+</li>
+</ul>
+<h1 id="astorytime">A. Story Time</h1>
+<p>最高警长看完执行官（MobX）的自动部署方案，对 “观察员” 这个基层人员工作比较感兴趣，自执行官拿给他部署方案的时候，他就注意到所有上层人员的功能都是基于该底层人员高效的工作机制；</p>
+<p>第二天，他找上执行官（MobX）一起去视察“观察员”所在机构部门（下面简称为 ”观察局“），想更深入地了解 “观察员” 运行分配机制。</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623123354.png" alt="执行官去视察观察局"></p>
+<p>当最高警长到达部门的时候，恰好遇到该部门恰好要开始执行 MobX 前不久新下发的任务，要求监控 <code>parent</code> 对象的一举一动：</p>
+<pre><code class="language-js">var parent = {
+  child: {
+    name: 'tony',
+    age: 15
+  }
+  name: 'john'
+}
+
+var bankUser = observable(parent);
+</code></pre>
+<p>任务达到观察局办公室后，相应的办公室文员会对任务进行分析，然后会依据对象类型交给相应科室进行处理，常见的有 <code>object</code> 科，另外还有 <code>map</code> 科和 <code>array</code> 科；</p>
+<p>现在，办公室文员见传入的对象是 <code>parent</code> 是个对象，就将其传递给 <code>object</code> 科，让其组织起一起针对该 <code>parent</code> 对象的 ”观察小组“，组名为 <code>bankUser</code>。</p>
+<p><code>object</code> 科接到任务，委派某位科长（以下称为 <code>bankUser</code> 科长）组成专项负责此 <code>parent</code> 对象的观察工作，<code>bankUser</code> 科长接手任务后发现有两个属性，其中 <code>child</code> 是对象类型，<code>age</code> 是原始值类型，就分别将任务委派给 <code>child</code> 小科长 和 <code>name</code> 观察员 O1，<code>child</code> 小科长接到任务后再委派给 <code>name</code> 观察员 O2 和 <code>age</code> 观察员 O3，最终执行该任务的人员结构如下：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623123444.png" alt="观察局组织架构"></p>
+<p>观察员的任务职责我们已经很熟悉了，当读写观察员对应的数据时将触发 <code>reportObserved</code> 或 <code>propagateChanged</code> 方法；</p>
+<p>这里涉及到两位科长（<code>bankUser</code> 科长 和 <code>child</code> 小科长），那么科长的任务职责是什么呢？</p>
+<p>科长的人物职责是起到 <strong>管理</strong> 作用，它负责统管在他名下的观察员。比如当我们读写 <code>bankUser.child</code> 对象的 <code>name</code> 属性时（比如执行语句 <code>bankUser.child.name = 'Jack'</code>），首先感知到读写操作的并非是 <strong>观察员 O2 而是<code>bankUser</code>科长</strong>，<code>bankUser</code>科长会告知 <code>child</code> 小科长有数据变更，<code>child</code> 小科长然后再将信息传达给 <code>name</code> 观察员 O2 ，然后才是观察员 O2 对数据读写起反应，这才让观察员 O2 发挥作用。</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623123505.png" alt="消息传递机制"></p>
+<p>从代码层面看，我们看到仅仅是执行 <code>bankUser.child.name = 'Jack'</code>这一行语句，和我们平常修改对象属性并无二致。然而在这一行代码背后其实牵动了一系列的操作。<strong>这其实是 MobX 构建起的一套 ”镜像“ 系统，使用者仍旧按平时的方式读写对象，然而每个属性的读写操作实则都镜像到观察局 的某个小组具体的操作</strong>；非常类似于古代的 ”垂帘听政“ ，看似皇帝坐在文武百官前面，其实真正做出决策响应的是藏在帘后面的那个人。</p>
+<p>前几章中我们只看到观察员在活动，然则背后离不开 <strong>科长</strong> 这一角色机制在背后暗暗的调度。对每项任务，最终都会落实到观察员采取“一对一”模式监控分配到给自己的观察项，而每个观察员肯定是隶属于某个 ”科长“ 带领。在 MobX 系统里，办公室、科长和观察员是密不可分，共同构建起 <strong>观察局</strong> 运行体制；</p>
+<p>&quot;分工明确，运转高效&quot;，这是最高警长在巡视完观察员培训基地后的第一印象，观察局运转的每一步的设计都有精细的考量；</p>
+<h1 id="bsourcecodetime">B. Source Code Time</h1>
+<p>先罗列本文故事中人物与 MobX 源码概念映射关系：</p>
+<table>
+<thead>
+<tr>
+<th>故事人物</th>
+<th>MobX 源码</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>警署最高长官</td>
+<td>(无)</td>
+<td>MobX 用户，没错，就是你</td>
+</tr>
+<tr>
+<td>执行官 MobX</td>
+<td>MobX</td>
+<td>整个 MobX 运行环境</td>
+</tr>
+<tr>
+<td>观察局办公室（主任、文员）</td>
+<td><a href="https://mobx.js.org/refguide/api.html#-observable-value">observable</a>、<a href="https://cn.mobx.js.org/refguide/boxed.html">observable.box</a> 等</td>
+<td>用于创建 Observable 的 API</td>
+</tr>
+<tr>
+<td><code>object</code> 科室、<code>map</code> 科室、<code>array</code> 科室</td>
+<td><a href="https://cn.mobx.js.org/refguide/object.html">observable.object</a>、<a href="https://cn.mobx.js.org/refguide/map.html">observable.map</a>、<a href="https://cn.mobx.js.org/refguide/array.html">observable.array</a></td>
+<td>将不同复合类型转换成观察值的方法</td>
+</tr>
+<tr>
+<td>科长</td>
+<td><a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/types/observableobject.ts#L65">ObservableObjectAdministration</a></td>
+<td>主要给对象添加 <code>$mobx</code> 属性</td>
+</tr>
+<tr>
+<td>观察员</td>
+<td><a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/types/observablevalue.ts">ObservableValue</a> 实例</td>
+<td>ObservableValue 实例</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1observable">1、总入口：observable</h2>
+<p><code>observable</code> 对应上述故事中的 <strong>观察局办公室主任</strong> 角色，本身不提供转换功能，主要是起到统一调度作用 —— 这样 MobX 执行官只需要将命令发给办公室人员就行，至于内部具体的操作、具体由哪个科室处理，MobX 执行官不需要关心。</p>
+<p>将与 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/api/observable.ts#L201">observable 的源码</a> 相关的源码稍微整理，就是如下的形式：</p>
+<pre><code class="language-js">var observable = createObservable;
+// 使用“奇怪”的方式来扩展 observable 函数的功能，就是将 observableFactories 的方法挨个拷贝给 observable
+Object.keys(observableFactories).forEach(function(name) {
+  return (observable[name] = observableFactories[name]);
+});
+</code></pre>
+<ul>
+<li>首先 <code>observable</code> 是函数，函数内容就是 <code>createObservable</code></li>
+<li>其次 <code>observable</code> 是对象，对象属性和 <code>observableFactories</code> 一致</li>
+</ul>
+<p>也就是说 <code>observable</code> 其实是 <strong>各种构造器的总和</strong>，整合了 <code>createObservable</code>（默认构造器） + <code>observableFactories</code>（其他构造器）</p>
+<p>自己也可以在 console 控制台中打印来验证一番：</p>
+<pre><code class="language-js">const { observable } = mobx;
+
+console.log('observable name:', observable.name);
+console.log(Object.getOwnPropertyNames(observable));
+</code></pre>
+<p>从以下控制台输出的结果来看，<code>observable</code> 的属性的确来自于<code>createObservable</code> 和 <code>observableFactories</code> 这两者：<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623123735.png" alt="observable的属性"></p>
+<p>文字比较枯燥，用图来表示就是下面那样子：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623123540.png" alt="observable方法其实是适配器"></p>
+<p>这里我大致划分了一下，分成 4 部分内容来理解：</p>
+<ul>
+<li>第一部分：<code>createObservable</code> 方法刚才粗略讲过，是 MobX API 的 <a href="https://mobx.js.org/refguide/api.html#-observable-value">observable</a> 的别名，是一个高度封装的方法，算是一个总入口，方便用户调用；该部分对应上述故事中的 <strong>观察局办公室主任</strong> 的角色</li>
+<li>第二部分：<code>box</code> 是一个转换函数，用于将 <a href="https://developer.mozilla.org/en-US/docs/Glossary/Primitive">原值（primitive value）</a> 直接转换成 ObservableValue 对象；<code>shallowBox</code> 是 <code>box</code> 函数的非 deep 版本；该部分对应上述故事中的 <strong>观察局办公室文员</strong> 的角色；</li>
+<li>第三部分：针对 object、array 以及 map 这三种数据类型分别提供转换函数，同时也提供 <code>shallow</code> 的版本；该部分对应上述故事中的 <strong>科室</strong> 部分；</li>
+<li>第四部分：提供四种装饰器函数，装饰器的概念我们上一节课讲过，主要辅助提供装饰器语法糖作用；对普通 MobX 用户来讲这部分平时也是接触不到的；</li>
+</ul>
+<p>如何理解这 4 部分的之前的关系呢？我个人的理解如下：</p>
+<ul>
+<li>第三部分属于 “基层建筑”，分别为 object、array 以及 map 这三种数据类型提供转换成可观察值的功能（默认是递归转换，<strong>shallow</strong> 表示非递归转换）；<strong>这部分对应上述故事中的科室概念</strong>，不同的观察任务由不同的科室来处理；</li>
+<li>第一部分和第二部分属于 “上层建筑”，提供统一的接口，具体的转换功能都是调用第三部分中的某个转换函数来实现的；这两部分对应上述故事中的 <strong>观察局办公室</strong> 部分。</li>
+<li>第一部分我们最熟悉，不过第二部分的 <code>box</code> 函数转换能力反而比第一部分更广，<strong>支持将原始值转换成可观察值</strong>；</li>
+<li>第四部分和另外三部分没有直接的关系，主要辅助提供装饰器函数；注意，没有直接的联系并不代表没有联系，第四部分中装饰器内的核心逻辑和另外三部分是一样的（比如都调用 decorator 方法）。</li>
+</ul>
+<p>下面我们看两个具体的示例，来辅助消化上面的结论。</p>
+<p><strong>示例一</strong>：<code>observable.box(obj)</code> 底层就是调用  <code>observable.object(obj)</code>实现的</p>
+<pre><code class="language-js">var user = {
+  income: 3,
+  name: '张三'
+};
+var bankUser = observable.object(user);
+var bankUser2 = observable.box(user);
+
+console.log(bankUser);
+console.log(bankUser2);
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623123835.png" alt="box 和 object 方法一致"><br>
+可以发现 <code>bankUser2</code> 中的 <code>value</code> 属性部分内容和 <code>bankUser</code> 是一模一样的。</p>
+<p><strong>示例二</strong>：<code>observable.box(primitive)</code> 能行，<code>observable(primitive)</code> 却会报错</p>
+<pre><code class="language-js">var pr1 = observable.box(2);
+console.log(pr1);
+console.log('--------华丽分割-----------')
+var pr2 = observable(2);
+console.log(pr2);
+</code></pre>
+<p>从报错信息来看，MobX 会友情提示你改用 <code>observable.box</code> 方法实现原始值转换：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623123916.png" alt="原始值的转换需调用 box 方法"></p>
+<h2 id="2createobservable">2、第一部分：<a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/api/observable.ts#L68">createObservable</a></h2>
+<p>正如上面所言，该函数其实就是 MobX API 的 <a href="https://mobx.js.org/refguide/api.html#-observable-value">observable</a> 的 “别名”。所以也是对应上述故事中的 <strong>观察局办公室主任</strong> 角色；</p>
+<p>该函数本身不提供转换功能，只是起到 &quot;转发&quot; 作用，将传入的对象转发给对应具体的转换函数就行了；</p>
+<p>看一下 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/api/observable.ts#L68">源码</a>，</p>
+<pre><code class="language-js">function createObservable(v, arg2, arg3) {
+  // 走向 ①
+  if (typeof arguments[1] === 'string') {
+    return deepDecorator.apply(null, arguments);
+  }
+  
+  // 走向 ②
+  if (isObservable(v)) return v;
+  
+  var res = isPlainObject(v)
+    ? observable.object(v, arg2, arg3) // 走向③
+    : Array.isArray(v)
+      ? observable.array(v, arg2)  // 走向 ④
+      : isES6Map(v) ? observable.map(v, arg2) // 走向 ⑤
+      : v;
+  
+  if (res !== v) return res;
+  // 走向 ⑥
+  fail(
+        process.env.NODE_ENV !== &quot;production&quot; &amp;&amp;
+            `The provided value could not be converted into an observable. If you want just create an observable reference to the object use 'observable.box(value)'`
+    )
+}
+</code></pre>
+<p>不难看出其实是典型的采用了 <strong>策略设计模式</strong> ，将多种数据类型（Object、Array、Map）情况的转换封装起来，好让调用者不需要关心实现细节：</p>
+<blockquote>
+<p>该设计模式参考可参考 <a href="http://www.cnblogs.com/TomXu/archive/2012/03/05/2358552.html">深入理解JavaScript系列（33）：设计模式之策略模式</a></p>
+</blockquote>
+<p>用图来展示一下具体的走向：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623123954.png" alt="策略设计模式"></p>
+<ul>
+<li>走向 ① 是 <strong>装饰器</strong>语法所特有的，这是因为此时传给 <code>createObservable</code> 的第二个参数是 <strong>string</strong> 类型，这一点我们在上一篇文章有详细论述；</li>
+<li>走向 ② 很直观，如果传入的参数就已经是 <strong>观察值</strong> 了，不多废话直接返回传入的值，不需要转换；</li>
+<li>走向 ③、④ 、⑤ 是直根据传入参数的类型分别调用具针对具体类型的转换方法；</li>
+<li>走向 ⑥，在上面示例中我们已经看到过， 针对原始值会提示建议用户使用 <code>observable.box</code> 方法。</li>
+</ul>
+<p>第一部分的 <code>createObservable</code> 的内容就那么些，总之只是起了 “向导” 作用。是不是比你想象中的要简单？</p>
+<p>接下来我们继续看第二部分的 <code>observable.box</code> 方法。</p>
+<h2 id="3observablebox">3、第二部分：<a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/api/observable.ts#L106">observable.box</a></h2>
+<p>这个方法对应上述故事中的 <strong>观察局办公室文员</strong> 角色，也是属于办公室部门的，所起到的作用和 <code>主任</code> 大同小异，只是平时我们用得并不多罢了。</p>
+<p>当我第一次阅读 <a href="https://cn.mobx.js.org/refguide/api.html#observableboxvalue-options">官网文档</a> 中针对有关 <code>observable.box</code> 的描述时：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124026.png" alt="官网对 box 方法的说明"></p>
+<p>来回读了几次，“盒子”是个啥？它干嘛用的？ “observable” 和 “盒子” 有半毛钱关系？</p>
+<p>直到看完该函数的详细介绍 <a href="https://cn.mobx.js.org/refguide/boxed.html">boxed values</a> 后，方才有所感悟，这里这 <strong>box</strong> 方法就是将普通函数 “包装” 成可观察值，<strong>所以 <code>box</code> 是动词而非名词</strong> 。</p>
+<p>准确地理解，<code>observable.box</code> 是一个转换函数，比如我们将普通的原始值 &quot;Pekin&quot;（北京）转换成可观察值，就可以使用：</p>
+<pre><code class="language-js">const cityName = observable.box(&quot;Pekin&quot;);
+</code></pre>
+<p>原始值 &quot;Pekin&quot; 并不具备可观察属性，而经过 <strong>box</strong> 方法操作之后的 <code>cityName</code> 变量具有可观察性，比如：</p>
+<pre><code class="language-js">console.log(cityName.get());
+// 输出 'Pekin'
+
+cityName.observe(function(change) {
+    console.log(change.oldValue, &quot;-&gt;&quot;, change.newValue);
+});
+
+cityName.set(&quot;Shanghai&quot;);
+// 输出 'Pekin -&gt; Shanghai'
+</code></pre>
+<p>从输入输出角度来看，这 <code>box</code> 其实就是将普通对象转换成可观察值的过程，转换过程中将一系列能力“添加”到对象上，从而获得 “自动响应数值变化” 的能力。</p>
+<p>那么具体这 <code>box</code> 函数是如何实现的呢？直接看 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/api/observable.ts#L145">源码</a>。</p>
+<pre><code class="language-js">box: function(value, options) {
+  if (arguments.length &gt; 2) incorrectlyUsedAsDecorator('box');
+  var o = asCreateObservableOptions(options);
+  return new ObservableValue(
+    value,
+    getEnhancerFromOptions(o),
+    o.name
+  );
+}
+</code></pre>
+<p>发现该方法仅仅是调用 <code>ObservableValue</code> 构造函数，所以 <code>box</code> 方法操作的结果是返回 <code>ObservableValue</code> 实例。</p>
+<blockquote>
+<p>这里的 <code>asCreateObservableOptions</code> 方法仅仅是格式化入参 <code>options</code> 对象而已。</p>
+</blockquote>
+<h2 id="4observablevalue">4、核心类：<a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/types/observablevalue.ts">ObservableValue</a></h2>
+<p>总算是讲到这个 <code>ObservableValue</code> 类了，该类是理解可观察值的关键概念。这个类对应上述故事中的 <strong>观察员</strong> 角色，就是最基层的 <code>name</code> 观察员 O1、O2、O3 那些。</p>
+<p>本篇文章的最终目的也就是为了讲清楚这个 ObservableValue 类，其他的概念反而是围绕它而创建起来的。</p>
+<p>分析其源码，将这个类的属性和方法都拎出来瞧瞧，绘制成类图大致如下：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124053.png" alt="ObservableValue 类图"></p>
+<p>你会发现该类 <strong>继承自 Atom</strong> 类，所以在理解 <code>ObservableValue</code> 之前必须理解 <code>Atom</code>。</p>
+<blockquote>
+<p>其实在 3.x 版本的时候，<code>ObservableValue</code> 继承自 <code>BaseAtom</code>；<br>
+随着升级到 4.x 版本，官方以及废弃了 <code>BaseAtom</code>，直接继承自 <code>Atom</code> 这个类。</p>
+</blockquote>
+<h3 id="41atom">4.1、Atom</h3>
+<p>在 MobX 的世界中，任何能够 <strong>存储并管理</strong> 状态的对象都是 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/atom.ts#L7">Atom</a>，故事中的 <strong>观察员</strong>（ObservableValue 实例）本质上就是 <strong>Atom</strong>（准确的说，而 <code>ObservableValue</code> 是继承了 <code>Atom</code> 这个基类），<code>Atom</code>实例有两项重大的使命：</p>
+<ol>
+<li>当它的值被使用的时候，就会触发 <strong>reportObserved</strong> 方法，在 <a href="https://segmentfault.com/a/1190000013682735">第一篇文章</a> 的讲解中可知，MobX 正是基于该方法，使得观察员和探长之间建立关联关系。</li>
+<li>当它的值受到更改的时候，将会触发 <strong>reportChanged</strong> 方法，在第三篇文章 《<a href="https://segmentfault.com/a/1190000014726483">【用故事解读 MobX源码（三）】 shouldCompute</a>》中可知，基于该方法观察员就可以将 <strong>非稳态信息逐层上传</strong>，最终将让探长、会计员重新执行任务。</li>
+</ol>
+<p><code>Atom</code> 类图如下，从中我们看到前面几章中所涉及到的 <code>onBecomeUnobserved</code>、<code>onBecomeObserved</code>、<code>reportObserved</code>、<code>reportChanged</code> 这几个核心方法，它们都来源于 <code>Atom</code> 这个类：<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124136.png" alt="Atom 类图"></p>
+<p>所以说 <strong>Atom</strong> 是整个 MobX 的基石并不为过，所有的自动化响应机制都是建立在这个最最基础类之上。正如在大自然中，万物都是由原子（atom）构成的，借此意义， MobX 中的 ”具备响应式的“ 对象都是由这个 <code>Atom</code> 类构成的。<br>
+（<code>ComputeValue</code>类 也继承自 <code>Atom</code>，<code>Reaction</code> 类的实现得依靠 <code>Atom</code>，因此不难感知 <code>Atom</code> 基础重要性）</p>
+<h3 id="42createatom">4.2、createAtom</h3>
+<p>理论上你只要创建一个 Atom 实例就能融入到 mobx 的响应式系统中，</p>
+<p>如何自己创建一个 Atom 呢？</p>
+<p>MobX 已经暴露了一个名为 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/atom.ts#L66">createAtom</a> 方法，<br>
+官方文档 <a href="https://mobx.js.org/refguide/extending.html">创建 observable 数据结构和 reactions(反应)</a> 给出了创建一个 <strong>闹钟</strong> 的例子，具体讲解了该 <code>createAtom</code> 方法的使用：</p>
+<pre><code class="language-js">...
+  // 创建 atom 就能和 MobX 核心算法交互
+  this.atom = createAtom(
+      // 第一个参数是 name 属性，方便后续 
+      &quot;Clock&quot;,
+      // 第二个参数是回调函数，可选，当 atom 从 unoberved 状态转变到 observed 
+      () =&gt; this.startTicking(),
+      // 第三个参数也是回调函数，可选，与第二个参数对应，此回调是当 atom 从 oberved 状态转变到 unobserved 时会被调用
+      // 注意到，同一个 atom 有可能会在 oberved 状态和 unobserved 之间多次转换，所以这两个回调有可能会多次被调用
+      () =&gt; this.stopTicking()
+  );
+...
+</code></pre>
+<p>同时文中也给出了对应的最佳实践：</p>
+<ul>
+<li>最好给创建的 Atom 起一个名字，方便后续 debug</li>
+<li><code>onBecomeObserved</code> 和 <code>onBecomeUnobserved</code> 和我们面向对象中构造函数与析构函数的作用相似，方便进行<strong>资源的申请和释放</strong>。</li>
+</ul>
+<p>不过 Atom 实例这个还是偏向底层实现层，除非需要强自定义的特殊场景中，平时我们推荐直接使用 <code>observable</code> 或者 <code>observable.box</code> 来创建观察值更为简单直接；</p>
+<h3 id="43observablevalue">4.3、理解 ObservableValue</h3>
+<p>MobX 在 <code>Atom</code> 类基础上，泛化出一个名为 <code>ObservableValue</code> 类，就是我们耳熟能详的 <strong>观察值</strong> 了。从代码层面上来看，实现 <code>ObservableValue</code> 其实就是继承一下 <code>Atom</code> 这个类，然后再添加许多辅助的方法和属性就可以了。</p>
+<p>理解完上述的 <code>Atom</code> 对象之后，你就已经理解 <code>ObservableValue</code> 的大部分。接下来就是去理解 <code>ObservableValue</code> 相比 <code>Atom</code> 多出来的属性和方法，我这里并不会全讲，太枯燥了。只挑选重要的两部分 ——  <strong>Intercept &amp; Observe</strong> 部分 和 <strong>enhancer</strong> 部分</p>
+<h4 id="431interceptobserve">4.3.1、Intercept &amp; Observe 部分</h4>
+<p>在 <code>ObservableValue</code> 类图中除了常见的 <code>toJSON()</code>、<code>toString()</code> 方法之外，有两个方法格外引人注目 ——  <code>intercept()</code> 和 <code>observe</code> 两个方法。</p>
+<p>如果把 “对象变更” 作为事件，那么我们可以在 <strong>事件发生之前</strong> 和 <strong>事件方法之后</strong> 这两个 “切面” 分别可以安插回调函数（callback），方便程序动态扩展，这属于 <strong>面向切面编程的思想</strong>。</p>
+<blockquote>
+<p>不了解 AOP 的，可以查阅 <a href="https://www.zhihu.com/question/24863332">知乎问答-什么是面向切面编程AOP？</a></p>
+</blockquote>
+<p>在 MobX 世界里，将安插在 <strong>事件发生之前</strong> 的回调函数称为 <code>intercept</code>，将安插在 <strong>事件发生之后</strong> 的回调函数称为 <code>observe</code>。理解这两个方法可以去看 <a href="https://cn.mobx.js.org/refguide/observe.html">官方中的示例</a>，能快速体会其作用。</p>
+<p>这里稍微进一步讲细致一些，有时候官方文档会中把 <code>intercept</code> 理解成 <strong>拦截器</strong>。 这是因为它作用于事件（数据变更）发生之前，因此可以操纵变更的数据内容，甚至可以通过返回 <code>null</code> 忽略某次数据变化而不让它生效。</p>
+<p>其作用机制也很直接，该方法调用的最终都是调用实例的 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/types/observablevalue.ts#L124">intercept</a> 方法，这样每次在值变更之前（以下 <code>prepareNewValue</code> 方法执行），都会触发观察值上所绑定的所有的 <strong>拦截器</strong>：</p>
+<pre><code class="language-js">ObservableValue.prototype.prepareNewValue = function(newValue) {
+  ...
+  if (hasInterceptors(this)) {
+    var change = interceptChange(this, {
+      object: this,
+      type: 'update',
+      newValue: newValue
+    });
+    if (!change) return UNCHANGED;
+    newValue = change.newValue;
+  }
+  // apply modifier
+  ...
+};
+</code></pre>
+<p>着重里面的那行语句 <code>if (!change) return UNCHANGED;</code> ，如果你在 <code>intercept</code> 安插的回调中返回 <code>null</code> 的话，相当于告知 MobX 数值没有变更（<code>UNCHANGED</code>），既然值没有变更，后续的逻辑就不会触发了。</p>
+<p><code>observe</code> 的作用是将回调函数安插在值变更之后（以下 <code>setNewValue</code> 方法调用），同样是通过调用 <code>notifyListeners</code> 通知所有的<strong>监听器</strong>：</p>
+<pre><code class="language-js">ObservableValue.prototype.setNewValue = function(newValue) {
+  ...
+  this.reportChanged();
+  if (hasListeners(this)) {
+    notifyListeners(this, {
+      type: 'update',
+      object: this,
+      newValue: newValue,
+      oldValue: oldValue
+    });
+  }
+};
+</code></pre>
+<p><mark><mark><mark><mark><mark>【以下是额外的知识内容，可跳过，不影响主线讲解】</mark></mark></mark></mark></mark>=</p>
+<p><strong>如何解除安插的回调函数？</strong></p>
+<p>Intercept &amp; Observe 这两个函数返回一个 <code>disposer</code> 函数，这个函数是 <strong>解绑函数</strong>，调用该函数就可以取消<strong>拦截器</strong>或者<strong>监听器</strong> 了。这里有一个最佳实践，如果不需要某个<strong>拦截器</strong>或者<strong>监听器</strong>了，记得要及时清理自己绑定的监听函数 <a href="https://cn.mobx.js.org/best/pitfalls.html#%E6%B0%B8%E8%BF%9C%E8%A6%81%E6%B8%85%E7%90%86-reaction">永远要清理 reaction</a> —— 即调用  <code>disposer</code> 函数。</p>
+<p>那么如何实现  <code>disposer</code> 解绑函数这套机制？</p>
+<p>以拦截器（intercept）为例，注册的时候调用 <code>registerInterceptor</code> 方法：</p>
+<pre><code class="language-js">function registerInterceptor(interceptable, handler) {
+  var interceptors =
+    interceptable.interceptors || (interceptable.interceptors = []);
+  interceptors.push(handler);
+  return once(function() {
+    var idx = interceptors.indexOf(handler);
+    if (idx !== -1) interceptors.splice(idx, 1);
+  });
+}
+</code></pre>
+<p>整体的逻辑比较清晰，就是将传入的 <code>handler</code>（拦截器）添加到 <code>interceptors</code> 数组属性中。关键是在于返回值，返回的是一个闭包 —— <code>once</code> 函数调用的结果值。</p>
+<p>所以我们简化一下 <code>disposer</code> 解绑函数的定义：</p>
+<pre><code class="language-js">disposer = once(function() {
+  var idx = interceptors.indexOf(handler);
+  if (idx !== -1) interceptors.splice(idx, 1);
+});
+</code></pre>
+<p><strong>恰是这个 <code>once</code> 函数是实现解绑功能的核心</strong>。</p>
+<p>查看这个 <code>once</code> 函数源码只有寥寥几行，却将<strong>闭包</strong>的精髓运用到恰到好处。</p>
+<pre><code class="language-js">function once(func) {
+  var invoked = false;
+  return function() {
+    if (invoked) return;
+    invoked = true;
+    return func.apply(this, arguments);
+  };
+}
+</code></pre>
+<p>该 <code>once</code> 方法其实通过 <code>invoked</code> 变量，控制传入的 <code>func</code> 函数只调用一次。</p>
+<p>回过头来 <code>disposer</code> 解绑函数，调用一次就会从 <code>interceptors</code> 数组中移除当前拦截器。使用 <code>once</code> 函数后，你无论调用多少次 <code>disposer</code> 方法，最终都只会解绑一次。</p>
+<p>由于 <code>once</code> 是纯函数，因此大伙儿可以提取出来运用到自己的代码库中 —— 这也是源码阅读的益处之一，借鉴源码中优秀部分，然后学习吸收，引以为用。</p>
+<p>=======================================================</p>
+<h4 id="432enhancer">4.3.2、enhancer 部分</h4>
+<p>这部分是在 <code>ObservableValue</code> 构造函数中发挥作用的，其影响的恰恰是最核心的<strong>数据</strong>属性：</p>
+<pre><code class="language-js">function ObservableValue(value, enhancer, name, notifySpy) {
+      ...
+      _this.enhancer = enhancer;
+      _this.value = enhancer(value, undefined, name);
+      ...
+    }
+</code></pre>
+<p>在上一篇文章《<a href="https://segmentfault.com/a/1190000015481998">【用故事解读 MobX 源码（四）】装饰器 和 Enhancer</a>》中有提及过 enhance，在那里我们说起过 <strong>enhance</strong> 其实就是装饰器（decorator）的有效成分，该有效成分影响的正是本节所讲的 <code>ObservableValue</code> 对象。结合 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/types/modifiers.ts">types/modifier.ts</a> 中有各种 <strong>Enhancer</strong> 的具体内容，就能大致了解 enhancer 是如何起到 <strong>转换数值</strong> 的作用的，以常见的 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/types/modifiers.ts#L5">deepEnhancer</a> 为例，当在构造函数中执行 <code>_this.value = enhancer(value, undefined, name);</code> 的时候会进入到 <code>deepEnhance</code> 函数体内：</p>
+<pre><code class="language-js">function deepEnhancer(v, _, name) {
+  // it is an observable already, done
+  if (isObservable(v)) return v;
+  // something that can be converted and mutated?
+  if (Array.isArray(v))
+    return observable.array(v, {
+      name: name
+    });
+  if (isPlainObject(v))
+    return observable.object(v, undefined, {
+      name: name
+    });
+  if (isES6Map(v))
+    return observable.map(v, {
+      name: name
+    });
+  return v;
+}
+</code></pre>
+<p>这段代码是否似曾相识？！没错，和上一节所述 <code>createObservable</code> 方法几乎一样，采用 <strong>策略设计模式</strong> 调用不同具体转换函数（比如 <code>observable.object</code> 等）。</p>
+<p>现在应该能够明白，第一部分的 <code>createObservable</code> 和 第二部分的 <code>observable.box</code> 都是建立在第三部分之上，而且通过第一部分、第二部分以及第三部分获得的观察值对象都是属于观察值对象（<code>ObservableValue</code>），大同小异，顶多只是“外形”有略微的差别。</p>
+<p>通过该 enhancer 部分的讲解，我们发现所有待分析的重要部分都聚焦到第三部分的 <code>observable.object</code> 等这些个转换方法身上了。</p>
+<h2 id="5observableobject">5、第三部分：<a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/api/observable.ts#L181">observable.object</a></h2>
+<p>因为结构的原因，上面先讲了最基层的 <code>ObservableValue</code> 部分，现在回来讲的 <code>observable.object</code> 方法。<strong>从这里你能大概体会到 MobX 体系中递归现象</strong>： <code>new ObservableValue</code> 里面会调用 <code>observable.object</code> 方法，从后面的讲解里你将会看到 <code>observable.object</code> 方法里面也会调用 <code>new ObservableValue</code> 的操作，所以 <strong>递归地将对象转换成可观察值</strong> 就很顺理成章。</p>
+<p>阅读官方文档 <a href="https://cn.mobx.js.org/refguide/object.html">Observable.object</a>，该 <code>observable.object</code> 方法就是把一个普通的 JavaScript 对象的所有属性都将被拷贝至一个克隆对象并将克隆对象转变成可观察的，而且 observable 是 <strong>递归应用</strong> 的。</p>
+<p><code>observable.object</code> 等方法对应于上述故事中的 <strong>科室</strong> 部分，用于执行具体的操作。常见的 <code>object</code> 科室是将 <code>plan object</code> 类型数据转换成可观察值，<code>map</code> 科室是将 <code>map</code> 类型数据转换成可观察值....</p>
+<p>我们查阅 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/api/observable.ts#L181">observable.object(object) </a> 源码，其实就 2 行有效代码：</p>
+<pre><code class="language-js">object: function(props, decorators, options) {
+  if (typeof arguments[1] === 'string')
+    incorrectlyUsedAsDecorator('object');
+  var o = asCreateObservableOptions(options);
+  return extendObservable({}, props, decorators, o);
+},
+</code></pre>
+<p>可以说 <code>observable.object(object)</code>实际上是 <code>extendObservable({}, object)</code> 的别名，从这里 <code>extendObservable</code> 方法的第一个参数是 <code>{}</code> 可以看到，<strong>最终产生的观察值对象是基于全新的对象，不影响原始传入的对象内容</strong>。</p>
+<h3 id="51extendobservable">5.1、extendObservable 方法</h3>
+<p>讲到这里，会有一种恍然大悟，原来 <code>extendObservable</code> 方法才是最终大 boss，一切观察值的创建终归走到这个函数。查看该方法的 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/api/extendobservable.ts#L27">源码</a>，函数签名如下：</p>
+<pre><code class="language-js">extendObservable(target, properties, decorators, options)
+</code></pre>
+<ul>
+<li>必须接收 2 ~ 4 个参数</li>
+<li>第一个参数必须是对象，比如 <code>bankUser</code></li>
+<li>第二个参数是属性名，比如 <code>name</code></li>
+<li>第三个参数是 <strong>装饰器</strong> 配置项，这一知识点在上一篇章已经讲解。</li>
+<li>第四个参数是配置选项对象</li>
+</ul>
+<p>方法具体的使用说明参考 <a href="https://cn.mobx.js.org/refguide/extend-observable.html">官方文档 extendObservable</a></p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124205.png" alt="官网对 extendObservable 的相关说明"></p>
+<p>将该方法的主干找出来：</p>
+<pre><code class="language-js">function extendObservable(target, properties, decorators, options) {
+  ...
+  
+  // 第一步 调用 asObservableObject 方法给 target 添加 $mobx 属性
+  options = asCreateObservableOptions(options);
+  var defaultDecorator =
+    options.defaultDecorator ||
+    (options.deep === false ? refDecorator : deepDecorator);
+  asObservableObject(
+    target,
+    options.name,
+    defaultDecorator.enhancer
+  ); 
+  
+  // 第二步 循环遍历，将属性经过 decorator(装饰器) 改造后添加到 target 上
+  startBatch();
+  for (var key in properties) {
+    var descriptor = Object.getOwnPropertyDescriptor(
+      properties,
+      key
+    );
+    var decorator =
+      decorators &amp;&amp; key in decorators
+        ? decorators[key]
+        : descriptor.get
+          ? computedDecorator
+          : defaultDecorator;
+    var resultDescriptor = decorator(
+      target,
+      key,
+      descriptor,
+      true
+    );
+    if (resultDescriptor){
+      Object.defineProperty(target, key, resultDescriptor);
+    }
+  }
+  endBatch();
+  return target;
+</code></pre>
+<p>这方法看上去块头很大，不过分析起来就 2 大步：</p>
+<ul>
+<li>首先调用 <code>asObservableObject</code> 方法，给 <code>target</code> 生成 <code>$mobx</code> 属性</li>
+<li>其次挨个让每个属性经过 <code>decorator</code> 改造后重新安装到 target 上，默认的 decorator 是 <code>deepDecorator</code>，装饰器的含义和作用在上一篇文章已讲过，点击 <a href="https://segmentfault.com/a/1190000015481998#articleHeader11">这里</a> 复习</li>
+</ul>
+<h3 id="52asobservableobject">5.2、第一步：调用 asObservableObject</h3>
+<p><code>asObservableObject</code> 方法，主要是给目标对象生成 <code>$mobx</code> 属性；该 <code>$mobx</code> 属性对应上述故事中的 <strong>科长</strong> 角色，用于管理对象的读写操作。</p>
+<p>为什么要添加 <code>$mobx</code> 属性？其具体作用又是什么？</p>
+<p>通过阅读源码，我无从获知作者添加 <code>$mobx</code> 属性的理由，但可以知道 <code>$mobx</code> 的作用是什么。</p>
+<p>首先，<code>$mobx</code> 属性是一个 <code>ObservableObjectAdministration</code> 对象，类图如下：<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124241.png" alt="ObservableObjectAdministration 的类图"></p>
+<p>用例子来看看 <code>$mobx</code> 属性：</p>
+<pre><code class="language-js">var bankUser = observable({
+    income: 3,
+    name: '张三'
+});
+
+console.table(bankUser);
+</code></pre>
+<p>下图红框处标示出来的就是 <code>bankUser.$mobx</code> 属性：<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124315.png" alt=" 属性"></p>
+<p>我们进一步通过以下两行代码输出 <code>$mobx</code> 属性中具体的数据成员和拥有的方法成员：</p>
+<pre><code class="language-js">console.log(`bankUser.$mobx:`, bankUser.$mobx);
+console.log(`bankUser.$mobx.__proto__:`, bankUser.$mobx.__proto__);
+</code></pre>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124400.png" alt=" 内的属性"></p>
+<p>在这么多属性中，格外需要注意的是 <code>write</code> 和 <code>read</code> 这两个方法，这两个方法算是 <code>$mobx</code> 属性的灵魂，下面即将会讲到，这里先点名一下。</p>
+<p>除此之外还需要关注 <code>$mobx</code> 对象中的 <code>values</code> 属性，刚初始化的时候该属性是 <code>{}</code> 空对象，不过注意上面截图中看到 <code>$mobx.values</code> 是有内容的，这其实不是在这一步完成，而是在接下来要讲的第二步中所形成的。</p>
+<p>你可以这么理解，这一步仅仅是找到担任科长的人选，还是光杆司令；下一步才是<strong>正式委派科长到某个科室</strong>，那个时候新上任的科长才有权力管束其下属的观察员。</p>
+<h3 id="53decorator">5.3、第二步：每个属性都经过一遍 <code>decorator</code> 的 “洗礼”</h3>
+<p>这部分就是应用 <strong>装饰器</strong> 操作了，默认是使用 <code>deepDecorator</code> 这个装饰器。装饰器的应用流程在 <a href="https://segmentfault.com/a/1190000015481998#articleHeader15">上一篇文章</a> 中有详细讲解，直接拿结论过来：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124424.png" alt="使用 deepDecorator 进行装饰"></p>
+<p>你会发现应用装饰器的最后一步是在调用 <code>defineObservableProperty</code> 方法时创建 <code>ObservableValue</code> 属性，对应在 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/types/observableobject.ts#L247">defineObservableProperty 源码</a> 中以下语句：</p>
+<pre><code class="language-js">var observable = (adm.values[propName] = new ObservableValue(
+  newValue,
+  enhancer,
+  adm.name + '.' + propName,
+  false
+));
+</code></pre>
+<p>这里的 <code>adm</code> 就是 <code>$mobx</code> 属性，这样新生成的 <code>ObservableValue</code> 实例就挂载在 <code>$mobx.values[propName]</code> 属性下。</p>
+<p>这样的设定很巧妙，值得我们深挖。先看一下下面的示例：</p>
+<pre><code class="language-js">var user = {
+  income: 3,
+  name: '张三'
+};
+var bankUser = observable(user);
+
+bankUser.income = 5;
+
+console.log(bankUser.income);
+console.table(bankUser.$mobx.values.income);
+</code></pre>
+<p>在这个案例中，我们直接修改 <code>bankUser</code> 的 <code>income</code> 属性为 <code>5</code>，一旦修改，此时 <code>bankUser.$mobx.values.income</code> 也会同步修改：<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124455.png" alt="双向修改数值"></p>
+<p>这是怎么做到的呢？</p>
+<p>答案是：<strong>通过 <code>generateObservablePropConfig</code> 方法</strong></p>
+<pre><code class="language-js">function generateObservablePropConfig(propName) {
+  return (
+    observablePropertyConfigs[propName] ||
+    (observablePropertyConfigs[propName] = {
+      configurable: true,
+      enumerable: true,
+      get: function() {
+        return this.$mobx.read(this, propName);
+      },
+      set: function(v) {
+        this.$mobx.write(this, propName, v);
+      }
+    })
+  );
+}
+</code></pre>
+<p>该方法是作用在 <code>decorator</code> 装饰器其作用期间，用 <code>generateObservablePropConfig</code> 生成的描述符重写原始对象的描述符，仔细看描述符里的 <code>get</code> 和 <code>set</code> 方法，对象属性的 <strong>读写分别映射到 <code>$mobx.read</code> 和 <code>$mobx.write</code>这两个方法中</strong>。</p>
+<p>在这里，我们就能知道挂载 <code>$mobx</code> 属性的意图：MobX 为我们创建了原对象属性的 <strong>镜像</strong> 操作，所有针对原有属性的读写操作都将镜像复刻到 <code>$mobx.values</code> 对应 Observable 实例对象上，从而将复杂的操作隐藏起来，给用户提供直观简单的，<strong>提高用户体验</strong>。</p>
+<p>以赋值语句 <code>bankUser.income = 5</code> 为例，这样的赋值语句我们平时经常写，只不过这里的 <code>bankUser</code> 是我们 <code>observable.object</code> 操作得到的，所以 MobX 会同步修改 <code>bankUser.$mobx.values.income</code> 这个 ObservableValue 实例对象，从而触发 <strong>reportChanged</strong> 或者 <strong>reportObserved</strong> 等方法，开启 <strong>响应式链</strong> 的第一步。</p>
+<p>你所做的操作和以往一样，书写 <code>bankUser.income = 5</code> 这样的语句就可以。而实际上 mobx 在背后默默地做了很多工作，这样就将简单的操作留给用户，而把绝大多数复杂的处理都隐藏给 MobX 框架来处理了。</p>
+<h3 id="54">5.4、递归实现观察值</h3>
+<p>本小节开始已经提及过递归传递观察值，这里再从代码层面看一下 <strong>递归实现观察值</strong> 的原理。这一步是在 <code>decorator</code> 装饰器应用过程中，通过 <code>$mobx</code> 挂载对应属性的 ObservableValue 实例达到的。</p>
+<p>对应的操作在刚才的 <code>5.3</code> 已经讲过，还是在 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/types/observableobject.ts#L247">defineObservableProperty 源码</a> 那行代码：</p>
+<pre><code class="language-js">var observable = (adm.values[propName] = new ObservableValue(
+  newValue,
+  enhancer,
+  adm.name + '.' + propName,
+  false
+));
+</code></pre>
+<p>以下述的 <code>parent</code> 对象为例：</p>
+<pre><code class="language-js">var parent = {
+  child: {
+    name: 'tony'
+  }
+}
+</code></pre>
+<p>当我们执行 <code>observable(parent)</code>（或者 <code>new ObservableValue(parent)</code> 、 <code>observable.box(parent)</code> 等创建观察值的方法），其执行路径如下：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124528.png" alt="递归将所有属性转换成观察值"></p>
+<p>从上图就可以看到，在 <code>decorator</code> 那一步将属性转换成 <code>ObservableValue</code> 实例，这样在整体上看就是递归完成了观察值的转换 —— 把 <code>child</code> 和它下属的属性也转换成可观察值。</p>
+<h2 id="6">6、小测试</h2>
+<p>请分析 <code>observable.map</code> 和 <code>observable.array</code> 的源码，看看它们和 <code>observable.object</code> 方法之间的差别在哪儿。</p>
+<h2 id="7">7、总结</h2>
+<p>本文重点是讲 <code>Observable</code> 类，与之相关的类图整理如下：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190623124626.png" alt="和 Observable 类相关的类图"></p>
+<ul>
+<li><code>ObservableValue</code> 继承自 <code>Atom</code>，并实现一系列的 <strong>接口</strong>；</li>
+<li><code>ObservableObjectAdministration</code> 是 <strong>镜像操作管理者</strong>，它主要通过 <code>$mobx</code> 属性来操控管理每个观察值 <code>ObservableValue</code></li>
+<li>比较重要的方法是 <code>intercept</code> 和 <code>observe</code> ，用“面向切口”编程的术语来讲，这两个方法就是两个 <strong>切口</strong>，分别作用于数值更改前后，方便针对数据状态做一系列的响应；</li>
+</ul>
+<p>本文中出现很多 <code>observable</code> 相关的单词，稍作总结：</p>
+<ul>
+<li><code>ObservableValue</code> 是一个普通的 class，用于表示 <strong>观察值</strong> 这个概念。</li>
+<li><code>observable</code> 是一个函数，也是 mobx 提供的 API，等于 <code>createObservable</code>，代表操作，该操作过程中会根据情况调用 <code>observable.object</code>（或者 <code>observable.array</code>、<code>observable.map</code>）等方法，最终目的是为了创建 <code>ObservableValue</code> 对象。</li>
+<li><code>extendObservable</code>，这是一个工具函数，算是比较底层的方法，该方法用来向已存在的目标对象添加 observable 属性；上述的 <code>createObservable</code> 方法其实也是借用该方法实现的；</li>
+</ul>
+<p>MobX 默认会递归将对象转换成可观察属性，这主要是得益于 <code>enhancer</code> 在其中发挥的作用，因为每一次 Observable 构造函数会对传入的值经过 <code>enhancer</code> 处理；</p>
+<p>有人不禁会问，既然提供 <code>observable</code> 方法了，那么 <code>observable.box</code> 方法存在的意义是什么？答案是，由于它直接返回的是 <code>ObservableValue</code>，它相比普通的 <code>observable</code> 创建的观察值，提供更加细粒度（底层）的操作；</p>
+<p>比如它除了能像正常观察值一样和 <code>autorun</code> 搭配使用之外，创建的对象还直接拥有 <code>intercept</code> 和 <code>observe</code> 方法：</p>
+<pre><code class="language-js">var pr1 = observable.box(2);
+autorun(() =&gt; {
+  console.log('value:', pr1.get());
+});
+pr1.observe(change =&gt; {
+  console.log('change from', change.oldValue, 'to', change.newValue);
+});
+
+pr1.set(3);
+
+// 以下是输出结果：
+// value: 2
+// value: 3
+// change from 2 to 3
+</code></pre>
+<p>当然 MobX 考虑也很周全，还单独提供 <a href="https://cn.mobx.js.org/refguide/observe.html">Intercept &amp; Observe</a> 两个工具函数，以函数调用的方式给观察值新增这两种回调函数。</p>
+<p>因此下述两种方式是等同的，可以自己试验一下：</p>
+<pre><code class="language-js">// 调用 observe 属性方法
+pr1.observe(change =&gt; {
+  console.log('change from', change.oldValue, 'to', change.newValue);
+});
+
+// 使用 observe 工具函数可以达到相同的目的
+observe(pr1, change =&gt; {
+    console.log('change from', change.oldValue, 'to', change.newValue);
+}):
+</code></pre>
+<p><a id="mobx-proxy"></a><br>
+本文针对 MobX 4 源码讲解，而在 MobX 5 版本中的 <code>Observable</code> 类则是采用 <code>proxy</code> 来实现 <strong>Observable</strong>，整体思路和上述的并无二致，只是在细节方面将 <code>Object.defineProperty</code> 替换成 <code>new Proxy</code> 的写法而已，感兴趣的同学建议先阅读 《<a href="https://zhuanlan.zhihu.com/p/35080324">抱歉，学会 Proxy 真的可以为所欲为</a>》了解 <code>Proxy</code> 的写法，然后去看一下 MobX 5 中的 <a href="https://github.com/mobxjs/mobx/blob/5.0.3/src/api/observable.ts#L172">observable.object</a> 方法已经改用 <a href="https://github.com/mobxjs/mobx/blob/5.0.3/src/types/dynamicobject.ts#L59">createDynamicObservableObject</a> 来创建 proxy，所创建的 proxy 模型来自于 <a href="https://github.com/mobxjs/mobx/blob/5.0.3/src/types/dynamicobject.ts#L17"> objectProxyTraps</a> 方法；如有机会将在后续的文章中更新这方面的知识。</p>
+<p>用故事讲解 MobX 源码的系列文章至此告一段落，后续以散篇的形式发布跟 MobX 相关的文章。</p>
+<p>============= 参考文章 ===============</p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/35080324">抱歉，学会 Proxy 真的可以为所欲为</a>：Proxy 的入门讲解，需要和 <code>Object.defineProperty</code> 方法做出区别</li>
+<li><a href="https://zhuanlan.zhihu.com/p/31705632">Mobx 源码解读（二） Observable</a>：系列文章第二篇</li>
+</ul>
+<!--kg-card-end: markdown-->
+                </div>
+            </section>
+            <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
+            <section style="text-align: center"><img
+                    src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg" /></section>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+                integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+                integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH"
+                crossorigin="anonymous"></script>
+
+
+            <section id="gitalk-component-wrap"/>
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" />
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/boycgit/index.html">boycgit</a></h4>
+            <p>阅读此作者的<a href='../author/boycgit/index.html'>更多文章</a>.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/boycgit/index.html">阅读更多</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+                <article class="read-next-card"
+                            style="background-image: url(https://casper.ghost.org/v1.0.0/images/blog-cover.jpg)"
+                >
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">&mdash; JSCON-简时空 &mdash;</small>
+                        <h3 class="read-next-card-header-title"><a href="../tag/mobx/index.html">mobx</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="../mobx-source-enhancer/index.html">【用故事解读 MobX 源码（四）】装饰器 和 Enhancer</a></li>
+                            <li><a href="../mobx-source-shouldcompute/index.html">【用故事解读 MobX源码（三）】 shouldCompute</a></li>
+                            <li><a href="../mobx-source-computed/index.html">【用故事解读 MobX源码（二）】 computed</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="../tag/mobx/index.html">查看所有4篇文章 →</a>
+                    </footer>
+                </article>
+
+                <article class="post-card post tag-ae tag-jiao-cheng tag-te-xiao">
+        <a class="post-card-image-link" href="../ae-text-trace/index.html">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1522119923992-e7090449fcd7?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;b7c88b8ac9dd2de222497adfed9b4ba7)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../ae-text-trace/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">AE</span>
+                <h2 class="post-card-title">AE教程 - 字幕追踪</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>我随手拍了一段直升飞机的视频，想要新增的文字可以跟随运动。本文基于 AE CC 2018 软件，完成此项教程大致需要 10 分钟</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/index.html" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" /></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 3 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-mobx tag-javascript tag-yuan-ma-fen-xi tag-yuan-ma">
+        <a class="post-card-image-link" href="../mobx-source-enhancer/index.html">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1522921190264-372c4181543c?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;9b52a3b11f518813592e6294fc0fa556)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../mobx-source-enhancer/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">mobx</span>
+                <h2 class="post-card-title">【用故事解读 MobX 源码（四）】装饰器 和 Enhancer</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析源码中有关装饰器与 enhancer 的执行逻辑</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/index.html" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" /></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 21 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://boycgit.github.io">
+                <img src="../content/images/2018/08/logo.png" alt="JSCON-简时空 icon" />
+            <span>JSCON-简时空</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">【用故事解读 MobX 源码（五）】 Observable</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8A%E3%80%90%E7%94%A8%E6%95%85%E4%BA%8B%E8%A7%A3%E8%AF%BB%20MobX%20%E6%BA%90%E7%A0%81%EF%BC%88%E4%BA%94%EF%BC%89%E3%80%91%20Observable%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/mobx-source-observable/"
+            onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1534600204727" class="icon" style="" viewBox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/mobx-source-observable/&mhid=txbODQq7nZkhMHcqI9xROqg"
+            onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1534604253879" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.min.js"></script>
+
+<script>
+    (function () {
+        /**
+         * Get Node
+         * @param  {String|Element} el
+         * @param  {Boolean} noCache
+         * @return {Element}
+         */
+        var cacheNode = {};
+        function getNode(el, noCache) {
+            if (noCache === void 0) noCache = false;
+
+            if (typeof el === 'string') {
+                if (typeof window.Vue !== 'undefined') {
+                    return find(el);
+                }
+                el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el));
+            }
+
+            return el;
+        }
+
+        /**
+         * Find element
+         * @example
+         * find('nav') => document.querySelector('nav')
+         * find(nav, 'a') => nav.querySelector('a')
+         */
+        function find(el, node) {
+            return node ? el.querySelector(node) : document.querySelector(el);
+        }
+        function create(node, tpl) {
+            node = document.createElement(node);
+            if (tpl) {
+                node.innerHTML = tpl;
+            }
+            return node;
+        }
+        function appendTo(target, el) {
+            return target.appendChild(el);
+        }
+
+        function renderGitalkContainer() {
+            var div = create('div');
+            div.id = 'gitalk-container';
+            var main = getNode('#site-main');
+            div.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            appendTo(find('#gitalk-component-wrap'), div);
+            var script = create('script');
+            var content = "gitalk.render('gitalk-container')";
+        }
+        renderGitalkContainer();
+
+        var gitalk = new Gitalk({
+            clientID: 'a65ee9e3ea5168da1470',
+            clientSecret: 'ebfd520679d1ad61929b1887b2efccd4872389e3',
+            repo: 'boycgit.github.io',
+            owner: 'boycgit',
+            admin: [
+                'boycgit'
+            ],
+            id: location.pathname,
+            // facebook-like distraction free mode
+            distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container');
+
+
+
+        var postImages = document.querySelectorAll('.post-content img');
+        Array.prototype.forEach.call(postImages, function (el, i) {
+            el.outerHTML = `<aholder href="${el.src}" data-lightbox="postImages" data-title="${el.alt}">${el.outerHTML}</aholder>`.replace(/aholder/g, 'a');
+        });
+
+        // 动态添加 js 脚本
+        setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/js/lightbox.min.js";
+            document.getElementsByTagName('body')[0].appendChild(script);
+
+            script.onload = function () {
+
+                console.log('load success');
+            }
+        }, 1000);
+
+    })();
+</script>
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://boycgit.github.io">JSCON-简时空</a> &copy; 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="https://boycgit.github.io">最新文章</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=11f1923694"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });
+</script>
+
+</body>
+</html>
+</html>

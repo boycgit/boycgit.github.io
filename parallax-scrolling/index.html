@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="zh">
+<!DOCTYPE html><html lang="zh">
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>视差卷轴特效</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=11f1923694" />
+
+    <link rel="shortcut icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="https://boycgit.github.io/parallax-scrolling/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <link rel="amphtml" href="https://boycgit.github.io/parallax-scrolling/amp/" />
+    
+    <meta property="og:site_name" content="JSCON-简时空" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="视差卷轴特效" />
+    <meta property="og:description" content="搜索关键词：parallax scrolling tutorial  前景移动越快，越远的层移动越慢。这种效果叫做__“视觉卷轴/滚动”（parallax scrolling）__  纯CSS视差特效 效果图：    当你手动拖动浏览器的窗口改变其大小，你会发现前景（小草）、中景（山）和背景（白云）的移动速度不一样，小草移动要快一些从而导致了视觉差。  这里的关键是：  背景图片按百分比铺设，背景的百分比铺设是非常有用的，见【CSS】响应式sprites 图像层使用position:absolute叠加 HTML：  &amp;lt;div id &#x3D; &amp;quot;back&amp;quot; class &#x3D; &amp;quot;layer&amp;quot;&amp;gt;&amp;lt;/div&amp;gt; &amp;lt;div id &#x3D; &amp;quot;middle&amp;" />
+    <meta property="og:url" content="https://boycgit.github.io/parallax-scrolling/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1534380258625-ff16d769fb5f?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;b84b5497940b3e93df939721be8143c6" />
+    <meta property="article:published_time" content="2015-03-12T15:21:00.000Z" />
+    <meta property="article:modified_time" content="2019-06-20T05:28:06.000Z" />
+    <meta property="article:tag" content="javascript" />
+    <meta property="article:tag" content="动画" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="视差卷轴特效" />
+    <meta name="twitter:description" content="搜索关键词：parallax scrolling tutorial  前景移动越快，越远的层移动越慢。这种效果叫做__“视觉卷轴/滚动”（parallax scrolling）__  纯CSS视差特效 效果图：    当你手动拖动浏览器的窗口改变其大小，你会发现前景（小草）、中景（山）和背景（白云）的移动速度不一样，小草移动要快一些从而导致了视觉差。  这里的关键是：  背景图片按百分比铺设，背景的百分比铺设是非常有用的，见【CSS】响应式sprites 图像层使用position:absolute叠加 HTML：  &amp;lt;div id &#x3D; &amp;quot;back&amp;quot; class &#x3D; &amp;quot;layer&amp;quot;&amp;gt;&amp;lt;/div&amp;gt; &amp;lt;div id &#x3D; &amp;quot;middle&amp;" />
+    <meta name="twitter:url" content="https://boycgit.github.io/parallax-scrolling/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1534380258625-ff16d769fb5f?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;b84b5497940b3e93df939721be8143c6" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="boycgit" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="javascript, 动画" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="1620" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "JSCON-简时空",
+        "logo": "https://boycgit.github.io/content/images/2018/08/logoicon.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "boycgit",
+        "image": {
+            "@type": "ImageObject",
+            "url": "//www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&d=mm&r=x",
+            "width": 250,
+            "height": 250
+        },
+        "url": "https://boycgit.github.io/author/boycgit/",
+        "sameAs": []
+    },
+    "headline": "视差卷轴特效",
+    "url": "https://boycgit.github.io/parallax-scrolling/",
+    "datePublished": "2015-03-12T15:21:00.000Z",
+    "dateModified": "2019-06-20T05:28:06.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1534380258625-ff16d769fb5f?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ&s=b84b5497940b3e93df939721be8143c6",
+        "width": 1080,
+        "height": 1620
+    },
+    "keywords": "javascript, 动画",
+    "description": "搜索关键词：parallax scrolling tutorial  前景移动越快，越远的层移动越慢。这种效果叫做__“视觉卷轴/滚动”（parallax scrolling）__  纯CSS视差特效 效果图：    当你手动拖动浏览器的窗口改变其大小，你会发现前景（小草）、中景（山）和背景（白云）的移动速度不一样，小草移动要快一些从而导致了视觉差。  这里的关键是：  背景图片按百分比铺设，背景的百分比铺设是非常有用的，见【CSS】响应式sprites 图像层使用position:absolute叠加 HTML：  &amp;lt;div id &#x3D; &amp;quot;back&amp;quot; class &#x3D; &amp;quot;layer&amp;quot;&amp;gt;&amp;lt;/div&amp;gt; &amp;lt;div id &#x3D; &amp;quot;middle&amp;",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://boycgit.github.io/"
+    }
+}
+    </script>
+
+    <script src="../public/ghost-sdk.js?v=11f1923694"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "7c2ea2eb9409"
+});
+</script>
+    <meta name="generator" content="Ghost 2.31" />
+    <link rel="alternate" type="application/rss+xml" title="JSCON-简时空" href="https://boycgit.github.io/rss/" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-69473481-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-69473481-3');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+<style>
+
+/* 结束 */
+
+  .end-block-wrap{
+        color:#338daf;
+        text-align: center;
+    }
+
+    .end-block-wrap img{
+        border: none;
+        max-width: 100%;
+        margin: 0px auto; display: inline-block;
+    }
+
+    .end-block-wrap img.main{
+        width: 30px;
+    }
+
+
+/* 参考文档 */
+.ref-wrap .line-text{
+    display: flex;justify-content:center;align-items:flex-end;
+}
+
+.ref-wrap .line-text::before, .ref-wrap .line-text::after{
+    content: '';
+    display: inline-block;
+    width: 25%; border-bottom: 1px dashed rgb(51, 51, 51); box-sizing: border-box;
+}
+
+.ref-wrap .text.main{
+    font-size: 14px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 0px 10px; 
+    font-weight: bold; 
+    margin-bottom: -5px; 
+    box-sizing: border-box;
+}
+
+.ref-wrap  .text.second{
+    font-size: 16px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 10px; 
+    text-align: center; 
+    box-sizing: border-box;
+}
+/* 求关注 */
+.qr-wrap{
+    margin-right: auto; 
+    margin-left: auto; 
+    width: 360px; 
+    border: none rgb(255, 129, 36); 
+    background: url(https://mpt.135editor.com/mmbiz_gif/ziadDDQxbCJFA2XMwm7VE1RTcS94u8LqVWSjIasMfzY8aG5HolkBhHhwEp0eUpPCEzPYqXYicbRNtROJibbM9P55g/0?wx_fmt=gif) right 0px no-repeat; 
+    background-size: contain; 
+    box-sizing: border-box;
+}
+
+.qr-image{
+    padding: 10px 3px; 
+    width: 150px; 
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.qr-image img{
+    width: 150px;
+}
+
+
+</style>
+
+</head>
+<body class="post-template tag-javascript tag-dong-hua">
+
+    <div class="site-wrapper">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/css/lightbox.min.css">
+
+
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://boycgit.github.io"><img src="../content/images/2018/08/logoicon.png" alt="JSCON-简时空" /></a>
+            <ul class="nav" role="menu">
+    <li class="nav-shou-ye" role="menuitem"><a href="https://boycgit.github.io/">首页</a></li>
+    <li class="nav-guan-yu" role="menuitem"><a href="https://boycgit.github.io/about-me/">关于</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://boycgit.github.io/rss/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-javascript tag-dong-hua ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2015-03-12">12 March 2015</time>
+                        <span class="date-divider">/</span> <a href="../tag/javascript/index.html">javascript</a>
+                </section>
+                <h1 class="post-full-title">视差卷轴特效</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1534380258625-ff16d769fb5f?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;b84b5497940b3e93df939721be8143c6)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <!--kg-card-begin: markdown--><!--kg-card-begin: markdown--><blockquote>
+<p>搜索关键词：<code>parallax scrolling tutorial</code></p>
+</blockquote>
+<p>前景移动越快，越远的层移动越慢。这种效果叫做__“视觉卷轴/滚动”（parallax scrolling）__</p>
+<h2 id="css">纯CSS视差特效</h2>
+<p>效果图：</p>
+<p><img src="https://lh3.googleusercontent.com/-3ZDJ8D5B7v4/VG3Y7l8zygI/AAAAAAAACIk/p4btlTjf5As/s400/parral1.JPG" alt="CSS实现视差效果"></p>
+<p>当你<strong>手动</strong>拖动浏览器的窗口改变其大小，你会发现前景（小草）、中景（山）和背景（白云）的移动速度不一样，小草移动要快一些从而导致了视觉差。</p>
+<p>这里的关键是：</p>
+<ul>
+<li>背景图片按百分比铺设，背景的百分比铺设是非常有用的，见<a href="http://www.jscon.co/coding/frontend/css_sprite_mobile.html">【CSS】响应式sprites</a></li>
+<li>图像层使用<code>position:absolute</code>叠加</li>
+</ul>
+<p><strong>HTML：</strong></p>
+<pre><code class="language-html">&lt;div id = &quot;back&quot; class = &quot;layer&quot;&gt;&lt;/div&gt;
+&lt;div id = &quot;middle&quot; class = &quot;layer&quot;&gt;&lt;/div&gt;
+&lt;div id = &quot;front&quot; class = &quot;layer&quot;&gt;&lt;/div&gt;
+&lt;div style=&quot;position:absolute;top:280px;&quot;&gt;&lt;strong&gt;通过修改浏览器窗口大小预览视差效果&lt;/strong&gt;&lt;/div&gt;
+</code></pre>
+<p><strong>CSS：</strong></p>
+<pre><code class="language-css">body {
+	padding:0px;
+	margin:0px;           
+}
+
+.layer {
+	position:absolute;
+	width:100%;
+	height:256px;
+}
+
+# back {
+	background: #3BB9FF url(https://lh6.googleusercontent.com/-yztAKpPaHkg/VG3VMO7sIOI/AAAAAAAACIM/fqH9GUMFSCo/s800/back1.png) 20% 0px;    
+}
+# middle{
+	background: transparent url(https://lh4.googleusercontent.com/-bB8YHlB7k1w/VG3VMNS6b_I/AAAAAAAACIM/g9SMFQnkDrs/s800/back2.png) 30% 0px ;        
+
+}
+# front{
+	background: transparent url(https://lh5.googleusercontent.com/-ARbeGP3k9Ug/VG3VMczyFZI/AAAAAAAACIM/OX4PpTqAfJY/s800/back3.png) 40% 0px;              
+}
+</code></pre>
+<blockquote>
+<p data-height="268" data-theme-id="8185" data-slug-hash="bNNYXJ" data-default-tab="result" data-user="boycgit" class='codepen'>查看<a href='http://codepen.io/boycgit/pen/bNNYXJ/'>【CSS】视差效果</a> by firstcod (<a href='http://codepen.io/boycgit'>@boycgit</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</blockquote>
+<script async src="http://assets.codepen.io/assets/embed/ei.js"></script>
+<h3 id="">基于背景图片的视差</h3>
+<p>使用纯粹的CSS实现视差缺乏控制，只有在窗口大小改变的时候才出现，不能保证每个用户都看到。加上Javascript代码，使用场景将拓宽。</p>
+<p>添加JS代码之后，当鼠标移到页面左侧或者右侧，就会朝这一方向加速滚动；当鼠标在页面中间的时候，则放慢滚动速度；当鼠标离开页面的时候，则完全停止滚动。工作原理：</p>
+<ul>
+<li><code>mousemove</code>发生时，根据鼠标位置计算速度</li>
+<li><code>mouseout</code>发生时，将速度置为0</li>
+<li>每<code>30ms</code>将计算所得的速度值加到x坐标的位置变量<code>xPos</code>，将缩放之后的xPos应用到每一层水平背景图像坐标。从back层到front层，每层缩放比例一次为**<code>1</code><strong>、</strong><code>2</code><strong>和</strong><code>3</code>**</li>
+</ul>
+<p><strong>jQuery:</strong></p>
+<pre><code class="language-js">$(function () {
+	var speed = 0,
+	
+	    $back = $('#back'),     // Initial speed.
+	    $middle = $('#middle'), // Cache layers as jQuery objects.
+	    $front = $('#front'),
+	    xPos = 0,               // Initial x position of background images.
+	    $win = $(window);       // Cache jQuery reference to window.
+	// Respond to mouse move events.
+	$(document).mousemove(function (e) {
+	    var halfWidth = $win.width()/2;
+	    // Calculate speed based on mouse position.
+	    // 0 (center of screen) to 1 at edges.                                
+	    speed = e.pageX - halfWidth;
+	    speed /= halfWidth;
+	});
+	
+	// Kill speed on mouseout
+	$(document).mouseout(function (e) {
+	    speed = 0;
+	});
+	
+	// Every 30ms, update each layer's background position.
+	// The two front layers use a scaled up x position to
+	// create the parralax effect.
+	setInterval(function () {
+	    $back.css({
+	        backgroundPosition: xPos + 'px 0px'
+	    });
+	    $middle.css({
+	        backgroundPosition: (xPos * 2) + 'px 0px'
+	    });
+	    $front.css({
+	        backgroundPosition: (xPos * 3) + 'px 0px'
+	    });
+	
+	    // Update the background position.
+	    xPos += speed;
+	}, 30);
+
+});
+</code></pre>
+<blockquote>
+<p data-height="268" data-theme-id="8185" data-slug-hash="NPPXqZ" data-default-tab="result" data-user="boycgit" class='codepen'>See the Pen <a href='http://codepen.io/boycgit/pen/NPPXqZ/'>【JS】基于背景图片的视差效果</a> by firstcod (<a href='http://codepen.io/boycgit'>@boycgit</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+</blockquote>
+<script async src="http://assets.codepen.io/assets/embed/ei.js"></script>
+<blockquote>
+<p>CSS和HTML代码和之前的大同小异，就不在这儿陈列了，注意CSS中没有显示声明<code>background-size</code>。</p>
+</blockquote>
+<h2 id="">基于块的图像视差</h2>
+<p>上述滚动例子的缺点：</p>
+<p><strong>图片平铺在浏览器中，缺少变化；你可以使用大图作为背景，但内容区域越大，背景图片也就越大，基于大图的方法是不切实际的。</strong></p>
+<p>借鉴Canvas动画中的<code>Image Tile</code>思想，我们使用索引来将Sprite上的图片拼成**“地图（map）”**，其底层思想来源于“精简重复从而达到数据压缩”——你丫26个英文字母都能拼成万千世界，拼个图有何难的？</p>
+<blockquote>
+<p>P.S. 图片块在Canvas中的应用可参考  <a href="index.html">创建简单的sprite动画</a></p>
+</blockquote>
+<p><strong>两个问题：</strong></p>
+<ul>
+<li>在DOM中插入大量块级元素（image元素）。一个大的地图需要几千个块，如此庞大的DOM也就意味着性能变差</li>
+<li>如果每个独立的img元素都从网络上下载，会导致页面载入变慢</li>
+</ul>
+<p><strong>解决方案：</strong></p>
+<ul>
+<li>针对DOM元素数量问题，可以使用**<code>snapping</code>**技术</li>
+<li>针对图片下载问题，使用**<code>Sprites</code>**技术，使用div取代img元素</li>
+</ul>
+<h3 id="snappingtile">Snapping——tile的移动</h3>
+<p>将所需要的块数量降低到视点钟所用到的块数。比如</p>
+<p><img src="https://lh3.googleusercontent.com/-Z3Lbh-xZCbc/VG3mk3PmBcI/AAAAAAAACI8/9-PFHbHb8q4/s640/640%25E8%25A7%2586%25E7%2582%25B9.JPG" alt="640x384像素的视点"></p>
+<p>显示了640x384px的视点窗口，背后的网格代表地图中可见部分，每个网格都是64x64px大小，可以计算出视点最多可以容纳11 x 7个块。计算方法:（以高度方向为例）</p>
+<blockquote>
+<p>7 = Math.ceil( 384 / 64 ) + 1</p>
+</blockquote>
+<p>从而不难推演出公式：</p>
+<blockquote>
+<p>num = Math.ceil( axisSize / tileWidth) + 1</p>
+</blockquote>
+<p><strong>我们需要一个方法，使得创建和操作的块数等于视点中最多可显示的块数，而和地图的大小无关。</strong></p>
+<p>想象向右滚动地图，77个块将向左移动。如果最左边的块被移动到了视点之外呢？</p>
+<p>由于右边没有延伸部分的地图块，视点的右边就没有元素可以显示，因此将显示空白区域，而左边的块已经移出视觉之外。自然而然的想法就是将左边的块“挪到”右边填充空白。（这个方法可以同样应用在其他滚动方向上）</p>
+<p>如何计算snap的位置呢？使用当前的地图滚动位置除以块宽度取余数的负数：</p>
+<blockquote>
+<p>snapPos = -(scrollPosition % tileWidth);</p>
+</blockquote>
+<p>如果块宽度是64px，而水平滚动距离每次增加8px（从0开始），那么snap的位置将如下重复：<br>
+0,-8,-16,-24,-32,-40,-48,-56,0,-8,-16,-24,-32,-40,-48,-56等<br>
+包含所有块的句柄元素的left值或top值将使用得到的snap位置。（snap位置必须分别针对水平坐标轴和垂直坐标轴计算）</p>
+<p>如果仅仅是snap所有块到右边，将重复显示地图的一部分，因此会出现跳动效果，所以还需要根据滚动位置改变块的位图。为了选择正确的位图，你必须从地图中提取合适的块索引（地图只是块索引的数组）。假设yPos，xPos，mapWidth都是以块为单位，可以如下计算块索引：</p>
+<blockquote>
+<p>index = map[(yPos*mapWidth)+xPos];</p>
+</blockquote>
+<h3 id="wrapping">Wrapping —— 背景的移动</h3>
+<p>无限Wrap一个地图，没有wrapping，当地图在视点的一个方向上滚动，最终会到达地图的边缘（出现空白）。</p>
+<p>用了wrapping技术后，在显示右边的边缘块之后，我们将显示左边的边缘块，好比在遍历数组时，从A[n-1]跳到A[0]，这样使得滚动无限下去。</p>
+<p>地图wrapping技术非常适合无限大的背景特效，比如蓝天白云、璀璨星辰等。</p>
+<h3 id="">提高速度</h3>
+<p>虽然使用snapping能够极大减少块的数目，不过一个<code>640x384</code>像素的视点内3层视差卷轴还是会达到<code>3x77=231</code>块。如果其中一层只是有少许云朵的天空，我们可以使用128像素的块，这样将块数量从77降低到24。</p>
+<p>为保证帧率，滚动时对这些块的操作应尽量降到最低：尽可能预先计算。注意：</p>
+<ul>
+<li>少进行函数调用，尤其是jQuery</li>
+<li>仅进行简单的循环和算术</li>
+<li>将每个块的样式属性的引用存在数组中，方便快速改变诸如背景位置等属性。</li>
+<li>将每个块索引的背景位置作为字符串存在数组中：'0px 0px'、'0px 64px'等等，你可以将这些字符串一次直接存入背景位置属性，而不是分别更新left、top属性</li>
+<li>因为你只是在设置视点期间一次性加入可见的块，因此在滚动时浏览器不会进行页面内容回流（reflow）或其他耗费时间的动作。</li>
+</ul>
+<blockquote>
+<p>reflow是指当页面文档流变动时，重新计算所有的DOM元素的位置和大小。绝对定位和固定定位的元素是在文档流之外的，操作他们不会引起回流。</p>
+</blockquote>
+<h2 id="">页面代码</h2>
+<p data-height="432" data-theme-id="8185" data-slug-hash="NPqOXb" data-default-tab="result" data-user="boycgit" class='codepen'>See the Pen <a href='http://codepen.io/boycgit/pen/NPqOXb/'>基于块的视差卷轴</a> by firstcod (<a href='http://codepen.io/boycgit'>@boycgit</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<script async src="http://assets.codepen.io/assets/embed/ei.js"></script>
+<p>两个重点：</p>
+<p>① 静态部分：创建开始图片（既场景的初始化），这和平常的<code>Sprite</code>布局没啥区别</p>
+<p>② 动态部分：snapping，根据鼠标移动更换背景图位置</p>
+<p>逻辑思路：鼠标移动&gt;获得偏移值（<code>scrollX</code>、<code>scrollY</code>）&gt; A.获得handle偏移值<code>xoff</code>,<code>yoff</code>；B.获得Snapping偏移值sx、sy（以块为单位，snapping是整个背景跳跃） &gt; 获取索引值<code>tileIndex</code>（依据<code>map[mapRow + sx]</code>，偏移了5个<code>tile</code>，相当于就是那偏移第五个tile的背景做自己的背景，整体都替换）</p>
+<p>背后的思想，动画就是多个静态图片的变化—&gt;所以要先掌握静态图片的绘制（给定scrollX、scrollY的情形下）</p>
+<h3 id="">基本结构</h3>
+<p>首先是简单的HTML：（只有一个viewports对象）</p>
+<pre><code class="language-html">&lt;body&gt;
+	&lt;!-- This div will contain the three viewports --&gt;
+	&lt;div id=&quot;viewports&quot;&gt;&lt;/div&gt;
+&lt;/body&gt;
+</code></pre>
+<p>它的CSS样式也很简单：（绝对定位）</p>
+<pre><code class="language-css">	    body {
+	        padding:0px;
+	        margin:0px;           
+	    }
+	    #viewports {
+	        position:absolute;
+	        border:4px solid #000;
+	        background-color:#3090C7;
+	        width:640px;
+	        height:384px;
+	    }
+</code></pre>
+<h4 id="tiled">使用Tiled创建的地图</h4>
+<p>使用的png基本图形是：</p>
+<p><img src="http://gtms01.alicdn.com/tps/i1/TB1T.ndHXXXXXaTXFXXkUmJWVXX-525-331.png" alt="基本图片"></p>
+<p>使用Tiled软件拼接出三层合成图：<br>
+<img src="http://gtms03.alicdn.com/tps/i3/TB1Gc9EHXXXXXX9XFXXzK2b2FXX-1656-1002.png" alt="拼接出来的三层合成图"></p>
+<p>最后导出成CSV格式保存即可。</p>
+<blockquote>
+<p>我的这个Tiled版本<code>0.9.1</code>可以地图按JSON格式导出。</p>
+</blockquote>
+<h3 id="">获得地图信息</h3>
+<p>如果使用Tile导出的xml文件，使用<code>jQuery</code>可以像解析DOM一样很方便地解析xml文件;</p>
+<p>不过现在Tile软件还支持导出成JSON格式，建议使用使用JSON格式；无论怎么样，最终你需要获得下面几个参数：</p>
+<pre><code class="language-javascript">var params = {
+	 tileWidth: +$mapInfo.attr('tilewidth'),// tile的宽度、高度，以px为单位
+	 tileHeight:+$mapInfo.attr('tileheight'),
+	 wrapX:true,
+	 wrapY:true,
+	 mapWidth:+$mapInfo.attr('width'),  // 以tile为单位，计算map的宽度
+	 mapHeight:+$mapInfo.attr('height'),// 以tile为单位，计算map的高度
+	 image:$imageInfo.attr('source'),
+	 imageWidth: +$imageInfo.attr('width'), // 实际图片的宽度
+	 imageHeight: +$imageInfo.attr('height') // 实际图片的高度
+ },  
+</code></pre>
+<blockquote>
+<p>为保证都是数值相加，获取属性值时需要特意在前面添加<code>+</code>号：</p>
+</blockquote>
+<p>获得的参数，用于后续创建tileScroller对象；</p>
+<h3 id="tilescroller">tileScroller对象</h3>
+<p><code>tileScroller</code>专门是根据params参数创建场景内容的。</p>
+<p>为了方便讲解，先看一下程序运行后的DOM结构（因为DOM节点都是动态创建出来的）；</p>
+<p>前两层的DOM树如下，对应上面我们用Tiled拼接出来的三层合成图：<br>
+<img src="http://gtms03.alicdn.com/tps/i3/TB1TjjuHXXXXXb5XXXXY4LHNpXX-819-103.png" alt="前两层的DOM树"></p>
+<p>没错<code>#smallclouds</code>、<code>#bigclouds</code>、<code>#foreground</code>元素内容的DOM结构是一样的（内容当然有区别，不要混淆），称之为<code>tileScroller</code>，DOM下方都含有一个<code>.handle</code>元素，<code>.handle</code>元素下就是各个<code>.tile</code>了（以<code>#smallclouds</code>为代表展开）：<br>
+<img src="http://gtms03.alicdn.com/tps/i3/TB19T9FGVXXXXa_XVXXq_g09VXX-447-180.png" alt="tileScroller结构图"></p>
+<blockquote>
+<p>打个不恰当的比方，<code>.handle</code>相当于显示器物理外框，<code>.tile</code>相当于液晶，这两者都是物理客观存在的实体；显示器能够显示多彩多样的内容，是通过电流改变液晶内部元素位置产生的；而这里我们将使用JS操控<code>.tile</code>的背景图片就可以达到此种效果。只是这里的<code>.tile</code>也会进行“小幅度”（可控）的整体移动</p>
+</blockquote>
+<blockquote>
+<p>what？你问什么是液晶显示器？.....@#$#!#%*&amp;^....</p>
+</blockquote>
+<h4 id="tile">tile数组</h4>
+<p><code>tileScroller</code>这个函数根据<code>params</code>创建<code>div.handle</code>元素以及里面的<code>div.tile</code>各种子元素。<br>
+在创建这边多子元素的时候，有个最佳实践原则：</p>
+<blockquote>
+<p>把DOM拼接成字符串之后一次性放到div.handle元素中。</p>
+</blockquote>
+<p>将场景中的77个<code>tile</code>的每个样式都存储在一个数组中，样式都是按引用方式存储的：</p>
+<pre><code class="language-javascript">	for (i = 0; i &lt; tilesAcross * tilesDown; i++) {
+	    tiles.push($('.tile', $viewport)[i].style);
+	}
+</code></pre>
+<p>这样以后在更新每个tile属性的时候会方便很多。</p>
+<h4 id="">背景偏移数组</h4>
+<p><code>tileBackPos</code>中存储了tile背景图片对应的偏移（x,y）值：</p>
+<pre><code class="language-javascript">tileBackPos.push('0px 0px'); // Tile zero - special 'hidden' tile.
+for (top = 0; top \&lt; params.imageHeight; top += params.tileHeight) {
+	for (left = 0; left &lt; params.imageWidth; left += params.tileWidth) {
+	    tileBackPos.push(-left + 'px ' + -top + 'px');
+	}
+}
+</code></pre>
+<blockquote>
+<p>注意<code>tileBackPos</code>针对的是最原始的背景图片而不是地图！<br>
+使用sprite图制作图标的同学都知道，显示某个图标，只需要获得该图标在sprite图上的偏移位置即可。</p>
+</blockquote>
+<h4 id="draw">函数draw</h4>
+<p>铺设完“地砖”之后，最为重要的是给每个地砖绘制准确的背景图片索引值。这都在方法<code>that.draw</code>中计算的：</p>
+<p>传入当前用户感觉应当偏离的坐标（scrollX，scrollY）值，计算出handle的偏移值<code>xoff</code>和<code>yoff</code>（就是上面说的snap值）：</p>
+<pre><code class="language-javascript">var xoff = -(scrollX % params.tileWidth),
+	yoff = -(scrollY % params.tileHeight);
+//&gt; 0 alternative to math.floor. Number changes from a float to an int.
+handle.style.left = (xoff&gt; 0) + 'px';
+handle.style.top = (yoff&gt; 0) + 'px';
+</code></pre>
+<p>同时计算出目前应当滚过多少片“地砖”：</p>
+<pre><code class="language-javascript">// Convert pixel scroll positions to tile units.
+scrollX = (scrollX / params.tileWidth)&gt; 0;
+scrollY = (scrollY / params.tileHeight)&gt; 0;
+</code></pre>
+<p><code>params.map</code>存储者地图索引值，把二维图片存成一维的数组。<br>
+之后开始绘制逻辑，一行一行的绘制，所以先从列开始循环，第一行（countDown=1）....第二行（countDown=2）...第三行（countDown=3）....</p>
+<pre><code class="language-javascript">
+   for (countDown = tilesDown; countDown; countDown--) {
+
+	    ...
+	
+	    // Draw a row.
+	    sx = scrollX;
+	    mapRow = sy * mapWidth;
+	    for (countAcross = tilesAcross; countAcross; countAcross--) {
+	
+	        ...
+	
+	        // 获取背景图片索引.
+	        tileIndex = map[mapRow + sx];
+	        sx++;
+	        // 如果索引值不为零（表示有对应的图片块），则“绘制”该模块,
+	        if (tileIndex) {
+	            tiles[tileInView].visibility = 'visible';
+	            // 背景图片偏移值
+	            tiles[tileInView++].backgroundPosition = tileBackPos[tileIndex];
+	        }
+	        // 否则就隐藏该板块
+	        else {
+	            tiles[tileInView++].visibility = 'hidden';
+	        }
+	    }
+	    sy++;
+	}
+};
+</code></pre>
+<p>其中有两行关键代码，先是获取块索引tileIndex：</p>
+<pre><code class="language-javascript"> // Get tile index no.
+tileIndex = map[mapRow + sx]; // 其中 mapRow = sy * mapWidth;
+</code></pre>
+<p>这里的mapWidth不是按像素为单位的，是以“块”为单位的；经过map之后，tileIndex就是背景图片所对应的块索引值；有了块索引之后，就开始设置背景图片：</p>
+<pre><code class="language-javascript">// If tile index non zero, then 'draw' it,
+if (tileIndex) {
+	tiles[tileInView].visibility = 'visible';
+	tiles[tileInView++].backgroundPosition = tileBackPos[tileIndex];
+}
+</code></pre>
+<p>注意有些<code>tileIndex</code>的值是为0的，这表示没有背景，所以直接隐藏该块即可：</p>
+<pre><code class="language-javascript">	// 否则就隐藏该板块
+	else {
+	    tiles[tileInView++].visibility = 'hidden';
+	}
+</code></pre>
+<h3 id="">进行视差</h3>
+<p>最后联合调用上面定义的两个函数即可，它初始化了所有的场景，并在鼠标移动的时候控制不同的层以不同的速度滚动，最后以30ms的setInterval调用完成这个效果：</p>
+<pre><code class="language-javascript">// Call the loadMap function. The callback passed
+// is a function that scrolls each viewport according
+// to mouse movement.
+loadMap(&quot;map1.tmx&quot;, $('#viewports'), function (tileScrollers) {
+
+	var ts1 = tileScrollers[0],  // Get the three tileScrollers.
+	    ts2 = tileScrollers[1],
+	    ts3 = tileScrollers[2],
+	    scrollX = 0,             // Current scroll position.
+	    scrollY = 0,
+	    xSpeed = 0,              // Current scroll speed.                             
+	    ySpeed = 0,
+	    // Width and height of viewports.
+	    viewWidth = $('#viewports').innerWidth(),
+	    viewHeight = $('#viewports').innerHeight();
+	
+	// As mouse is moved around viewports,
+	// calculate a speed to scroll by.
+	$('#viewports').mousemove(function (ev) {
+	    xSpeed = ev.clientX - (viewWidth / 2);
+	    xSpeed /= (viewWidth / 2);
+	    xSpeed *= 10;
+	    ySpeed = ev.clientY - (viewHeight / 2);
+	    ySpeed /= (viewHeight / 2);
+	    ySpeed *= 10;
+	});
+	// Every 30 milliseconds, update the scroll positions
+	// for the three tileScrollers. 
+	setInterval(function () {
+	    // Each tileScroller is given a different scroll positions
+	    // for a parralax effect.
+	    ts1.draw(scrollX / 3, scrollY / 3);
+	    ts2.draw(scrollX / 2, scrollY / 2);
+	    ts3.draw(scrollX, scrollY);
+	    // Update scroll position.
+	    scrollX += xSpeed;
+	    scrollY += ySpeed;
+	    // Stop scrolling at edges of map.
+	    // This code can be removed to test the wrapping.
+	    if (scrollX &lt; 0) {
+	        scrollX = 0;
+	    }
+	    if (scrollX &gt; ts3.mapWidthPixels - viewWidth) {
+	        scrollX = ts3.mapWidthPixels - viewWidth;
+	    }
+	    if (scrollY &lt; 0) {
+	        scrollY = 0;
+	    }
+	    if (scrollY &gt; ts3.mapHeightPixels - viewHeight) {
+	        scrollY = ts3.mapHeightPixels - viewHeight;
+	    }
+	}, 30);
+});
+
+</code></pre>
+<blockquote>
+<p>通过 jQuery，很容易处理元素和浏览器窗口的尺寸:<a href="http://www.w3school.com.cn/jquery/jquery_dimensions.asp">http://www.w3school.com.cn/jquery/jquery_dimensions.asp</a></p>
+</blockquote>
+<p>如果，我们注释掉最后的几行代码，我们就可以wrapping，无限滚动了！</p>
+<pre><code class="language-javascript">	    if (scrollX &lt; 0) {
+	        scrollX = 0;
+	    }
+	    if (scrollX &gt; ts3.mapWidthPixels - viewWidth) {
+	        scrollX = ts3.mapWidthPixels - viewWidth;
+	    }
+	    if (scrollY &lt; 0) {
+	        scrollY = 0;
+	    }
+	    if (scrollY &gt; ts3.mapHeightPixels - viewHeight) {
+	        scrollY = ts3.mapHeightPixels - viewHeight;
+	    }
+</code></pre>
+<h2 id="">性能报告</h2>
+<p>为了检测动画的性能，我们使用chrome的<code>Timeline</code>工具进行监测：</p>
+<p>发现帧频都是到<code>30fps</code>上下，怎么回事？</p>
+<p>因为使用了setTimeout函数，其中的设置的ms数恰好是<code>30ms</code>——好凑巧...</p>
+<p>我们使用rAF来改善一下：</p>
+<pre><code class="language-javascript">	var step =  function (timestamp) {
+	    // Each tileScroller is given a different scroll positions
+	    // for a parralax effect.
+	    ts1.draw(scrollX / 3, scrollY / 3);
+	    ts2.draw(scrollX / 2, scrollY / 2);
+	    ts3.draw(scrollX, scrollY);
+	    // Update scroll position.
+	    scrollX += xSpeed;
+	    scrollY += ySpeed;
+	    // Stop scrolling at edges of map.
+	    // This code can be removed to test the wrapping.
+	    if (scrollX &lt; 0) {
+	        scrollX = 0;
+	    }
+	    if (scrollX &gt; ts3.mapWidthPixels - viewWidth) {
+	        scrollX = ts3.mapWidthPixels - viewWidth;
+	    }
+	    if (scrollY &lt; 0) {
+	        scrollY = 0;
+	    }
+	    if (scrollY &gt; ts3.mapHeightPixels - viewHeight) {
+	        scrollY = ts3.mapHeightPixels - viewHeight;
+	    }
+	
+	    window.requestAnimationFrame(step);
+	};
+	
+	window.requestAnimationFrame(step);
+</code></pre>
+<p>是不是流畅到想哭的冲动啊？！</p>
+<h2 id="">手机上能用么？</h2>
+<p>结合上次写的自适应Sprite功能，非常方便地就移植到移动端了！<br>
+没错，使用百分比设置<code>background-size</code>和<code>background-position</code>即可</p>
+<p>其实上面的代码直接放在客户端是可以直接使用的，只是针对不同宽度的手机，它所用的块数的数量是不同的。</p>
+<p>我们的目标是，要求在不同宽度手机上，使用的块数也是一样的————一个直观的感觉是等比缩放。</p>
+<p>最终效果：</p>
+<p data-height="313" data-theme-id="8185" data-slug-hash="XJBdMV" data-default-tab="result" data-user="boycgit" class='codepen'>See the Pen <a href='http://codepen.io/boycgit/pen/XJBdMV/'>parallax_resp</a> by firstcod (<a href='http://codepen.io/boycgit'>@boycgit</a>) on <a href='http://codepen.io'>CodePen</a>.</p>
+<script async src="http://assets.codepen.io/assets/embed/ei.js"></script>
+<h3 id="tilescroller">改造tileScroller</h3>
+<h4 id="tile">获取准确的tile数量</h4>
+<p>首先获取响应式参数：</p>
+<pre><code class="language-javascript">	var ratio = 1 / 46.875;
+	var baseWidth = + $(document.documentElement).css(&quot;font-size&quot;).slice(0,-2);
+</code></pre>
+<p>这两个参数用于<code>tileScroller</code>函数，用于计算准确的tile数量：</p>
+<pre><code class="language-javascript">	Parallax.prototype.tileScroller = function (params) {
+	
+	    // ...other code
+	
+	        // Snapping....
+	        // 根据$viewport大小，计算所需的tile数量
+	        //计算标准下的图像高宽
+	        var standWidth = ($viewport.width()/baseWidth/ratio);
+	        var standHeight = ($viewport.height()/baseWidth/ratio);
+	        tilesAcross =  Math.ceil((standWidth + params.tileWidth) / params.tileWidth),
+	        tilesDown =  Math.ceil((standHeight + params.tileHeight) / params.tileHeight);
+	
+	     // ...other code
+	
+	}
+</code></pre>
+<h4 id="tile">修改tile数据</h4>
+<p>初始化<code>tile</code>时候，将<code>px</code>单位替换成<code>rem</code>，注意这里多了<code>background-size</code>的声明：</p>
+<pre><code class="language-javascript">	// ... ohter code
+	    for (top = 0; top &lt; tilesDown; top++) {
+	        for (left = 0; left &lt; tilesAcross; left++) {
+	            html += '&lt;div class=&quot;tile&quot; style=&quot;position:absolute;' +
+	            'background-image:url(\'' + params.image + '\');' +
+	            'width:' + params.tileWidth*ratio + 'rem;' +
+	            'height:' + params.tileHeight*ratio + 'rem;' +
+	            'background-position: 0% 0%;' +
+	            'background-size: '+ (100 * params.imageWidth / params.tileWidth) +'% auto;' +
+	            'left:' + (left * params.tileWidth * ratio) + 'rem;' +
+	            'top:' + (top * params.tileHeight * ratio) + 'rem;' + '&quot;/&gt;';
+	        }
+	    }
+	
+	// ... ohter code
+</code></pre>
+<h4 id="">背景位置百分比</h4>
+<p>之后最为关键的，就是初始化Sprite图片时，需要使用百分比：</p>
+<pre><code class="language-javascript">	// ... other code
+	    tileBackPos.push('0% 0%'); // Tile zero - special 'hidden' tile.
+	    for (top = 0; top &lt; params.imageHeight; top += params.tileHeight) {
+	        for (left = 0; left &lt; params.imageWidth; left += params.tileWidth) {
+	            tileBackPos.push((-left/(params.tileWidth - params.imageWidth)*100) + '% ' + (-top/(params.tileHeight - params.imageHeight)*100) + '%');
+	        }
+	    }
+	// ... other code
+
+</code></pre>
+<blockquote>
+<p>P.S 百分比化的原理参见 “响应式Sprite图片”章节</p>
+</blockquote>
+<h3 id="draw">改造draw函数</h3>
+<p>这个draw函数也是属于<code>tileScroller</code>的，只用适当地替换单位即可：</p>
+<pre><code class="language-javascript">	handle.style.left = (xoff &gt;&gt; 0)*ratio + 'rem';
+	handle.style.top = (yoff &gt;&gt; 0)*ratio + 'rem';
+</code></pre>
+<p>好了就这么简单。具体代码参见：<a href="http://codepen.io/boycgit/pen/XJBdMV">http://codepen.io/boycgit/pen/XJBdMV</a></p>
+<h3 id="">加上传感器</h3>
+<p>利用Z轴作为法向量，因此x、y轴方向可以用<code>gamma</code>和<code>beta</code>计算：</p>
+<pre><code class="language-javascript">	// 加入传感器
+	if (window.DeviceOrientationEvent){
+	
+	    $(window).on('deviceorientation',function(e){
+	        // 速度分解，速度矢量方向是z轴，进行x方向和y方向的速度分解
+	        xSpeed = e.originalEvent.gamma / 5;
+	        ySpeed = e.originalEvent.beta / 5;
+	
+	    }); 
+	} 
+</code></pre>
+<p>将这段代码添加到主函数中，这样方便动态修改速度值：</p>
+<pre><code class="language-javascript">// 第二个重点：动态部分
+// Call the loadMap function. The callback passed
+// is a function that scrolls each viewport according
+// to mouse movement.
+loadMap(mapJSON, $('#viewports'), function (tileScrollers) {
+
+	// ......
+	// 加入传感器
+	if (window.DeviceOrientationEvent){
+	
+	    $(window).on('deviceorientation',function(e){
+	        // console.log(&quot;44,log&quot;,e.originalEvent.gamma);
+	        // 速度分解，速度矢量方向是z轴，进行x方向和y方向的速度分解
+	        xSpeed = e.originalEvent.gamma / 5;
+	        ySpeed = e.originalEvent.beta / 5;
+	
+	    }); 
+	} 
+	// Every 30 milliseconds, update the scroll positions
+	// for the three tileScrollers. 
+	setInterval(function () {
+	    // Each tileScroller is given a different scroll positions
+	    // for a parralax effect.
+	    ts1.draw(scrollX / 3, scrollY / 3);
+	    ts2.draw(scrollX / 2, scrollY / 2);
+	    ts3.draw(scrollX, scrollY);
+	    // Update scroll position.
+	    scrollX += xSpeed;
+	    scrollY += ySpeed;
+	    // ....
+	}, 30);
+});
+</code></pre>
+<p>好了，现在在手机端打开，摇摆你的手机吧~~</p>
+<blockquote>
+<p>P.S. 本地调试代码已经托管在<a href="https://github.com/boycgit/demos">demos</a>仓库中了</p>
+</blockquote>
+<pre><code class="language-javascript">
+</code></pre>
+<!--kg-card-end: markdown--><!--kg-card-end: markdown-->
+                </div>
+            </section>
+            <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
+            <section style="text-align: center"><img
+                    src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg" /></section>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+                integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+                integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH"
+                crossorigin="anonymous"></script>
+
+
+            <section id="gitalk-component-wrap"/>
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" />
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/boycgit/index.html">boycgit</a></h4>
+            <p>阅读此作者的<a href='../author/boycgit/index.html'>更多文章</a>.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/boycgit/index.html">阅读更多</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+                <article class="read-next-card"
+                            style="background-image: url(https://casper.ghost.org/v1.0.0/images/blog-cover.jpg)"
+                >
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">&mdash; JSCON-简时空 &mdash;</small>
+                        <h3 class="read-next-card-header-title"><a href="../tag/javascript/index.html">javascript</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="../debugging-with-ts-jest/index.html">在 ts + Jest 单元测试中 debugging</a></li>
+                            <li><a href="../typescript-advance-cheatsheet/index.html">速查手册 - TypeScript 高级类型 cheat sheet</a></li>
+                            <li><a href="../react-hooks-capture-value/index.html">理解 React Hooks 的 Capture Value 特性</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="../tag/javascript/index.html">查看所有13篇文章 →</a>
+                    </footer>
+                </article>
+
+                <article class="post-card post tag-webpack tag-jing-yan-zong-jie">
+        <a class="post-card-image-link" href="../webpack-multi-entry/index.html">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1527276826904-9c2275f441e5?ixlib&#x3D;rb-1.2.1&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../webpack-multi-entry/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">Webpack</span>
+                <h2 class="post-card-title">Webpack实战 - 使用动态 entry 改善调试体验</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>使用 Webpack 开发多页面系统时，会受到页面数量影响，可采用动态 entry 的方式优化；动态 entry 实施的过程是借鉴 webpack 自身的 SingleEntryPlugin 插件进行的，在可靠性方面有很大的保障</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/index.html" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" /></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 6 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-za-shi">
+        <a class="post-card-image-link" href="../about-me/index.html">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1511344506912-a2a2d4916354?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;c56b7209a955b18ed284ca2274e4a83c)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../about-me/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">杂事</span>
+                <h2 class="post-card-title">About Me</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>let myself = {     name: 'JSCON',     age: '&gt; 25' } External Links 新浪微博 segmentfault     \[{e^{\pi i}} + 1 = 0\]</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/index.html" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" /></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 1 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://boycgit.github.io">
+                <img src="../content/images/2018/08/logo.png" alt="JSCON-简时空 icon" />
+            <span>JSCON-简时空</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">视差卷轴特效</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8A%E8%A7%86%E5%B7%AE%E5%8D%B7%E8%BD%B4%E7%89%B9%E6%95%88%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/parallax-scrolling/"
+            onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1534600204727" class="icon" style="" viewBox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/parallax-scrolling/&mhid=txbODQq7nZkhMHcqI9xROqg"
+            onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1534604253879" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.min.js"></script>
+
+<script>
+    (function () {
+        /**
+         * Get Node
+         * @param  {String|Element} el
+         * @param  {Boolean} noCache
+         * @return {Element}
+         */
+        var cacheNode = {};
+        function getNode(el, noCache) {
+            if (noCache === void 0) noCache = false;
+
+            if (typeof el === 'string') {
+                if (typeof window.Vue !== 'undefined') {
+                    return find(el);
+                }
+                el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el));
+            }
+
+            return el;
+        }
+
+        /**
+         * Find element
+         * @example
+         * find('nav') => document.querySelector('nav')
+         * find(nav, 'a') => nav.querySelector('a')
+         */
+        function find(el, node) {
+            return node ? el.querySelector(node) : document.querySelector(el);
+        }
+        function create(node, tpl) {
+            node = document.createElement(node);
+            if (tpl) {
+                node.innerHTML = tpl;
+            }
+            return node;
+        }
+        function appendTo(target, el) {
+            return target.appendChild(el);
+        }
+
+        function renderGitalkContainer() {
+            var div = create('div');
+            div.id = 'gitalk-container';
+            var main = getNode('#site-main');
+            div.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            appendTo(find('#gitalk-component-wrap'), div);
+            var script = create('script');
+            var content = "gitalk.render('gitalk-container')";
+        }
+        renderGitalkContainer();
+
+        var gitalk = new Gitalk({
+            clientID: 'a65ee9e3ea5168da1470',
+            clientSecret: 'ebfd520679d1ad61929b1887b2efccd4872389e3',
+            repo: 'boycgit.github.io',
+            owner: 'boycgit',
+            admin: [
+                'boycgit'
+            ],
+            id: location.pathname,
+            // facebook-like distraction free mode
+            distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container');
+
+
+
+        var postImages = document.querySelectorAll('.post-content img');
+        Array.prototype.forEach.call(postImages, function (el, i) {
+            el.outerHTML = `<aholder href="${el.src}" data-lightbox="postImages" data-title="${el.alt}">${el.outerHTML}</aholder>`.replace(/aholder/g, 'a');
+        });
+
+        // 动态添加 js 脚本
+        setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/js/lightbox.min.js";
+            document.getElementsByTagName('body')[0].appendChild(script);
+
+            script.onload = function () {
+
+                console.log('load success');
+            }
+        }, 1000);
+
+    })();
+</script>
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://boycgit.github.io">JSCON-简时空</a> &copy; 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="https://boycgit.github.io">最新文章</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=11f1923694"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });
+</script>
+
+</body>
+</html>
+</html>

@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh">
+<!DOCTYPE html><html lang="zh">
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Node.js -  200 多行代码实现 Websocket 协议</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=11f1923694" />
+
+    <meta name="description" content="最近正在研究 Websocket 相关的知识，想着如何能自己实现 Websocket 协议。到网上搜罗了一番资料后用 Node.js 实现该协议，本文会从知识储备、具体代码分析以及注意事项角度去讲解如何用 Node.js 实现一个简单的 Websocket 服务，除去注释语句和 console 语句后，大约 200 行代码左右。本文记录了实现过程中的经验和总结。" />
+    <link rel="shortcut icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="https://boycgit.github.io/implement-websocket-protocol/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <link rel="amphtml" href="https://boycgit.github.io/implement-websocket-protocol/amp/" />
+    
+    <meta property="og:site_name" content="JSCON-简时空" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Node.js -  200 多行代码实现 Websocket 协议" />
+    <meta property="og:description" content="最近正在研究 Websocket 相关的知识，想着如何能自己实现 Websocket 协议。到网上搜罗了一番资料后用 Node.js 实现该协议，本文会从知识储备、具体代码分析以及注意事项角度去讲解如何用 Node.js 实现一个简单的 Websocket 服务，除去注释语句和 console 语句后，大约 200 行代码左右。本文记录了实现过程中的经验和总结。" />
+    <meta property="og:url" content="https://boycgit.github.io/implement-websocket-protocol/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1496055401924-5e7fdc885742?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;24c37e30b5bde3626b5dff19ff0bd456" />
+    <meta property="article:published_time" content="2018-09-21T09:35:00.000Z" />
+    <meta property="article:modified_time" content="2019-06-24T03:13:06.000Z" />
+    <meta property="article:tag" content="Node.js" />
+    <meta property="article:tag" content="源码" />
+    <meta property="article:tag" content="教程" />
+    <meta property="article:tag" content="TCP" />
+    <meta property="article:tag" content="计算机网络" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Node.js -  200 多行代码实现 Websocket 协议" />
+    <meta name="twitter:description" content="最近正在研究 Websocket 相关的知识，想着如何能自己实现 Websocket 协议。到网上搜罗了一番资料后用 Node.js 实现该协议，本文会从知识储备、具体代码分析以及注意事项角度去讲解如何用 Node.js 实现一个简单的 Websocket 服务，除去注释语句和 console 语句后，大约 200 行代码左右。本文记录了实现过程中的经验和总结。" />
+    <meta name="twitter:url" content="https://boycgit.github.io/implement-websocket-protocol/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1496055401924-5e7fdc885742?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;24c37e30b5bde3626b5dff19ff0bd456" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="boycgit" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Node.js, 源码, 教程, TCP, 计算机网络" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="810" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "JSCON-简时空",
+        "logo": "https://boycgit.github.io/content/images/2018/08/logoicon.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "boycgit",
+        "image": {
+            "@type": "ImageObject",
+            "url": "//www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&d=mm&r=x",
+            "width": 250,
+            "height": 250
+        },
+        "url": "https://boycgit.github.io/author/boycgit/",
+        "sameAs": []
+    },
+    "headline": "Node.js -  200 多行代码实现 Websocket 协议",
+    "url": "https://boycgit.github.io/implement-websocket-protocol/",
+    "datePublished": "2018-09-21T09:35:00.000Z",
+    "dateModified": "2019-06-24T03:13:06.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1496055401924-5e7fdc885742?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ&s=24c37e30b5bde3626b5dff19ff0bd456",
+        "width": 1080,
+        "height": 810
+    },
+    "keywords": "Node.js, 源码, 教程, TCP, 计算机网络",
+    "description": "最近正在研究 Websocket 相关的知识，想着如何能自己实现 Websocket 协议。到网上搜罗了一番资料后用 Node.js 实现该协议，本文会从知识储备、具体代码分析以及注意事项角度去讲解如何用 Node.js 实现一个简单的 Websocket 服务，除去注释语句和 console 语句后，大约 200 行代码左右。本文记录了实现过程中的经验和总结。",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://boycgit.github.io/"
+    }
+}
+    </script>
+
+    <script src="../public/ghost-sdk.js?v=11f1923694"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "7c2ea2eb9409"
+});
+</script>
+    <meta name="generator" content="Ghost 2.31" />
+    <link rel="alternate" type="application/rss+xml" title="JSCON-简时空" href="https://boycgit.github.io/rss/" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-69473481-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-69473481-3');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+<style>
+
+/* 结束 */
+
+  .end-block-wrap{
+        color:#338daf;
+        text-align: center;
+    }
+
+    .end-block-wrap img{
+        border: none;
+        max-width: 100%;
+        margin: 0px auto; display: inline-block;
+    }
+
+    .end-block-wrap img.main{
+        width: 30px;
+    }
+
+
+/* 参考文档 */
+.ref-wrap .line-text{
+    display: flex;justify-content:center;align-items:flex-end;
+}
+
+.ref-wrap .line-text::before, .ref-wrap .line-text::after{
+    content: '';
+    display: inline-block;
+    width: 25%; border-bottom: 1px dashed rgb(51, 51, 51); box-sizing: border-box;
+}
+
+.ref-wrap .text.main{
+    font-size: 14px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 0px 10px; 
+    font-weight: bold; 
+    margin-bottom: -5px; 
+    box-sizing: border-box;
+}
+
+.ref-wrap  .text.second{
+    font-size: 16px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 10px; 
+    text-align: center; 
+    box-sizing: border-box;
+}
+/* 求关注 */
+.qr-wrap{
+    margin-right: auto; 
+    margin-left: auto; 
+    width: 360px; 
+    border: none rgb(255, 129, 36); 
+    background: url(https://mpt.135editor.com/mmbiz_gif/ziadDDQxbCJFA2XMwm7VE1RTcS94u8LqVWSjIasMfzY8aG5HolkBhHhwEp0eUpPCEzPYqXYicbRNtROJibbM9P55g/0?wx_fmt=gif) right 0px no-repeat; 
+    background-size: contain; 
+    box-sizing: border-box;
+}
+
+.qr-image{
+    padding: 10px 3px; 
+    width: 150px; 
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.qr-image img{
+    width: 150px;
+}
+
+
+</style>
+
+</head>
+<body class="post-template tag-node-js tag-yuan-ma tag-jiao-cheng tag-tcp tag-ji-suan-ji-wang-luo">
+
+    <div class="site-wrapper">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/css/lightbox.min.css">
+
+
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://boycgit.github.io"><img src="../content/images/2018/08/logoicon.png" alt="JSCON-简时空" /></a>
+            <ul class="nav" role="menu">
+    <li class="nav-shou-ye" role="menuitem"><a href="https://boycgit.github.io/">首页</a></li>
+    <li class="nav-guan-yu" role="menuitem"><a href="https://boycgit.github.io/about-me/">关于</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://boycgit.github.io/rss/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-node-js tag-yuan-ma tag-jiao-cheng tag-tcp tag-ji-suan-ji-wang-luo ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2018-09-21">21 September 2018</time>
+                        <span class="date-divider">/</span> <a href="../tag/node-js/index.html">Node.js</a>
+                </section>
+                <h1 class="post-full-title">Node.js -  200 多行代码实现 Websocket 协议</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1496055401924-5e7fdc885742?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;24c37e30b5bde3626b5dff19ff0bd456)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <!--kg-card-begin: markdown--><h1 id="a">A、预备工作</h1>
+<h2 id="1">1、序</h2>
+<p>最近正在研究 Websocket 相关的知识，想着如何能自己实现 Websocket 协议。到网上搜罗了一番资料后用 Node.js 实现该协议，倒也没有想象中那么复杂，除去注释语句和 console 语句后，大约 200 行代码左右。本文记录了实现过程中的经验和总结。</p>
+<p>如果你想要写一个 WebSocket 服务器，首先需要读懂对应的网络协议 <a href="https://tools.ietf.org/html/rfc6455">RFC6455</a>，不过这对于一般人来说有些 “晦涩”，英文且不说，还得咬文嚼字理解 <strong>网络编程</strong> 含义。</p>
+<p>好在 WebSocket 技术出现比较早，所以可以搜到 <a href="https://wenku.baidu.com/view/2dc93465844769eae009ed86.html">RFC6455 中文版</a>，网上也有很多针对该协议的剖析文章，很多文章里还有现成的实现代码可以参考，所以说实现一个简单的 Websocket 服务并非难事。</p>
+<p>本文<strong>更偏向实战</strong>（in action），会从知识储备、具体代码分析以及注意事项角度去讲解如何用 Node.js 实现一个简单的 Websocket 服务，至于 Websocket 概念、定义、解释和用途等基础知识不会涉及，因为这些知识在本文所列的参考文章中轻松找到。（也可以自行网上随便一搜，就能找到很多）</p>
+<h2 id="2">2、知识储备</h2>
+<p>如果要自己写一个 Websocket 服务，主要有两个难点：</p>
+<ol>
+<li>熟练掌握 Websocket 的协议，这个需要多读现有的解读类文章；（下面会给出参考文章）</li>
+<li>操作二进制数据流，在 Node.js 中需要对 <a href="http://nodejs.cn/api/buffer.html">Buffer</a> 这个类稍微熟悉些。</li>
+</ol>
+<p>同时还需要具备两个基础知识点：</p>
+<ul>
+<li>网络编程中使用 <strong>大端次序</strong>（Big endian）表示大于一字节的数据，称之为 <strong>网络字节序</strong> （不晓得大小端的，推荐阅读 <a href="https://www.bysocket.com/?p=615">什么是大小端？</a>）</li>
+<li>了解最高有效位（MSB， Most Significant Bit），不太清楚的，可以参考 <a href="https://blog.csdn.net/qq_29350001/article/details/51177404">LSB最低有效位和MSB最高有效位</a></li>
+</ul>
+<p>具体的做法如下，推荐先阅读以下几篇参考文章：</p>
+<ul>
+<li><a href="https://github.com/abbshr/abbshr.github.io/issues/22">学习WebSocket协议—从顶层到底层的实现原理（修订版）</a>：作者本身自己就用 Node.js 实现过一遍，知识点讲解挺透彻的，适合前端同学优先阅读</li>
+<li><a href="http://www.52im.net/thread-331-1-1.html">WebSocket详解（一）：初步认识WebSocket技术</a>：是一系列的文章，从浅入深，配有丰富的图文</li>
+<li><a href="https://segmentfault.com/a/1190000012709475">WebSocket：5分钟从入门到精通</a>：全文以 Q&amp;A 的方式组织而成，协议的要点都解读到了，除此之外还很全面， 涉及了WebSocket如何建立连接、交换数据的细节、数据帧的格式以及网络安全等。</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers">MDN - Writing WebSocket servers</a>：MDN 官方教程，读一遍没啥坏处。</li>
+</ul>
+<p>然后开始写代码，在实现过程中的大部分代码可以从下面 3 篇文章中找到并借鉴（copy）：</p>
+<ul>
+<li><a href="https://blog.csdn.net/Newpidian/article/details/50850670">nodejs 实现</a>：简化版本的从这儿借鉴过来的</li>
+<li><a href="https://github.com/abbshr/abbshr.github.io/issues/22">学习WebSocket协议—从顶层到底层的实现原理（修订版）</a></li>
+<li><a href="http://www.cnblogs.com/jice1990/p/5435419.html">WebSocket协议解析</a>：虽然是 C++ 写的，但不影响代码逻辑的理解</li>
+</ul>
+<p>阅读完上面的文章，你会有发现一个共同点，就是在实现 WebSockets 过程中，最最核心的部分就是 <strong>解析</strong> 或者 <strong>生成</strong> Frame（帧），就是下面这结构：<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190624105952.png" alt="帧结构标准"></p>
+<blockquote>
+<p>截图来自规范<a href="https://tools.ietf.org/html/rfc6455#section-5.2">Base Framing Protocol</a></p>
+</blockquote>
+<p>想要理解 frame 各个字段的含义，可参考 <a href="http://www.52im.net/thread-332-1-1.html">WebSocket详解（三）：深入WebSocket通信协议细节</a>，文中作者绘制了一副图来解释这个 frame 结构；</p>
+<p>而在代码层面，frame 的解析或生成可以在  <a href="https://github.com/abbshr/RocketEngine/blob/master/lib/wsframe/parser.js">RocketEngine - parser</a> 或者 <code>_processBuffer</code> 中找到。</p>
+<p>在完成上面几个方面的知识储备之后，而且大多有现成的代码，所以自己边抄边写一个 Websocket 服务器并不算太难。</p>
+<p>对于 Websocket 初学者，请务必阅读以上参考文章，对 Websocket 协议有大概的了解之后再继续本文剩下部分的阅读，否则很有可能会觉得我写得云里雾里，不知所云。</p>
+<h1 id="b">B、 实战</h1>
+<p>实现代码放在自己的  <a href="https://github.com/boycgit/demos/blob/master/websocket/micro-ws/README.md">demos 仓库的 micro-ws 的目录</a> 了，git clone 后本地运行，执行</p>
+<pre><code class="language-js">node index.js
+</code></pre>
+<p>将会在 <a href="http://127.0.0.1:3000">http://127.0.0.1:3000</a> 创建服务。运行服务之后，打开控制台就能看到效果：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blogNbRwgy1fv70a9e8adg30hs0fuqrz.gif" alt="实战效果图"></p>
+<p>动图中浏览器 console 所执行的 js 代码步骤如下：</p>
+<p><strong>1.先建立连接</strong>：</p>
+<pre><code class="language-js">var ws = new WebSocket(&quot;ws://127.0.0.1:3000&quot;);
+ws.onmessage = function(evt) {
+  console.log( &quot;Received Message: &quot; + evt.data);
+};
+</code></pre>
+<p><strong>2.然后发送消息</strong>：（注意一定要在建立连接之后再执行该语句，否则发不出消息的）</p>
+<pre><code class="language-js">ws.send('hello world'); 
+</code></pre>
+<p>从效果可见，我们已经实现 Websocket 最基本的通讯功能了。</p>
+<p>接下来我们详细看一下具体实现的细节。</p>
+<h2 id="1websocket">1、调用所写的 Websocket 类</h2>
+<p>站在使用者的角度，<strong>假设我们已经完成 Websocket 类了</strong>，那么应该怎么使用？</p>
+<p>客户端通过 HTTP <strong>Upgrade</strong> 请求，即 101 Switching Protocol 到 HTTP 服务器，然后由服务器进行协议转换。</p>
+<p>在 Node.js 中我们通过 <a href="http://nodejs.cn/api/http.html#http_http_createserver_options_requestlistener">http.createServer</a> 获取 <code>http.server</code> 实例，然后监听 <a href="http://nodejs.cn/api/http.html#http_event_upgrade">upgrade 事件</a>，在处理这个事件：</p>
+<pre><code class="language-js">// HTTP服务器部分
+var server = http.createServer(function(req, res) {
+  res.end('websocket test\r\n');
+});
+
+// Upgrade请求处理
+server.on('upgrade', function(req, socket, upgradeHead){
+  // 初始化 ws
+  var ws = new WebSocket(req, socket, upgradeHead);
+  
+  // ... ws 监听 data、error 的逻辑等
+
+});
+
+</code></pre>
+<p>这里监听 <strong>upgrade</strong> 事件的回调函数中第二个参数 <code>socket</code> 是 <a href="http://nodejs.cn/api/net.html#net_class_net_socket">net.Socket</a> 实例，这个类是 TCP 或 UNIX Socket 的抽象，同时一个 net.Socket 也是一个 <a href="http://nodejs.cn/s/2iRabr">duplex stream</a>，所以它能被读或写，并且它也是一个 <a href="http://nodejs.cn/s/pGAddE">EventEmitter</a>。</p>
+<p>我们就利用这个 socket 对象上进行 Websocket 类实例的初始化工作；</p>
+<h2 id="2">2、构造函数</h2>
+<p>所以不难理解 Websocket 的构造函数就是下面这个样子：</p>
+<pre><code class="language-js">class WebSocket extends EventEmitter {
+  constructor(req, socket, upgradeHead){
+    super(); // 调用 EventEmitter 构造函数
+    
+    // 1. 构造响应头 resHeaders 部分
+    
+    // 2. 监听 socket 的 data 事件，以及 error 事件
+    
+    // 3. 初始化成员属性
+    
+  }
+}
+</code></pre>
+<p>注意，我们需要继承内置的 EventEmitter ，这样生成的实例才能监听、绑定事件；</p>
+<blockquote>
+<p>Node.js 采用事件驱动、异步编程，天生就是为了网络服务而设计的，继承 EventEmitter 就能享受到非阻塞模式的 IO 处理；</p>
+</blockquote>
+<p>讲一下其中 <strong>响应头的构造</strong> 和 <strong>事件监听</strong> 部分。</p>
+<h3 id="21responseheader">2.1、返回响应头（Response Header）</h3>
+<p>根据协议规范，我们能写出响应头的内容：</p>
+<ol>
+<li>将 <code>Sec-WebSocket-Key</code> 跟 <code>258EAFA5-E914-47DA-95CA-C5AB0DC85B11</code>拼接。</li>
+<li>通过 <strong>SHA1</strong> 计算出摘要，并转成 <strong>base64</strong> 字符串。</li>
+</ol>
+<p>具体代码如下：</p>
+<pre><code class="language-js">    var resKey = hashWebSocketKey(req.headers['sec-websocket-key']);
+
+    // 构造响应头
+    var resHeaders = [
+      'HTTP/1.1 101 Switching Protocols',
+      'Upgrade: websocket',
+      'Connection: Upgrade',
+      'Sec-WebSocket-Accept: ' + resKey
+    ]
+      .concat('', '')
+      .join('\r\n');
+    socket.write(resHeaders);
+</code></pre>
+<p>当执行 <code>socket.write(resHeaders);</code> 到后就和客户端建立起 WebSocket 连接了，剩下去就是数据的处理。</p>
+<h3 id="22">2.2、监听事件</h3>
+<p><code>socket</code> 就是 TCP 协议的抽象，直接在上面监听已有的 <code>data</code> 事件和 <code>close</code> 事件这两个事件。</p>
+<blockquote>
+<p>还有其他事件，比如 <code>error</code>、<code>end</code> 等，详细参考 <a href="http://nodejs.cn/api/net.html#net_class_net_socket">net.Socket</a> 文档</p>
+</blockquote>
+<pre><code class="language-js">    socket.on('data', data =&gt; {
+      this.buffer = Buffer.concat([this.buffer, data]);
+      while (this._processBuffer()) {} // 循环处理返回的 data 数据
+    });
+
+    socket.on('close', had_error =&gt; {
+      if (!this.closed) {
+        this.emit('close', 1006);
+        this.closed = true;
+      }
+    });
+</code></pre>
+<p><code>close</code> 的事件逻辑比较简单，比较重要的是 <code>data</code> 的事件监听部分。核心就是 <code>this._processBuffer()</code> 这个方法，用于处理客户端传送过来的数据（即 Frame 数据）<br>
+。注意该方法是放在 <code>while</code> 循环语句里，处理好边界情况，防止死循环。</p>
+<h2 id="3frame">3、Frame 帧数据的处理</h2>
+<p>WebSocket 客户端、服务端通信的最小单位是帧（frame），由1个或多个帧组成一条完整的消息（message）。<br>
+这 <code>this._processBuffer()</code> 部分代码逻辑就是用来解析帧数据的，所以它是实现 Websocket 代码的关键；（该方法里面用到了大量的位操作符以及 <a href="http://nodejs.cn/api/buffer.html">Buffer</a> 类的操作）</p>
+<p>帧数据结构详细定义可参考 <a href="https://tools.ietf.org/html/rfc6455#section-5.2">RFC6455 5.2节</a>，上面罗列的参考文章都有详细的解读，我在这儿也不啰嗦讲细节了，直接看代码比听我用文字讲要好。</p>
+<p>这里就其中两个细节需要铺垫一下，方便更好地理解代码。</p>
+<h3 id="31opcode">3.1、操作码（Opcode）</h3>
+<p><code>Opcode</code> 即 <strong>操作代码</strong>，Opcode 的值决定了应该如何解析后续的<strong>数据载荷</strong>（data payload）</p>
+<p>根据 Opcode 我们可以大致将数据帧分成两大类：<strong>数据帧</strong> 和 <strong>控制帧</strong>。</p>
+<ul>
+<li><strong>数据帧</strong>：目前只有 3 种，对应的 opcode 是：
+<ul>
+<li><strong>0x0</strong>：数据延续帧</li>
+<li><strong>0x1</strong>：utf-8文本</li>
+<li><strong>0x2</strong>：二进制数据；</li>
+<li><strong>0x3</strong> - <strong>0x7</strong>：目前保留，用于后续定义的非控制帧。</li>
+</ul>
+</li>
+<li><strong>控制帧</strong>：除了上述 3 种数据帧之外，剩下的都是控制帧
+<ul>
+<li><strong>0x8</strong>：表示连接断开</li>
+<li><strong>0x9</strong>：表示 ping 操作</li>
+<li><strong>0xA</strong>：表示 pong 操作</li>
+<li><strong>0xB - 0xF</strong>：目前保留，用于后续定义的控制帧</li>
+</ul>
+</li>
+</ul>
+<p>在代码里，我们会先从帧数据中提取操作码：</p>
+<pre><code class="language-js">var opcode = byte1 &amp; 0x0f; //截取第一个字节的后 4 位，即 opcode 码
+</code></pre>
+<p>然后根据协议获取到真正的数据载荷（data payload），然后将这两部分传给 <code>_handleFrame</code> 方法：</p>
+<pre><code class="language-js">this._handleFrame(opcode, payload); // 处理操作码
+</code></pre>
+<p>该方法会根据不同的 <code>opcode</code> 做出不同的操作：</p>
+<pre><code class="language-js">_handleFrame(opcode, buffer) {
+    var payload;
+    switch (opcode) {
+      case OPCODES.TEXT:
+        payload = buffer.toString('utf8'); //如果是文本需要转化为utf8的编码
+        this.emit('data', opcode, payload); //Buffer.toString()默认utf8 这里是故意指示的
+        break;
+      case OPCODES.BINARY: //二进制文件直接交付
+        payload = buffer;
+        this.emit('data', opcode, payload);
+        break;
+      case OPCODES.PING: // 发送 pong 做响应
+        this._doSend(OPCODES.PONG, buffer);
+        break;
+      case OPCODES.PONG: //不做处理
+        console.log('server receive pong');
+        break;
+      case OPCODES.CLOSE: // close有很多关闭码
+        let code, reason; // 用于获取关闭码和关闭原因
+        if (buffer.length &gt;= 2) {
+          code = buffer.readUInt16BE(0);
+          reason = buffer.toString('utf8', 2);
+        }
+        this.close(code, reason);
+        this.emit('close', code, reason);
+        break;
+      default:
+        this.close(1002, 'unhandle opcode:' + opcode);
+    }
+  }
+</code></pre>
+<h3 id="32fragment">3.2、分片（Fragment）</h3>
+<blockquote>
+<p>规范文档：<a href="https://tools.ietf.org/html/rfc6455#section-5.4">5.4 -  Fragmentation</a></p>
+</blockquote>
+<p>一旦 WebSocket 客户端、服务端建立连接后，后续的操作都是基于数据帧的传递。理论上来说，每个帧（Frame）的大小是没有限制的。</p>
+<p>对于大块的数据，Websocket 协议建议对数据进行<strong>分片</strong>（Fragment）操作。</p>
+<p>分片的意义主要是两方面：</p>
+<ul>
+<li>主要目的是允许当消息开始但不必缓冲该消息时<strong>发送一个未知大小的消息</strong>。如果消息不能被分片，那么端点将不得不缓冲整个消息以便在首字节发生之前统计出它的长度。对于分片，服务器或中间件可以选择一个合适大小的缓冲，当缓冲满时，再写一个片段到网络。</li>
+<li>另一方面分片传输也能更高效地<strong>利用多路复用提高带宽利用率</strong>，一个逻辑通道上的一个大消息独占输出通道是不可取的，因此多路复用需要可以分割消息为更小的分段来更好的共享输出通道。参考文档 <a href="https://www.zhihu.com/question/28594409">I/O多路复用技术（multiplexing）是什么？</a></li>
+</ul>
+<p>WebSocket 协议提供的分片方法，是将原本一个大的帧拆分成数个小的帧。下面是把一个大的Frame分片的图示：</p>
+<table>
+<thead>
+<tr>
+<th>分片编号</th>
+<th>0</th>
+<th>1</th>
+<th>...</th>
+<th>n-2</th>
+<th>n-1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FIN</td>
+<td>0</td>
+<td>0</td>
+<td>...</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>opcode</td>
+<td>!0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>由图可知，第一个分片的 <code>FIN</code> 为 0，Opcode 为非0值（0x1 或 0x2），最后一个分片的FIN为1，Opcode为 0。中间分片的 <code>FIN</code> 和 <code>opcode</code> 二者均为 0。</p>
+<ul>
+<li>根据 FIN 的值来判断，是否已经收到消息的最后一个数据帧。
+<ul>
+<li><code>FIN=1</code> 表示当前数据帧为消息的最后一个数据帧，此时接收方已经收到完整的消息，可以对消息进行处理。</li>
+<li><code>FIN=0</code>，则接收方还需要继续监听接收其余的数据帧。</li>
+</ul>
+</li>
+<li>opcode在数据交换的场景下，表示的是数据的类型。
+<ul>
+<li><code>0x01</code> 表示文本，永远是 <code>utf8</code> 编码的</li>
+<li><code>0x02</code> 表示二进制</li>
+<li>而 <code>0x00</code> 比较特殊，表示 <strong>延续帧</strong>（continuation frame），顾名思义，就是完整消息对应的数据帧还没接收完。</li>
+</ul>
+</li>
+</ul>
+<p>代码里，我们需要检测 FIN 的值，如果为 0 说明有分片，需要记录第一个 FIN 为 0 时的 <code>opcode</code> 值，缓存到 <code>this.frameOpcode</code> 属性中，将载荷缓存到 <code>this.frames</code> 属性中：</p>
+<pre><code class="language-js">    var FIN = byte1 &amp; 0x80; // 如果为0x80，则标志传输结束，获取高位 bit
+    // 如果是 0 的话，说明是延续帧，需要保存好 opCode
+    if (!FIN) {
+      this.frameOpcode = opcode || this.frameOpcode; // 确保不为 0;
+    }
+    
+    //....
+    // 有可能是分帧，需要拼接数据
+    this.frames = Buffer.concat([this.frames, payload]); // 保存到 frames 中
+
+</code></pre>
+<p>当接收到最后一个 <code>FIN</code> 帧的时候，就可以组装后给 <code>_handleFrame</code> 方法：</p>
+<pre><code class="language-js">    if (FIN) {
+      payload = this.frames.slice(0); // 获取所有拼接完整的数据
+      opcode = opcode || this.frameOpcode; // 如果是 0 ，则保持获取之前保存的 code
+      this.frames = Buffer.alloc(0); // 清空 frames
+      this.frameOpcode = 0; // 清空 opcode
+      this._handleFrame(opcode, payload); // 处理操作码
+    }
+</code></pre>
+<h3 id="33">3.3、发送数据帧</h3>
+<p>上面讲的都是接收并解析来自客户端的数据帧，当我们想给客户端发送数据帧的时候，也得按协议来。</p>
+<p>这部分操作相当于是上述 <code>_processBuffer</code> 方法的逆向操作，在代码里我们使用 <code>encodeMessage</code> 方法（为了简单起见，<strong>我们发送给客户端的数据没有经过掩码处理</strong>）将发送的数据分装成数据帧的格式，然后调用 <code>socket.write</code> 方法发送给客户端；</p>
+<pre><code class="language-js">  _doSend(opcode, payload) {
+    // 1. 考虑数据分片
+    this.socket.write(
+      encodeMessage(count &gt; 0 ? OPCODES.CONTINUE : opcode, payload)
+    ); //编码后直接通过socket发送
+</code></pre>
+<p>为了考虑分片场景，特意设置 <code>MAX_FRAME_SIZE</code> 来对每次发送的数据长度做截断做分片：</p>
+<pre><code class="language-js">    // ...
+    var len = Buffer.byteLength(payload);
+    // 分片的距离逻辑
+    var count = 0;
+    // 这里可以针对 payload 的长度做分片
+    while (len &gt; MAX_FRAME_SIZE) {
+      var framePayload = payload.slice(0, MAX_FRAME_SIZE);
+      payload = payload.slice(MAX_FRAME_SIZE);
+      this.socket.write(
+        encodeMessage(
+          count &gt; 0 ? OPCODES.CONTINUE : opcode,
+          framePayload,
+          false
+        )
+      ); //编码后直接通过socket发送
+      count++;
+      len = Buffer.byteLength(payload);
+    }
+  // ...
+</code></pre>
+<p>至此已经实现 Websocket 协议的关键部分，所组装起来的代码就能和客户端建立 Websocket 连接并进行数据交互了。</p>
+<h2 id="4qa">4、Q&amp;A</h2>
+<h3 id="41258eafa5e91447da95cac5ab0dc85b11">4.1、字符串 “258EAFA5-E914-47DA-95CA-C5AB0DC85B11” 怎么来的？</h3>
+<p>这个标志性字符串是专门标示 <code>Websocket</code> 协议的 UUID；UUID 是长度为 16-byte（128-bit）的ID，一般以形如<code>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</code>的字符串作为 <strong>URN</strong>（Uniform Resource Name，统一资源名称）</p>
+<blockquote>
+<p>UUID 可以移步到 <a href="https://blog.csdn.net/ScrappyShiyu/article/details/79936897">UUID原理</a> 和 <a href="https://tools.ietf.org/html/rfc4122">RFC 4122</a> 获取更多知识</p>
+</blockquote>
+<p>为啥选择这个字符串？</p>
+<p>在规范的第七页已经有明确的说明了：<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190624111046.png" alt="专用于 websocket 的 uuid 标识符"></p>
+<p>之所以选用这个 UUID ，主要该 ID 极大不太可能被其他不了解 Websocket 协议的网络终端所使用；</p>
+<p>我也不晓得该怎么翻译。。。总之就说这个 ID 就相当于 <code>Websocket</code> 协议的 “身份证号” 了。</p>
+<h3 id="42websockethttp">4.2、Websocket 和 HTTP 什么关系？</h3>
+<p>HTTP、WebSocket 等应用层协议，都是基于 TCP 协议来传输数据的，我们可以把这些高级协议理解成对 TCP 的封装。</p>
+<p>既然大家都使用 TCP 协议，<strong>那么大家的连接和断开，都要遵循 TCP 协议中的三次握手和四次握手 ，只是在连接之后发送的内容不同，或者是断开的时间不同</strong>。</p>
+<p>对于 WebSocket 来说，它必须依赖 HTTP 协议进行一次握手 ，<strong>握手成功后，数据就直接从 TCP 通道传输，与 HTTP 无关了</strong>。</p>
+<h3 id="43websocket">4.3、浏览器中 Websocket 会自动分片么？</h3>
+<p>答案是：<strong>看具体浏览器的实现</strong>。</p>
+<p>WebSocket是一个 message based 的协议，它可以自动将数据分片，并且自动将分片的数据组装。<br>
+每个 message 可以是一个或多个分片。message 不记录长度，分片才记录长度；</p>
+<p>根据协议 <strong>websocket 协议中帧长度上限为 2^63 byte（为 8388608 TB），可以认为没有限制</strong>，很明显按协议的最大上限来传输数据是不靠谱的。所以在实际使用中 <code>websocket</code> 消息长度限制取决于具体的实现。关于哲方面，找了两篇参考文章：</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/29916578">Websocket需要像TCP Socket那样进行逻辑数据包的分包与合包吗?</a>：WebSocket是一个message-based的协议，它可以自动将数据分片，并且自动将分片的数据组装；；</li>
+<li><a href="https://segmentfault.com/q/1010000010620489">websocket长文本问题？</a>：这里给出了长文本 ws 传输实践总结。</li>
+</ul>
+<p>在文章 <a href="https://segmentfault.com/a/1190000012319848#articleHeader8">WebSocket探秘</a> 中，作者就做了一个实验，作者发送 27378 个字节，结果被迫分包了；如果是大数据量，就会被socket自动分包发送。</p>
+<p>而经过我本人试验，发现 Chrome 浏览器（版本 68.0.3440.106 - 64bit）会针对 <strong>131072</strong>（=2^17）bytes 大小进行自动分包。我是通过以下测试代码验证：</p>
+<pre><code class="language-js">var ws = new WebSocket(&quot;ws://127.0.0.1:3000&quot;);
+ws.onmessage = function(evt) {
+  console.log( &quot;Received Message: &quot; + evt.data);
+};
+var myArray = new ArrayBuffer(131072 * 2 + 1);
+ws.send(myArray);
+</code></pre>
+<p>服务端日志：</p>
+<pre><code class="language-sh">server detect fragment, sizeof payload: 131072
+server detect fragment, sizeof payload: 131072
+receive data: 2 262145
+</code></pre>
+<p>客户端日志：</p>
+<pre><code class="language-sh">Received Message: good job
+</code></pre>
+<p>截图如下：<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190624111141.png" alt="chrome 浏览器会自动分片"></p>
+<p>而以同样的方式去测试一些自己机器上的浏览器：</p>
+<ul>
+<li>Firefox（62.0，64bit）</li>
+<li>safari (11.1.2 - 13605.3.8)</li>
+<li>IE 11</li>
+</ul>
+<p>这些客户端上的 Websocket 几乎没有大小的分片（随着数据量增大，发送会减缓，但并没有发现分片现象）。</p>
+<h2 id="5">5、总结</h2>
+<p>从刚开始决定阅读 Websocket 协议，到自己使用 Node.js 实现一套简单的 Websocket 协议，到这篇文章的产出，前后耗费大约 1 个月时间（拖延症。。。）。<br>
+感谢文中所提及的参考文献所给予的帮助，让我实现过程中事半功倍。</p>
+<p>之所以能够使用较少的代码实现 Websocket，<strong>是因为 Node.js 体系本身了很好的基础</strong>，比如其所提供的 <code>EventEmitter</code> 类自带事件循环，http 模块让你直接使用封装好的 <code>socket</code> 对象，我们只要按照 Websocket 协议实现 Frame（帧）的解析和组装即可。</p>
+<p>在使用 Node.js 实现一遍 Websocket 协议后，就能较为深刻地理解以下知识点（理解起来一切都是那么自然而然）：</p>
+<ul>
+<li>Websocket 是一种应用层协议，是为了提供 Web 应用程序和服务端<strong>全双工通信</strong>而专门制定的；</li>
+<li>WebSocket 和 HTTP <strong>都是基于 TCP 协议实现的</strong>；</li>
+<li>WebSocket和 HTTP 的唯一关联就是 HTTP 服务器需要发送一个 “<strong>Upgrade</strong>” 请求，即 101 Switching Protocol 到 HTTP 服务器，然后由服务器进行协议转换。</li>
+<li>WebSocket使用 HTTP 来建立连接，但是定义了一系列新的 header 域，这些域在 HTTP 中并不会使用；</li>
+<li>WebSocket 可以和 HTTP Server <strong>共享同一 port</strong></li>
+<li>WebSocket 的 <strong>数据帧有序</strong></li>
+<li>...</li>
+</ul>
+<p>本文仅仅是协议的简单实现，对于 Websocket 的其实还有很多事情可以做（比如支持 <strong>命名空间</strong>、<strong>流式 API</strong> 等），有兴趣的可以参考业界流行的 Websocket 仓库，去练习锻造一个健壮的 Websocket 工具库轮子：</p>
+<ul>
+<li><a href="https://github.com/socketio/socket.io">socketio/socket.io</a>：43.5k star，不多说，业界权威龙头老大。（不过这实际上不是一个 WebSocket 库，而是一个实时 pub/sub 框架。简单地说，<a href="https://github.com/socketio/socket.io">Socket.IO</a> 只是包含 WebSocket 功能的一个框架，如果要使用该库作为 server 端的服务，则 client 也必须使用该库，因为它不是标准的 WebSocket 协议，而是基于 WebSocket 再包装的消息通信协议）</li>
+<li><a href="https://github.com/websockets/ws">websockets/ws</a>：9k star，强大易用的 websocket 服务端、客户端实现，还有提供很多强大的特性</li>
+<li><a href="https://github.com/uNetworking/uWebSockets">uNetworking/uWebSockets</a>：9.5k star，小巧高性能的 websocket实现，C++ 写的，想更多了解 Websocket 的底层实现，该库是不错的案例。</li>
+<li><a href="https://github.com/theturtle32/WebSocket-Node">theturtle32/WebSocket-Node</a>：2.3k star，大部分使用 JavaScript，性能关键部分使用 C++ node-gyp 实现的库。其所列的 <a href="http://theturtle32.github.io/WebSocket-Node/test-report/servers">测试用例</a> 有挺好的参考价值</li>
+</ul>
+<p>本文完。</p>
+<!--kg-card-end: markdown-->
+                </div>
+            </section>
+            <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
+            <section style="text-align: center"><img
+                    src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg" /></section>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+                integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+                integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH"
+                crossorigin="anonymous"></script>
+
+
+            <section id="gitalk-component-wrap"/>
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" />
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/boycgit/index.html">boycgit</a></h4>
+            <p>阅读此作者的<a href='../author/boycgit/index.html'>更多文章</a>.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/boycgit/index.html">阅读更多</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+
+                <article class="post-card post tag-suan-fa tag-javascript tag-shu-ju-jie-gou">
+        <a class="post-card-image-link" href="../algorithm-shunting-yard/index.html">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1516437202929-3e06ed03f0b0?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;95145a369b4060b4e92c923a92d71196)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../algorithm-shunting-yard/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">算法</span>
+                <h2 class="post-card-title">算法 - 调度场算法（Shunting Yard Algorithm）</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>有一种中缀转后缀的算法称为调度场算法（Shunting Yard Algorithm）。算法核心就在于用栈暂存符号以备“调度”，比较新符号和栈顶原有的符号，选择其中更容易结合的（根据优先级、结合方向）出栈，其算法思想和树的后续遍历一致</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/index.html" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" /></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 21 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-shu-ju-jie-gou tag-javascript tag-he-ji">
+        <a class="post-card-image-link" href="../ss-stack/index.html">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1533669955142-6a73332af4db?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;a6a969261e498b4f14dcd90d82eb9974)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../ss-stack/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">数据结构</span>
+                <h2 class="post-card-title">前端学数据结构 - 栈（Stack）和 队列（Queue）</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>前端学数据结构系列 - 栈和队列。本文收集了队列相关的参考文章、代码实现和实际应用等等，通过本文能基本掌握栈和队列这两类数据结构</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/index.html" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" /></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 7 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://boycgit.github.io">
+                <img src="../content/images/2018/08/logo.png" alt="JSCON-简时空 icon" />
+            <span>JSCON-简时空</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Node.js -  200 多行代码实现 Websocket 协议</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8ANode.js%20-%20%20200%20%E5%A4%9A%E8%A1%8C%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%20Websocket%20%E5%8D%8F%E8%AE%AE%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/implement-websocket-protocol/"
+            onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1534600204727" class="icon" style="" viewBox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/implement-websocket-protocol/&mhid=txbODQq7nZkhMHcqI9xROqg"
+            onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1534604253879" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.min.js"></script>
+
+<script>
+    (function () {
+        /**
+         * Get Node
+         * @param  {String|Element} el
+         * @param  {Boolean} noCache
+         * @return {Element}
+         */
+        var cacheNode = {};
+        function getNode(el, noCache) {
+            if (noCache === void 0) noCache = false;
+
+            if (typeof el === 'string') {
+                if (typeof window.Vue !== 'undefined') {
+                    return find(el);
+                }
+                el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el));
+            }
+
+            return el;
+        }
+
+        /**
+         * Find element
+         * @example
+         * find('nav') => document.querySelector('nav')
+         * find(nav, 'a') => nav.querySelector('a')
+         */
+        function find(el, node) {
+            return node ? el.querySelector(node) : document.querySelector(el);
+        }
+        function create(node, tpl) {
+            node = document.createElement(node);
+            if (tpl) {
+                node.innerHTML = tpl;
+            }
+            return node;
+        }
+        function appendTo(target, el) {
+            return target.appendChild(el);
+        }
+
+        function renderGitalkContainer() {
+            var div = create('div');
+            div.id = 'gitalk-container';
+            var main = getNode('#site-main');
+            div.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            appendTo(find('#gitalk-component-wrap'), div);
+            var script = create('script');
+            var content = "gitalk.render('gitalk-container')";
+        }
+        renderGitalkContainer();
+
+        var gitalk = new Gitalk({
+            clientID: 'a65ee9e3ea5168da1470',
+            clientSecret: 'ebfd520679d1ad61929b1887b2efccd4872389e3',
+            repo: 'boycgit.github.io',
+            owner: 'boycgit',
+            admin: [
+                'boycgit'
+            ],
+            id: location.pathname,
+            // facebook-like distraction free mode
+            distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container');
+
+
+
+        var postImages = document.querySelectorAll('.post-content img');
+        Array.prototype.forEach.call(postImages, function (el, i) {
+            el.outerHTML = `<aholder href="${el.src}" data-lightbox="postImages" data-title="${el.alt}">${el.outerHTML}</aholder>`.replace(/aholder/g, 'a');
+        });
+
+        // 动态添加 js 脚本
+        setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/js/lightbox.min.js";
+            document.getElementsByTagName('body')[0].appendChild(script);
+
+            script.onload = function () {
+
+                console.log('load success');
+            }
+        }, 1000);
+
+    })();
+</script>
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://boycgit.github.io">JSCON-简时空</a> &copy; 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="https://boycgit.github.io">最新文章</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=11f1923694"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });
+</script>
+
+</body>
+</html>
+</html>

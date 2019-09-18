@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh">
+<!DOCTYPE html><html lang="zh">
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>【用故事解读 MobX源码（三）】 shouldCompute</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=11f1923694" />
+
+    <meta name="description" content="网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析 shouldCompute 源码的执行逻辑" />
+    <link rel="shortcut icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="https://boycgit.github.io/mobx-source-shouldcompute/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <link rel="amphtml" href="https://boycgit.github.io/mobx-source-shouldcompute/amp/" />
+    
+    <meta property="og:site_name" content="JSCON-简时空" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="【用故事解读 MobX源码（三）】 shouldCompute" />
+    <meta property="og:description" content="网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析 shouldCompute 源码的执行逻辑" />
+    <meta property="og:url" content="https://boycgit.github.io/mobx-source-shouldcompute/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1523240524572-9fa79064364a?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;6da5ce196c64ceaebce9ec6f3640f787" />
+    <meta property="article:published_time" content="2018-05-04T08:31:00.000Z" />
+    <meta property="article:modified_time" content="2019-06-21T05:54:41.000Z" />
+    <meta property="article:tag" content="mobx" />
+    <meta property="article:tag" content="javascript" />
+    <meta property="article:tag" content="源码分析" />
+    <meta property="article:tag" content="源码" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="【用故事解读 MobX源码（三）】 shouldCompute" />
+    <meta name="twitter:description" content="网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析 shouldCompute 源码的执行逻辑" />
+    <meta name="twitter:url" content="https://boycgit.github.io/mobx-source-shouldcompute/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1523240524572-9fa79064364a?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;6da5ce196c64ceaebce9ec6f3640f787" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="boycgit" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="mobx, javascript, 源码分析, 源码" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="720" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "JSCON-简时空",
+        "logo": "https://boycgit.github.io/content/images/2018/08/logoicon.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "boycgit",
+        "image": {
+            "@type": "ImageObject",
+            "url": "//www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&d=mm&r=x",
+            "width": 250,
+            "height": 250
+        },
+        "url": "https://boycgit.github.io/author/boycgit/",
+        "sameAs": []
+    },
+    "headline": "【用故事解读 MobX源码（三）】 shouldCompute",
+    "url": "https://boycgit.github.io/mobx-source-shouldcompute/",
+    "datePublished": "2018-05-04T08:31:00.000Z",
+    "dateModified": "2019-06-21T05:54:41.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1523240524572-9fa79064364a?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ&s=6da5ce196c64ceaebce9ec6f3640f787",
+        "width": 1080,
+        "height": 720
+    },
+    "keywords": "mobx, javascript, 源码分析, 源码",
+    "description": "网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析 shouldCompute 源码的执行逻辑",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://boycgit.github.io/"
+    }
+}
+    </script>
+
+    <script src="../public/ghost-sdk.js?v=11f1923694"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "7c2ea2eb9409"
+});
+</script>
+    <meta name="generator" content="Ghost 2.31" />
+    <link rel="alternate" type="application/rss+xml" title="JSCON-简时空" href="https://boycgit.github.io/rss/" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-69473481-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-69473481-3');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+<style>
+
+/* 结束 */
+
+  .end-block-wrap{
+        color:#338daf;
+        text-align: center;
+    }
+
+    .end-block-wrap img{
+        border: none;
+        max-width: 100%;
+        margin: 0px auto; display: inline-block;
+    }
+
+    .end-block-wrap img.main{
+        width: 30px;
+    }
+
+
+/* 参考文档 */
+.ref-wrap .line-text{
+    display: flex;justify-content:center;align-items:flex-end;
+}
+
+.ref-wrap .line-text::before, .ref-wrap .line-text::after{
+    content: '';
+    display: inline-block;
+    width: 25%; border-bottom: 1px dashed rgb(51, 51, 51); box-sizing: border-box;
+}
+
+.ref-wrap .text.main{
+    font-size: 14px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 0px 10px; 
+    font-weight: bold; 
+    margin-bottom: -5px; 
+    box-sizing: border-box;
+}
+
+.ref-wrap  .text.second{
+    font-size: 16px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 10px; 
+    text-align: center; 
+    box-sizing: border-box;
+}
+/* 求关注 */
+.qr-wrap{
+    margin-right: auto; 
+    margin-left: auto; 
+    width: 360px; 
+    border: none rgb(255, 129, 36); 
+    background: url(https://mpt.135editor.com/mmbiz_gif/ziadDDQxbCJFA2XMwm7VE1RTcS94u8LqVWSjIasMfzY8aG5HolkBhHhwEp0eUpPCEzPYqXYicbRNtROJibbM9P55g/0?wx_fmt=gif) right 0px no-repeat; 
+    background-size: contain; 
+    box-sizing: border-box;
+}
+
+.qr-image{
+    padding: 10px 3px; 
+    width: 150px; 
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.qr-image img{
+    width: 150px;
+}
+
+
+</style>
+
+</head>
+<body class="post-template tag-mobx tag-javascript tag-yuan-ma-fen-xi tag-yuan-ma">
+
+    <div class="site-wrapper">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/css/lightbox.min.css">
+
+
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://boycgit.github.io"><img src="../content/images/2018/08/logoicon.png" alt="JSCON-简时空" /></a>
+            <ul class="nav" role="menu">
+    <li class="nav-shou-ye" role="menuitem"><a href="https://boycgit.github.io/">首页</a></li>
+    <li class="nav-guan-yu" role="menuitem"><a href="https://boycgit.github.io/about-me/">关于</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://boycgit.github.io/rss/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-mobx tag-javascript tag-yuan-ma-fen-xi tag-yuan-ma ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2018-05-04">4 May 2018</time>
+                        <span class="date-divider">/</span> <a href="../tag/mobx/index.html">mobx</a>
+                </section>
+                <h1 class="post-full-title">【用故事解读 MobX源码（三）】 shouldCompute</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1523240524572-9fa79064364a?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;6da5ce196c64ceaebce9ec6f3640f787)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <!--kg-card-begin: markdown--><p><code>==========前言============</code></p>
+<ul>
+<li>
+<p><strong>初衷</strong>：以系列故事的方式展现 MobX 源码逻辑，尽可能以易懂的方式讲解源码；</p>
+</li>
+<li>
+<p><strong>本系列文章</strong>：</p>
+<ul>
+<li>《<a href="https://segmentfault.com/a/1190000013682735">【用故事解读 MobX源码（一）】 autorun</a>》</li>
+<li>《<a href="https://segmentfault.com/a/1190000014238836">【用故事解读 MobX源码（二）】 computed</a>》</li>
+<li>《<a href="https://segmentfault.com/a/1190000014726483">【用故事解读 MobX源码（三）】 shouldCompute</a>》👈 you are here</li>
+<li>《<a href="https://segmentfault.com/a/1190000015481998">【用故事解读 MobX 源码（四）】装饰器 和 Enhancer</a>》</li>
+<li>《<a href="https://segmentfault.com/a/1190000015875144">【用故事解读 MobX 源码（五）】 Observable</a>》</li>
+</ul>
+</li>
+<li>
+<p><strong>文章编排</strong>：每篇文章分成两大段，第一大段以简单的侦探系列故事的形式讲解（<strong>所涉及人物、场景都以 MobX 中的概念为原型创建</strong>），第二大段则是源码讲解。</p>
+</li>
+<li>
+<p><strong>本文基于 MobX 4 源码讲解</strong><br>
+<code>===========================</code></p>
+</li>
+</ul>
+<h1 id="astorytime">A. Story Time</h1>
+<p>宁静的早上，执行官 MobX 将自己的计算性能优化机制报告呈现给警署最高长官。</p>
+<p>在这份报告解说中，谈及部署成本最高的地方是在<strong>执行任务部分</strong>。因此优化这部分任务执行机制，也就相当于优化性能。</p>
+<p>警署最高长官浏览了报告前言部分，大致总结以下 2 点核心思想：</p>
+<ul>
+<li>有<strong>两组人</strong>会涉及到任务的执行：<strong>执行组</strong>（探长） 和 <strong>计算组</strong>（会计师）</li>
+</ul>
+<blockquote>
+<p>言外之意，<strong>观察组</strong>（观察员）不在优化机制里，他们的行为仍旧按部就班，该汇报的时候就汇报，该提供数据的时候提供数据。</p>
+</blockquote>
+<ul>
+<li>由于<strong>执行任务的比较消耗资源</strong>，因此执行人员对每一次任务的执行都要问一个”为什么“，最核心的一点是：如果下级人员的<strong>数据不是最新</strong>的时候，上级人员就不应该执行任务。</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621132637.png" alt="执行人员依据什么样的规则来决定是否执行呢？"></p>
+<p>那么，执行人员依据什么样的规则来决定是否执行呢？</p>
+<p>警署最高长官继续往下阅读，找到了解答该问题的详细解说。简言之，为了解决该问题执行官 MobX 给出了<strong>状态调整策略</strong>，并在这套策略之上指定的<strong>任务执行规则</strong>。</p>
+<p>由于专业性较强，行文解释里多处使用代码。为了更生动形象地解释这套行为规范，执行官 MobX 在报告里采用 <strong>示例 + 图示</strong> 的方式给出生动形象的解释。</p>
+<p>接下来我们在 <strong>B. Source Code Time</strong> 部分详细阐述这份 <strong>任务执行规则</strong> 的内容。</p>
+<h1 id="bsourcecodetime">B. Source Code Time</h1>
+<p>执行人员（探长和会计师）依据什么样的规则来决定是否执行呢？</p>
+<p>答案是，执行官 MobX 提供了一个名为 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/derivation.ts#L76">shouldCompute</a> 的方法，每次执行人员（探长和会计师）需要执行之前都要调用该方法 —— 只有该方法返回 <code>true</code> 的时候才会执行任务（或计算）。</p>
+<blockquote>
+<p>在源码里搜索一下关键字 <code>shouldCompute</code>，就可以知道的确只有 <strong>derivation</strong>（执行组，探长也属于执行组）、<strong>reaction</strong>（探长）、<strong>computeValue</strong>（会计师）这些有执行权力的人才能调用这个方法，而 <strong>observerable</strong>（观察员）并不在其中。<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621132715.png" alt="只有执行组才涉及到 shouldCompute"></p>
+</blockquote>
+<p>也就说 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/derivation.ts#L76">shouldCompute</a> 就是<strong>任务执行规则</strong>，<strong>任务执行规则</strong>就是 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/derivation.ts#L76">shouldCompute</a>。而背后支撑 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/derivation.ts#L76">shouldCompute</a> 的则是一套 <strong>状态调整策略</strong></p>
+<h2 id="1">1、状态调整策略</h2>
+<h3 id="11ld">1.1、<strong>L 属性</strong> 和 <strong>D 属性</strong></h3>
+<p>翻开 <code>shouldCompute</code> 源码， 将会看到 <code>dependenciesState</code> 属性。</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621132807.png" alt="dependenciesState 属性"></p>
+<p>其实这个 <code>dependenciesState</code>（以下简称 <strong>D 属性</strong>） 属性还存在一个”孪生“属性<code>lowestObserverState</code> （以下简称 <strong>L 属性</strong>）。这两个属性正是执行官 MobX 状态调整策略的核心。</p>
+<p><strong>L 属性</strong> 和 <strong>D 属性</strong>反映当前对象<strong>所处的状态</strong>， 都是枚举值，且取值区间都是一致的，只能是以下 4 个值之一：</p>
+<ul>
+<li><strong>-1</strong>： 即 <strong>NOT_TRACKING</strong>，表示不在调整环节内（还未进入调整调整，或者已经退出调整环节）</li>
+<li><strong>0</strong>：即 <strong>UP_TO_DATE</strong>，表示状态很稳定</li>
+<li><strong>1</strong>： 即 <strong>POSSIBLY_STALE</strong>，表示状态有可能不稳定</li>
+<li><strong>2</strong>：即 <strong>STALE</strong>，表示状态不稳定</li>
+</ul>
+<p>上面的文字表述比较枯燥，我们来张图感受一下：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621132843.png" alt="用阶梯展示状态量"></p>
+<p>我们以 “阶梯” 来表示上述的状态值；</p>
+<ul>
+<li><strong>UP_TO_DATE</strong>（0） 是地面（表示“非常稳定”）</li>
+<li><strong>POSSIBLY_STALE</strong>（1） 是第一个台阶</li>
+<li><strong>STALE</strong>（2） 是第 2 个台阶，</li>
+<li><strong>NOT_TRACKING</strong>（-1）则到地下一层去了</li>
+<li>所谓 “高处不胜寒”，<strong>距离地面越高，就代表越不稳定</strong>。</li>
+<li>状态值 <strong>UP_TO_DATE</strong>（0）代表的含义是 <strong>稳定的状态</strong>，是每个对象所倾向的状态值。</li>
+</ul>
+<h3 id="12">1.2、调整策略</h3>
+<p>依托<strong>L 属性</strong> 和 <strong>D 属性</strong>，执行官 MobX 的调整策略应运而生：</p>
+<ul>
+<li>只有在 <strong>观察值发生变化</strong> 的时候（比如修改了 <code>bankUser.income</code> 属性值），才会启用这套机制；</li>
+<li>下级成员拥有 <strong>L 属性</strong>；而上级成员拥有 <strong>D 属性</strong>，比如：
+<ul>
+<li>观察员 O1 只拥有 <strong>L 属性</strong></li>
+<li>探长 R1 只拥有 <strong>D 属性</strong></li>
+<li>会计师 C1 既拥有 <strong>L 属性</strong>，也拥有 <strong>D 属性</strong></li>
+</ul>
+</li>
+<li>某下级成员调整属性时，调整的策略必须要满足：自身的 <strong>D 属性</strong> 永远不大于（≤）上级的 <strong>L 属性</strong></li>
+<li>某上级成员调整属性时，调整的策略必须要满足：其下级成员的 <strong>D 属性</strong> 永远不大于（≤）自身的 <strong>L 属性</strong></li>
+<li>观察值的变更会让成员的属性值 <strong>上升</strong>（提高不稳定性），MobX 执行任务会让成员属性值 <strong>降低</strong>（不稳定性降低）；</li>
+</ul>
+<p>上述调整策略给我们的直观感受，<strong>就是外界的影响导致 MobX 执行官的部署系统不稳定性上升，为了消除这些不稳定，MobX 会尽可能协调各方去执行任务，从而消除这些个不稳定性</strong>。<br>
+（举个不甚恰当的例子，参考人类的免疫机制，病毒感冒后体温上升就是典型的免疫机制激活的外在表现，抵御完病毒之后体温又回归正常）</p>
+<h2 id="2">2、执行任务规则</h2>
+<p>我们知道，只有上级成员（探长或者设计师）才有执行任务的权力；而一旦满足上面的调整策略，<strong>在任何时刻</strong>，执行官 MobX 直接查阅该上级成员的 <strong>D 属性</strong> 就能断定该上级成员（探长或者设计师）是否需要执行任务了，非常简单方便。</p>
+<p>执行官 MobX 判断的依据都体现在 <a href="https://github.com/mobxjs/mobx/blob/4.1.0/src/core/derivation.ts#L76">shouldCompute</a> 方法中了。</p>
+<blockquote>
+<p>本人窃认为这个 <code>shouldCompute</code> 函数的名字太过于抽象，如果让我命名的话，我更倾向于使用 <code>shouldExecuteTask</code> 这个单词。</p>
+</blockquote>
+<p>依托<strong>L 属性</strong> 和 <strong>D 属性</strong>，执行任务规则（即 <code>shouldCompute</code>）就出炉了：</p>
+<ul>
+<li>如果属性值为 <strong>NOT_TRACKING</strong>（-1）或者 <strong>STALE</strong>（2），说明自己所依赖的下级数值陈旧了，是时候该重新执行任务（或重新计算）了；</li>
+<li>如果属性值为 <strong>UP_TO_DATE</strong>（0），说明所依赖的下级的数值没有更改，是稳定的，不需要重新执行任务。</li>
+<li>如果属性值为 <strong>POSSIBLY_STALE</strong>（1），说明所依赖的值（一定是计算值，只有计算值的参与才会出现这种状态）有可能变更，需要让下级先确认完后再做进一步判断。这种情况可能不太好理解，后文会详细说明。</li>
+</ul>
+<p>执行任务规则看上去比较简单，但应用到执行官 MobX 自动化部署方案中情况就复杂了。下面将通过 3 个场景，从简单到复杂，一步一步来演示<strong>L 属性</strong>和<strong>D 属性</strong> 是如何巧妙地融合到已有的部署方案中，并以最小的成本实现性能优化的。</p>
+<h3 id="21">2.1、最简单的情况</h3>
+<pre><code class="language-js">var bankUser = mobx.observable({
+  income: 3,
+  debit: 2
+});
+
+mobx.autorun(() =&gt; {
+  console.log('张三的存贷：', income);
+});
+
+bankUser.income = 4;
+</code></pre>
+<p>这里我们创建了 <code>autorun</code> 实例 （探长 R1）、<code>observable</code>实例（观察员O1）</p>
+<p>这个示例和我们之前在首篇文章《<a href="https://segmentfault.com/a/1190000013682735">【用故事解读 MobX源码（一）】 autorun</a>》中所用示例是一致的。</p>
+<p>当执行 <code>bankUser.income = 4;</code> 语句的时候，观察员 O1 观察到的数值变化直接上报给探长 R1，然后探长就执行任务了。关系简单：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621132950.png" alt="上报关系"></p>
+<p>从代码层面上来讲，该 <strong>响应链</strong> 上的关键函数执行顺序如下：</p>
+<pre><code class="language-js">(O1) reportChange 
+    -&gt; (O1) propagateChanged 
+    -&gt; (R1) onBecomeStale 
+      -&gt; (R1) trackDerivedFunction 
+         -&gt; fn(即执行 autorun 中的回调) 
+</code></pre>
+<p>其中涉及到 <strong>L、D属性</strong> 更改的函数有 <code>propagateChanged</code> 和 <code>track</code> 这两个。</p>
+<p><strong>Step 1</strong>：在 <a href="https://github.com/mobxjs/mobx/blob/4.1.0/src/core/observable.ts#L197">propagateChanged</a> 方法执行时，让观察员 O1 的 <strong>L 属性</strong> 从 0 → 2 ，按照上述的调整原则，探长 R1 的 <strong>D属性</strong> 必须要高于观察员 O1 的 <strong>L 属性</strong>，所以其值也只能用从 0 → 2。</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621133043.png" alt=" propagateChanged 方法执行时，所有值都变成 2"></p>
+<p><strong>Step 2</strong>：而随着 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/derivation.ts#L144">trackDerivedFunction</a> 方法的执行（即探长执行任务）后，观察员 O1 的 <strong>L 属性</strong> 又从 2 → 0，同时也让探长 R1 的 <strong>D属性</strong> 从 2 → 0；</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621133138.png" alt="trackDerivedFunction 方法的执行会让值变成 0"></p>
+<p>在这里我们已经可以明显感受到 <strong>非稳态的上升</strong> 和 <strong>削减</strong> 这两个阶段：</p>
+<ul>
+<li><strong>非稳态的上升</strong>：外界更改 <code>bankUser.income</code> 属性，触发 <code>propagateChanged</code> 方法，从而让观察员的 <strong>L 属性</strong> 以及探长的 <strong>D属性</strong> 都变成了 2 ，这是系统趋向不稳定的表现。从 层级上来看，是<strong>自下而上</strong>的过程。</li>
+<li><strong>非稳态的削减</strong>：随着变更的传递，将触发探长 R1 的 <code>onBecameStale</code> 方法。执行期间 MobX 执行官查阅探长的 <strong>D属性</strong> 是 2，依据 <code>shouldCompute</code> 中的执行规定，同意让探长执行任务。执行完之后，观察员的 <strong>L 属性</strong>、探长的 <strong>D属性</strong> 都下降为 0，表示系统又重新回到稳定状态。从 层级上来看，是<strong>自上而下</strong>的过程。</li>
+</ul>
+<h3 id="22">2.2、有单个会计师的情况</h3>
+<p>上面介绍了最简单的情况，只有一个探长 R1（<code>autorun</code>）和一个观察员 O1（<code>income</code>）。</p>
+<p>现在我们将环境稍微弄复杂一些，新增一个 <strong>会计师 C1</strong>（<code>divisor</code>） ，此时再来看看上述的变更原则是如何在系统运转时起作用的：</p>
+<pre><code class="language-js">var bankUser = mobx.observable({
+  income: 3,
+  debit: 2
+});
+
+var divisor = mobx.computed(() =&gt; {
+  return bankUser.income / bankUser.debit;
+});
+
+mobx.autorun(() =&gt; {
+  console.log('张三的 divisor：', divisor);
+});
+
+bankUser.income = 4;
+</code></pre>
+<p>这个示例和我们之前在首篇文章《<a href="https://segmentfault.com/a/1190000014238836">【用故事解读 MobX源码（二）】 computed </a>》中所用示例是一致的。</p>
+<p>当我们执行 <code>bankUser.income = 4;</code> 语句的时候，观察员 O1 先上报给会计师 C1，接着会计师 C1 会重新执行计算任务后，上报给探长，探长R1 再重新执行任务。</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621133214.png" alt="当有会计师角色参与时的情况"></p>
+<p>上面描述起来比较简单，但从代码层面上来讲还是有些绕，先列出该 <strong>响应链</strong> 上的关键函数执行顺序如下（很明显比上面的示例要稍微复杂一些）：</p>
+<pre><code class="language-js">(O1) reportChange 
+    -&gt; (O1) propagateChanged
+      -&gt; (C1) propagateMaybeChanged
+      -&gt; (R1) onBecomeStale（这里并不会让探长 `runReaction`）
+-&gt; (O1) endBatch
+    -&gt; (R1) runReaction（到这里才让探长执行 `runReaction`）
+      -&gt; (C1) reportObserved
+      -&gt; (C1) shouldCompute
+         -&gt; (C1) trackAndCompute 
+         -&gt; (C1) propagateChangeConfirmed
+      -&gt; (R1) trackDerivedFunction
+         -&gt; fn(即执行 autorun 中的回调) 
+</code></pre>
+<blockquote>
+<p>注：这里还需要啰嗦一句，虽然这里会触发探长 R1 的 <code>onBecomeStale</code> 方法，但 MobX 并不会直接让探长执行任务，这也是 MobX 优化的一种手段体现，详细分析请移步《<a href="https://segmentfault.com/a/1190000014238836">【用故事解读 MobX源码（二）】 computed </a>》。</p>
+</blockquote>
+<p><strong>Step 1</strong>：在 <a href="https://github.com/mobxjs/mobx/blob/4.1.0/src/core/observable.ts#L197">propagateChanged</a> 方法执行时，让观察员 O1 的 <strong>L 属性</strong> 从 -1 → 2 ，按照上述的调整原则，其直接上级 C1 的 <strong>D属性</strong> 必须要高于观察员 O1 的 <strong>L 属性</strong>，所以其值也只能用从 0 → 2；</p>
+<p>和上述简单示例中最大的不同，<strong>在于该期间还涉及到会计师 C1 的状态更改</strong>，具体表现就是调用 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/observable.ts#L238">propagateMaybeChanged</a> ，在该方法执行后让会计师 C1 的 <strong>L 属性</strong> 从 0 → 1 ，其直接上级 R1 的 <strong>D属性</strong> 必须要高于会计师 C1 的 <strong>L 属性</strong>，所以其值也从 0 → 1；</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621133256.png" alt="propagateMaybeChanged 调用后的情况"></p>
+<blockquote>
+<p>注：虽然观察员 O1 的状态更改 <strong>不能直接</strong> 触发探长 R1 的状态更改，却可以凭借会计师 C1 <strong>间接</strong> 地让 探长 R1 的状态发生更改。</p>
+</blockquote>
+<p><strong>Step 2</strong>：此步骤是以 <strong>会计师</strong> 状态变更为中心演变过程，上一个案例并不存在会计师，所以并不会有该步骤。通过 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/computedvalue.ts#L189">trackAndCompute</a> 方法，会计师 C1 的 <strong>D 属性</strong> 又从 2 → 0，同时也让观察员 O1 的 <strong>L属性</strong> 从 2 → 0；这个过程表明会计师 C1 的计算值已经更新了。</p>
+<p>随后在 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/observable.ts#L218">propagateChangeConfirmed</a> 中让探长 R1 的 <strong>D 属性</strong> 从 1 （下级数值可能有更新）→ 2 （确定下级数值确定有更新），同时也让会计师 C1 的 <strong>L 属性</strong> 从 1（告知上级自己的值可能有更新）→ 2 （告知上级自己的值的确有更新）；表明探长 R1 和 会计师 C1 的稳态还未达成，需要 <strong>Step 3</strong> 的执行去消除非稳态。</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621133455.png" alt="消除非稳态"></p>
+<p><strong>Step 3</strong>：会计师的计算值 C1 更新完毕之后，探长才执行任务。通过 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/derivation.ts#L144">trackDerivedFunction</a> 方法的执行（即探长执行任务）后，会计师 C1 的 <strong>L 属性</strong> 又从 2 → 0，同时也让探长 R1 的 <strong>D 属性</strong> 从 2 → 0；</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621133541.png" alt="探长通过执行 trackDerivedFunction 方法消除非稳态"></p>
+<p>虽然这个示例中，状态的变更比上面的示例要复杂一些，不过我们依然可以从整体上感受到 <strong>非稳态的上升</strong> 和 <strong>削减</strong> 这两个阶段：</p>
+<ul>
+<li><strong>非稳态的上升</strong>：外界更改 <code>bankUser.income</code> 属性，触发 <code>propagateChanged</code> 方法，从而让观察员 O1 的 <strong>L 属性</strong> 以及会计师 C1 的 <strong>D属性</strong> 都变成了 2 ，同时让会计师 C1 的 <strong>L 属性</strong> 以及探长 R1 的 <strong>D属性</strong> 都变成了 1 。这是系统趋向不稳定的表现。从 层级上来看，是<strong>自下而上</strong>的过程。</li>
+<li><strong>非稳态的削减</strong>：随着变更的传递，有两次削减非稳态的手段： ① 让会计师 C1 重新计算； ② 让探长执行任务。这两个阶段结束之后，所有成员的属性都下降为 0，表示系统又重新回到稳定状态。从 层级上来看，是<strong>自上而下</strong>的过程。</li>
+</ul>
+<h3 id="23">2.3、有两个会计师的情况</h3>
+<p>我们继续在上一个示例上修改，再新增一个计算值 <code>indication</code>（这个变量的创建没有特殊的含义，纯粹是为了做演示），由会计师 C2 了负责其进行计算。</p>
+<pre><code class="language-js">var bankUser = mobx.observable({
+  income: 3,
+  debit: 2
+});
+
+var divisor = mobx.computed(() =&gt; {
+  return bankUser.income / bankUser.debit;
+});
+
+var indication = mobx.computed(() =&gt; {
+  return divisor / (bankUser.income + 1);
+});
+
+mobx.autorun(() =&gt; {
+  console.log('张三的 indication', indication);
+});
+
+bankUser.debit = 4;
+</code></pre>
+<p>大体成员和之前的示例相差不大，只是这次我们修改 <code>bankUser.debit</code> 变量（前面两个示例都是修改 <code>bankUser.income</code>）。</p>
+<p>这么做的目的是为了营造出下述的 <strong>响应链</strong> 结构，我们通过修改 <code>bankUser.debit</code> 变量，从而影响 会计师 C1，继而影响 会计师 C2，最终让探长 R1 执行任务。</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621133626.png" alt="当有两个设计师时的场景"></p>
+<p>同样的，我们从代码层面上来列出该 响应链 上的关键函数执行顺序，比上两个示例都复杂些，大致如下：</p>
+<pre><code class="language-js">(O2) reportChange 
+    -&gt; (O2) propagateChanged
+      -&gt; (C1) propagateMaybeChanged
+      -&gt; (C2) propagateMaybeChanged
+      -&gt; (R1) onBecomeStale（这里并不会让探长 `runReaction`）
+-&gt; (O2) endBatch
+    -&gt; (R1) runReaction（到这里才让探长执行 `runReaction`）
+      -&gt; (R1) shouldCompute
+         -&gt; (C2) shouldCompute
+           -&gt; (C1) shouldCompute
+           -&gt; (C1) trackAndCompute
+           -&gt; (C1) propagateChangeConfirmed
+         -&gt; (C2) trackAndCompute
+         -&gt; (C2) propagateChangeConfirmed
+      -&gt; trackDerivedFunction
+         -&gt; fn(即执行 autorun 中的回调) 
+</code></pre>
+<p><strong>Step 1</strong>：在 <a href="https://github.com/mobxjs/mobx/blob/4.1.0/src/core/observable.ts#L197">propagateChanged</a> 方法执行时，让观察员 O1 的 <strong>L 属性</strong> 从 0 → 2 ，按照上述的调整原则，其直接上级 C1 的 <strong>D属性</strong> 必须要高于观察员 O1 的 <strong>L 属性</strong>，所以其值也只能用从 0 → 2；</p>
+<p><strong>该期间还涉及到会计师 C1、C2 的状态更改</strong>，具体表现就是调用 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/observable.ts#L238">propagateMaybeChanged</a> ，在该方法执行后让会计师 C1、C2 的 <strong>L 属性</strong> 从 0 → 1 ，他们各自的直接上级 C2、 R1 的 <strong>D属性</strong> 值也从 0 → 1；</p>
+<p>描述起来比较复杂，其实无非就是多了一个 会计师 C2 的 <code>propagateMaybeChanged</code> 方法过程，一图胜千言：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621133653.png" alt="多了一个 会计师 C2 的 propagateMaybeChanged 方法过程"></p>
+<p><strong>Step 2</strong>：此步骤是以 <strong>会计师</strong> 状态变更为中心演变过程，该步骤是上一个示例中 <strong>Step 2</strong> 的“复数”版，多个人参与就复杂些，不过条理还是清晰明了的。上个示例中只有一个会计师，所以 <strong>trackAndCompute -&gt;propagateChangeConfirmed</strong> 的过程只有一次，而这里有两个会计师，所以这个过程就有两次（下图中两个蓝框）；</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621133805.png" alt="有两个会计师，消除非稳态过程就有两次"></p>
+<p>经过该步骤之后会计师 O2、C1 的 <strong>L 属性</strong> 又从 2 → 0，同时也让C1、C2 的 <strong>D 属性</strong> 从 2 → 0；这个过程表明观察员 O1 和 会计师 C1 的计算值已经更新，达到稳态。</p>
+<p>而 C2 的 <strong>L 属性</strong> 、探长 R1 的 <strong>D 属性</strong> 又从 0 → 2，表明探长 R1 和 会计师 C2 的稳态还未达成，需要 <strong>Step 3</strong> 的执行去消除非稳态。</p>
+<p><strong>Step 3</strong>：探长执行任务，通过 <a href="https://github.com/mobxjs/mobx/blob/4.1.1/src/core/derivation.ts#L144">trackDerivedFunction</a> 方法的执行（即探长执行任务）后，会计师 C2 的 <strong>L 属性</strong> 又从 2 → 0，同时也让探长 R1 的 <strong>D 属性</strong> 从 2 → 0；这一步和上个示例中的 <strong>Step 3</strong> 几乎相同。</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621133900.png" alt="通过 trackDerivedFunction 方法的执行所有非状态都归 0"></p>
+<p>在这个示例中，状态的变更纵使比上面的示例要复杂得多，但我们还是很清晰地从整体上感受到 <strong>非稳态的上升</strong> 和 <strong>削减</strong> 这两个阶段：</p>
+<ul>
+<li><strong>非稳态的上升</strong>：外界更改 <code>bankUser.debit</code> 属性，触发 <code>propagateChanged</code> 方法，从而让观察员 O1 开始，依次影响 会计师 C1、C2，以及探长 R1 的 <strong>L、D 属性</strong>从 0 变成 1 或者 2，这是系统趋向不稳定的表现。从 层级上来看，是<strong>自下而上</strong>的过程。</li>
+<li><strong>非稳态的削减</strong>：随着变更的传递，有两次削减非稳态的手段： ① 让会计师 C1 、C2 重新计算； ② 让探长 R1 执行任务。这两个阶段结束之后，所有成员的属性都下降为 0，表示系统又重新回到稳定状态。从 层级上来看，是<strong>自上而下</strong>的过程。</li>
+</ul>
+<h3 id="24">2.4、一点点总结</h3>
+<p>通过上面三个从简单逐步到复杂的示例，我们简单总结归纳一下 MobX 在处理状态变更过程中所采取执行机制以及其背后的调整策略：</p>
+<ul>
+<li><strong>先是自下而上传递非稳态</strong>：这是一个自下而上的过程，由观察员发起这个过程，在这个过程中依次将外界的变更层层向上传递，改变每个相关成员的 <strong>L、D属性</strong>。 这个期间会拒绝一切成员任务执行的申请（比如探长执行任务、会计师执行计算任务等等）。</li>
+<li><strong>其次自上而下消解非稳态</strong>：这是一个自上而下的过程。当非稳态到达顶层后，由顶层人员（一般是探长类）开始做决策执行任务，在执行任务中凡是遇到有非稳态的成员（比如会计师、观察员），责令他们更新状态，消除非稳态，逐层逐层地消除非稳态。等整个任务执行完之后，每个成员都处于稳态状态，开始下一个变更的到来。</li>
+</ul>
+<h2 id="3">3、状态图</h2>
+<p>在软件设计中，为了更好地显示这种状态变更和事件之间的关系，常常使用 <strong>状态图</strong> 来展现（没错，就是 UML建模中的那个状态图）</p>
+<blockquote>
+<p>如果不太熟悉，这里给个参考文章 <a href="http://www.cnblogs.com/ywqu/archive/2009/12/17/1626043.html">UML建模之状态图（Statechart Diagram）</a> 方便查阅。</p>
+</blockquote>
+<p>挨个总结上述 3 个案例中 <strong>L、D属性</strong>，我们将其中的事件和属性改变抽离出来，就能获取状态图了，方便我们从另外一个角度理解和体会。</p>
+<h3 id="31l">3.1、L 属性</h3>
+<p>Observable（观察员）、ComputeValue（会计师）这两种类型拥有 <strong>L 属性</strong> ：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621134007.png" alt="L 属性变更状态图"></p>
+<h3 id="32d">3.2、D 属性</h3>
+<p>Reaction（探长）、ComputeValue（会计师）这两种类型拥有 <strong>D 属性</strong>：<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190621134031.png" alt="D 属性变更状态图"></p>
+<blockquote>
+<p>所以，会计师同时拥有 <strong>L属性</strong> 和 <strong>D 属性</strong></p>
+</blockquote>
+<h2 id="4">4、小测试</h2>
+<p>如果我们将 <strong>2.3、有两个会计师的情况</strong> 示例中的 <code>bankUser.debit = 4;</code> 修改成 <code>bankUser.income = 6;</code> 的话，那各个成员对象的 <strong>D 属性</strong>、<strong>L 属性</strong> 的变化情况又是怎么样的？</p>
+<h2 id="5">5、本文总结</h2>
+<p>如何在复杂的场景下兼顾计算性能？</p>
+<p>MobX 提供了 <code>shouldCompute</code> 方法用于直接判断是否执行计算（或任务），判断的依据非常简单，只要根据对象的 <code>dependenciesState</code> 属性是否为 <code>true</code> 就能直接作出判断。</p>
+<p>而其背后的支持则是 <code>dependenciesState</code> 属性（上文中的 <strong>D 属性</strong>）和 <code>lowestObserverState</code> （上文中的 <strong>L 属性</strong>），这两个属性依托 MobX 中自动化机制在适当时机（搭”顺风车“）进行变更。因此，<strong>无论多么复杂的场景下 MobX 能以低廉的成本兼顾性能方面的治理，充分运用惰性求值思想减少计算开销</strong>。</p>
+<p>初看 MobX 源码，它往往给你一种 ”杂项丛生“的感觉（调试这段代码的时候真是心里苦啊），但其实在这背后运转着一套清晰的 <strong>非稳态传递</strong> 和 <strong>非稳态削减</strong> 的固定模式，一旦掌握这套模式之后，MobX 自动化响应体系的脉络已清晰可见，这将为你更好理解 MobX 的运行机制打下扎实的基础。</p>
+<p>到本篇为止，我们已经耗费 3 篇文章来解释 MobX 的（绝大部分）自动化响应机制。经过这 3 篇文章，读者应该对 MobX 的整个运转机制有了一个比较清晰明了的理解。后续的文章中将逐渐缩减”故事“成分，将讲解重心转移到 MobX 本身概念（比如 <code>Observable</code>、<code>decorator</code>、<code>Atom</code>等）源码的解读上，相信有了这三篇文章的作为打底，理解其余部分更多的是在语法层面，阅读起来将更加游刃有余。</p>
+<!--kg-card-end: markdown-->
+                </div>
+            </section>
+            <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
+            <section style="text-align: center"><img
+                    src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg" /></section>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+                integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+                integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH"
+                crossorigin="anonymous"></script>
+
+
+            <section id="gitalk-component-wrap"/>
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" />
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/boycgit/index.html">boycgit</a></h4>
+            <p>阅读此作者的<a href='../author/boycgit/index.html'>更多文章</a>.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/boycgit/index.html">阅读更多</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+                <article class="read-next-card"
+                            style="background-image: url(https://casper.ghost.org/v1.0.0/images/blog-cover.jpg)"
+                >
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">&mdash; JSCON-简时空 &mdash;</small>
+                        <h3 class="read-next-card-header-title"><a href="../tag/mobx/index.html">mobx</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="../mobx-source-observable/index.html">【用故事解读 MobX 源码（五）】 Observable</a></li>
+                            <li><a href="../mobx-source-enhancer/index.html">【用故事解读 MobX 源码（四）】装饰器 和 Enhancer</a></li>
+                            <li><a href="../mobx-source-computed/index.html">【用故事解读 MobX源码（二）】 computed</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="../tag/mobx/index.html">查看所有4篇文章 →</a>
+                    </footer>
+                </article>
+
+                <article class="post-card post tag-mobx tag-javascript tag-yuan-ma-fen-xi tag-yuan-ma">
+        <a class="post-card-image-link" href="../mobx-source-enhancer/index.html">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1522921190264-372c4181543c?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;9b52a3b11f518813592e6294fc0fa556)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../mobx-source-enhancer/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">mobx</span>
+                <h2 class="post-card-title">【用故事解读 MobX 源码（四）】装饰器 和 Enhancer</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析源码中有关装饰器与 enhancer 的执行逻辑</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/index.html" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" /></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 21 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-mobx tag-javascript tag-yuan-ma tag-yuan-ma-fen-xi">
+        <a class="post-card-image-link" href="../mobx-source-computed/index.html">
+            <div class="post-card-image" style="background-image: url(../content/images/2018/08/accountant-1238598_1280.jpg)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../mobx-source-computed/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">mobx</span>
+                <h2 class="post-card-title">【用故事解读 MobX源码（二）】 computed</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码。本文分析 computed 源码运行逻辑。</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/index.html" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" /></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 20 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://boycgit.github.io">
+                <img src="../content/images/2018/08/logo.png" alt="JSCON-简时空 icon" />
+            <span>JSCON-简时空</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">【用故事解读 MobX源码（三）】 shouldCompute</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8A%E3%80%90%E7%94%A8%E6%95%85%E4%BA%8B%E8%A7%A3%E8%AF%BB%20MobX%E6%BA%90%E7%A0%81%EF%BC%88%E4%B8%89%EF%BC%89%E3%80%91%20shouldCompute%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/mobx-source-shouldcompute/"
+            onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1534600204727" class="icon" style="" viewBox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/mobx-source-shouldcompute/&mhid=txbODQq7nZkhMHcqI9xROqg"
+            onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1534604253879" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.min.js"></script>
+
+<script>
+    (function () {
+        /**
+         * Get Node
+         * @param  {String|Element} el
+         * @param  {Boolean} noCache
+         * @return {Element}
+         */
+        var cacheNode = {};
+        function getNode(el, noCache) {
+            if (noCache === void 0) noCache = false;
+
+            if (typeof el === 'string') {
+                if (typeof window.Vue !== 'undefined') {
+                    return find(el);
+                }
+                el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el));
+            }
+
+            return el;
+        }
+
+        /**
+         * Find element
+         * @example
+         * find('nav') => document.querySelector('nav')
+         * find(nav, 'a') => nav.querySelector('a')
+         */
+        function find(el, node) {
+            return node ? el.querySelector(node) : document.querySelector(el);
+        }
+        function create(node, tpl) {
+            node = document.createElement(node);
+            if (tpl) {
+                node.innerHTML = tpl;
+            }
+            return node;
+        }
+        function appendTo(target, el) {
+            return target.appendChild(el);
+        }
+
+        function renderGitalkContainer() {
+            var div = create('div');
+            div.id = 'gitalk-container';
+            var main = getNode('#site-main');
+            div.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            appendTo(find('#gitalk-component-wrap'), div);
+            var script = create('script');
+            var content = "gitalk.render('gitalk-container')";
+        }
+        renderGitalkContainer();
+
+        var gitalk = new Gitalk({
+            clientID: 'a65ee9e3ea5168da1470',
+            clientSecret: 'ebfd520679d1ad61929b1887b2efccd4872389e3',
+            repo: 'boycgit.github.io',
+            owner: 'boycgit',
+            admin: [
+                'boycgit'
+            ],
+            id: location.pathname,
+            // facebook-like distraction free mode
+            distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container');
+
+
+
+        var postImages = document.querySelectorAll('.post-content img');
+        Array.prototype.forEach.call(postImages, function (el, i) {
+            el.outerHTML = `<aholder href="${el.src}" data-lightbox="postImages" data-title="${el.alt}">${el.outerHTML}</aholder>`.replace(/aholder/g, 'a');
+        });
+
+        // 动态添加 js 脚本
+        setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/js/lightbox.min.js";
+            document.getElementsByTagName('body')[0].appendChild(script);
+
+            script.onload = function () {
+
+                console.log('load success');
+            }
+        }, 1000);
+
+    })();
+</script>
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://boycgit.github.io">JSCON-简时空</a> &copy; 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="https://boycgit.github.io">最新文章</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=11f1923694"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });
+</script>
+
+</body>
+</html>
+</html>

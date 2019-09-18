@@ -1,0 +1,811 @@
+
+<!DOCTYPE html><html lang="zh">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>前端学数据结构 - 栈（Stack）和 队列（Queue）</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=11f1923694">
+
+    <meta name="description" content="前端学数据结构系列 - 栈和队列。本文收集了队列相关的参考文章、代码实现和实际应用等等，通过本文能基本掌握栈和队列这两类数据结构">
+    <link rel="shortcut icon" href="../favicon.png" type="image/png">
+    <link rel="canonical" href="https://boycgit.github.io/ss-stack/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://boycgit.github.io/ss-stack/amp/">
+    
+    <meta property="og:site_name" content="JSCON-简时空">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="前端学数据结构 - 栈（Stack）和 队列（Queue）">
+    <meta property="og:description" content="前端学数据结构系列 - 栈和队列。本文收集了队列相关的参考文章、代码实现和实际应用等等，通过本文能基本掌握栈和队列这两类数据结构">
+    <meta property="og:url" content="https://boycgit.github.io/ss-stack/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1533669955142-6a73332af4db?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=a6a969261e498b4f14dcd90d82eb9974">
+    <meta property="article:published_time" content="2018-09-17T02:38:24.000Z">
+    <meta property="article:modified_time" content="2019-06-28T11:49:53.000Z">
+    <meta property="article:tag" content="数据结构">
+    <meta property="article:tag" content="javascript">
+    <meta property="article:tag" content="合集">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="前端学数据结构 - 栈（Stack）和 队列（Queue）">
+    <meta name="twitter:description" content="前端学数据结构系列 - 栈和队列。本文收集了队列相关的参考文章、代码实现和实际应用等等，通过本文能基本掌握栈和队列这两类数据结构">
+    <meta name="twitter:url" content="https://boycgit.github.io/ss-stack/">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1533669955142-6a73332af4db?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=a6a969261e498b4f14dcd90d82eb9974">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="boycgit">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="数据结构, javascript, 合集">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="644">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "JSCON-简时空",
+        "logo": "https://boycgit.github.io/content/images/2018/08/logoicon.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "boycgit",
+        "image": {
+            "@type": "ImageObject",
+            "url": "//www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&d=mm&r=x",
+            "width": 250,
+            "height": 250
+        },
+        "url": "https://boycgit.github.io/author/boycgit/",
+        "sameAs": []
+    },
+    "headline": "前端学数据结构 - 栈（Stack）和 队列（Queue）",
+    "url": "https://boycgit.github.io/ss-stack/",
+    "datePublished": "2018-09-17T02:38:24.000Z",
+    "dateModified": "2019-06-28T11:49:53.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1533669955142-6a73332af4db?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ&s=a6a969261e498b4f14dcd90d82eb9974",
+        "width": 1080,
+        "height": 644
+    },
+    "keywords": "数据结构, javascript, 合集",
+    "description": "前端学数据结构系列 - 栈和队列。本文收集了队列相关的参考文章、代码实现和实际应用等等，通过本文能基本掌握栈和队列这两类数据结构",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://boycgit.github.io/"
+    }
+}
+    </script>
+
+    <script src="../public/ghost-sdk.js?v=11f1923694"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "7c2ea2eb9409"
+});
+</script>
+    <meta name="generator" content="Ghost 2.31">
+    <link rel="alternate" type="application/rss+xml" title="JSCON-简时空" href="https://boycgit.github.io/rss/">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-69473481-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-69473481-3');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+<style>
+
+/* 结束 */
+
+  .end-block-wrap{
+        color:#338daf;
+        text-align: center;
+    }
+
+    .end-block-wrap img{
+        border: none;
+        max-width: 100%;
+        margin: 0px auto; display: inline-block;
+    }
+
+    .end-block-wrap img.main{
+        width: 30px;
+    }
+
+
+/* 参考文档 */
+.ref-wrap .line-text{
+    display: flex;justify-content:center;align-items:flex-end;
+}
+
+.ref-wrap .line-text::before, .ref-wrap .line-text::after{
+    content: '';
+    display: inline-block;
+    width: 25%; border-bottom: 1px dashed rgb(51, 51, 51); box-sizing: border-box;
+}
+
+.ref-wrap .text.main{
+    font-size: 14px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 0px 10px; 
+    font-weight: bold; 
+    margin-bottom: -5px; 
+    box-sizing: border-box;
+}
+
+.ref-wrap  .text.second{
+    font-size: 16px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 10px; 
+    text-align: center; 
+    box-sizing: border-box;
+}
+/* 求关注 */
+.qr-wrap{
+    margin-right: auto; 
+    margin-left: auto; 
+    width: 360px; 
+    border: none rgb(255, 129, 36); 
+    background: url(https://mpt.135editor.com/mmbiz_gif/ziadDDQxbCJFA2XMwm7VE1RTcS94u8LqVWSjIasMfzY8aG5HolkBhHhwEp0eUpPCEzPYqXYicbRNtROJibbM9P55g/0?wx_fmt=gif) right 0px no-repeat; 
+    background-size: contain; 
+    box-sizing: border-box;
+}
+
+.qr-image{
+    padding: 10px 3px; 
+    width: 150px; 
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.qr-image img{
+    width: 150px;
+}
+
+
+</style>
+
+</head>
+<body class="post-template tag-shu-ju-jie-gou tag-javascript tag-he-ji">
+
+    <div class="site-wrapper">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/css/lightbox.min.css">
+
+
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://boycgit.github.io"><img src="../content/images/2018/08/logoicon.png" alt="JSCON-简时空"></a>
+            <ul class="nav" role="menu">
+    <li class="nav-shou-ye" role="menuitem"><a href="https://boycgit.github.io/">首页</a></li>
+    <li class="nav-guan-yu" role="menuitem"><a href="https://boycgit.github.io/about-me/">关于</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://boycgit.github.io/rss/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-shu-ju-jie-gou tag-javascript tag-he-ji ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2018-09-17">17 September 2018</time>
+                        <span class="date-divider">/</span> <a href="../tag/shu-ju-jie-gou/">数据结构</a>
+                </section>
+                <h1 class="post-full-title">前端学数据结构 - 栈（Stack）和 队列（Queue）</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1533669955142-6a73332af4db?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=a6a969261e498b4f14dcd90d82eb9974)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <!--kg-card-begin: markdown--><h1 id="a">A. 参考文档</h1>
+<h2 id="1">1、教程类</h2>
+<ul>
+<li><a href="https://github.com/trekhleb/javascript-algorithms/tree/master/src/data-structures/queue">Queue</a> + <a href="https://github.com/trekhleb/javascript-algorithms/tree/master/src/data-structures/stack">Stack</a>：数据结构专辑仓库，有代码有实现，言简意赅；</li>
+<li><a href="http://blog.benoitvallon.com/data-structures-in-javascript/the-queue-data-structure/">The Queue data structure</a>：系列文章，简短的介绍，但有具体的代码实现</li>
+<li><a href="https://code.tutsplus.com/articles/data-structures-with-javascript-stack-and-queue--cms-23348">Data Structures With JavaScript: Stack and Queue</a>：来自 tutsplus 的详细教程文章</li>
+<li><a href="http://blog.51cto.com/7071976/1206946">数据结构之栈和队列</a>：总结了栈和队列的特点，罗列一些具体的应用；</li>
+</ul>
+<h2 id="2">2、应用类</h2>
+<ul>
+<li><a href="https://www.jianshu.com/p/eade026ffaf5">数据结构(三)之栈结构</a>：很详细的系列教程文章 - 栈，从认识结构到它的特点和应用场景，还附有面试题</li>
+<li><a href="https://www.jianshu.com/p/ca1bb95ada76">数据结构(四)之队列结构</a>：很详细的系列教程文章 - 队列，从认识结构到它的特点和应用场景，还附有面试题</li>
+<li><a href="https://wenku.baidu.com/view/d6c35a3e15791711cc7931b765ce0508763275ab.html">栈与队列应用举例</a>：用栈和队列模拟停车场管理</li>
+<li><a href="https://blog.csdn.net/yihui1314/article/details/80154454">JavaScript数据结构与算法——栈及其应用</a>：罗列了括号匹配、汉诺塔等具体应用，有图文解释</li>
+<li><a href="https://blog.csdn.net/qq_34216631/article/details/52876816">用栈解决迷宫问题（输出所有路径和最短路径）</a></li>
+<li><a href="https://wuzhiwei.net/ds_app_stack/">数据结构与算法的JavaScript实现及应用 – 栈 递归 汉诺塔</a>：介绍栈的基本操作和它的一些应用；在括号匹配检测，表达式求值，函数调用上的应用，本文还将给出表达式求值和汉诺塔的HTML5演示</li>
+<li><a href="https://www.geeksforgeeks.org/stack-data-structure/">Stack Data Structure</a>：geeksforgeeks 中的 stack 专题</li>
+</ul>
+<h1 id="b">B. 正文</h1>
+<h2 id="1">1、概述</h2>
+<p>队列的主要两个操作是 <strong>enqueue</strong>（入队） 和 <strong>dequeue</strong>（出队）：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190628194841.png" alt="入队和出队"></p>
+<p>栈的主要两个操作是 <strong>push</strong>（入栈） 和 <strong>pop</strong>（出栈）：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190628194857.png" alt="入栈和出栈"></p>
+<p>因为这两个库底层都是基于链表完成（重操作、轻查询），所以复杂度和链表是一样的。</p>
+<p><strong>队列</strong>比较常用的是广度优先遍历，在树中是层序遍历，在图中是无权图的最短路径；<br>
+<strong>栈</strong>能帮助你实现深度优先遍历等；</p>
+<h2 id="2">2、栈的应用</h2>
+<p>在 JS 中，队列和数组很相似，所以平时使用队列的场景会比较多；而对于栈这种数据结构接触的比较少，因此下面罗列的应用偏栈的应用比较多；</p>
+<p>以下示例可以到 <a href="https://runkit.com/boycgit/ss-stack">https://runkit.com/boycgit/ss-stack</a> 查看具体的运行情况</p>
+<h3 id="21">2.1、十进制转二进制</h3>
+<blockquote>
+<p>来自文章 <a href="https://www.jianshu.com/p/eade026ffaf5">数据结构(三)之栈结构</a></p>
+</blockquote>
+<p>要把十进制转化成二进制，<strong>我们可以将该十进制数字和2整除（二进制是满二进一），直到结果是0为止</strong>。举个例子，把十进制的数字10转化成二进制的数字，过程大概是这样：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1OJfPairpK1RjSZFhXXXSdXXa-1000-543.png" alt="二进制"></p>
+<pre><code class="language-js">var Stack = require("ss-stack");
+// 封装十进制转二进制的函数
+function dec2bin(decNumer) {
+    // 定义变量
+    var stack = new Stack()
+    var remainder;
+
+    // 循环除法
+    while (decNumer &gt; 0) {
+        remainder = decNumer % 2;
+        decNumer = Math.floor(decNumer / 2);
+        stack.push(remainder);
+    }
+
+    // 将数据取出
+    var binayriStrng = ""
+    while (!stack.isEmpty()) {
+        binayriStrng += stack.pop();
+    }
+    return binayriStrng;
+}
+
+console.log(dec2bin(10));
+console.log(dec2bin(233));
+console.log(dec2bin(1000));
+</code></pre>
+<h3 id="22">2.2、括号匹配问题</h3>
+<ul>
+<li><a href="https://blog.csdn.net/Jasmine_yaoyao/article/details/77466854">栈的应用——检测括号是否匹配</a>：圆括号、方括号和大括号，其嵌套的顺序随意，使用栈这种数据结构能达到检测的目的；还有 <a href="https://segmentfault.com/a/1190000007173074">JS括号匹配问题</a> 给出了两种解决方法；</li>
+</ul>
+<blockquote>
+<p>示例来自 <a href="https://segmentfault.com/a/1190000007173074">JS括号匹配问题</a></p>
+</blockquote>
+<pre><code class="language-js">var Stack = require("ss-stack");
+function validBraces(braces){
+  let leftBraReg = /[\(\{\[]/, 
+    // 栈
+  rightBracket
+  braces = braces.split('')
+  let stack = new Stack();
+  for(let bracket of braces) {
+    if(leftBraReg.test(bracket)) {
+      stack.push(bracket)
+    }
+    else {
+      switch (bracket) {
+          case ')':
+          rightBracket = stack.pop()
+          if(rightBracket !=='(') {
+              return false
+          }
+          break
+        case ']':
+          rightBracket = stack.pop()
+          if(rightBracket !=='[') {
+              return false
+          }
+          break
+        case '}':
+          rightBracket = stack.pop()
+          if(rightBracket !=='{') {
+              return false
+          }
+          break
+      }
+    }
+  }
+  return stack.length === 0 ? true : false
+}
+
+validBraces("(){}[]")     // true 
+validBraces("(}")      // false 
+validBraces("[(])")    // false 
+validBraces("([{}])")     // true 
+</code></pre>
+<h3 id="3">3、汉诺塔求解</h3>
+<ul>
+<li><a href="https://blog.csdn.net/xgf415/article/details/52038961">用栈实现汉诺塔</a>：由于汉诺塔的规则与栈的规则类似（先入后出），因此提出了用栈具体实现汉诺塔</li>
+<li><a href="https://stackoverflow.com/questions/12383044/complexity-for-towers-of-hanoi#answer-12383320">Complexity for towers of Hanoi?</a>：汉诺塔的复杂度是 O(2^n)</li>
+</ul>
+<p>整个算法的思路是：</p>
+<ul>
+<li>将 a 柱子上的 n-1 个盘子暂时移到 b 柱子上</li>
+<li>a 柱子只剩下最大的盘子，把它移到目标柱子 c 上</li>
+<li>最后再将 b 柱子上的 n-1 个盘子移到目标柱子 c 上</li>
+</ul>
+<p>汉诺塔的递归法优雅而精妙，伪代码如下：</p>
+<pre><code class="language-js">//将n个盘子按规则从a柱子，移动到c柱子
+hanoi( n, a, b, c )
+{
+    if( n &gt; 0 )
+    {
+        hanoi(n-1,a,c,b);
+        //将a柱子的最上面的盘子移到c柱子
+        c.push( a.pop() );
+        hanoi(n-1,b,a,c);
+    }
+}
+</code></pre>
+<blockquote>
+<p>代码来自 <a href="https://blog.csdn.net/yihui1314/article/details/80154454">JavaScript数据结构与算法——栈及其应用</a></p>
+</blockquote>
+<pre><code class="language-js">var Stack = require("ss-stack");
+var towerOfHanoi = function(n, from, help, to) {
+  if (n &gt; 0) {
+    towerOfHanoi(n-1, from, to, help);
+    to.push(from.pop());
+    console.log('----------------');
+    console.log(`from: ${from.stack.toArray()}`);
+    console.log(`help: ${help.stack.toArray()}`);
+    console.log(`to: ${to.stack.toArray()}`);
+    towerOfHanoi(n-1, help, from, to);
+  }
+}
+
+var a = new Stack(),
+    b = new Stack(),
+    c = new Stack(),
+    n = 4;
+
+for(let i = n; i &gt; 0; i--) {
+  a.push(i);
+}
+// test
+towerOfHanoi(a.length, a, b, c);
+</code></pre>
+<h3 id="4">4、调度场算法（中缀表达式转后缀表达式）</h3>
+<ul>
+<li><a href="https://www.jianshu.com/p/ed482d1af8bc">计算器的核心算法-JavaScript实现（逆波兰表达式）</a>：很详细的教程，利用两个栈实现计算器，还有 <a href="https://codepen.io/lvanboy/full/LxKVxJ">demo</a>；</li>
+<li><a href="https://www.cnblogs.com/tylerdonet/p/5816464.html">javascript使用栈结构将中缀表达式转换为后缀表达式并计算值</a>：例子详实，推荐</li>
+<li><a href="http://hczhcz.github.io/2014/02/27/shunting-yard-algorithm.html">调度场算法系列</a>：共 3 篇系列文章，循序渐进剖析调度场算法的来龙去脉，推荐</li>
+</ul>
+<blockquote>
+<p>代码来自 <a href="https://boycgit.github.io/algorithm-shunting-yard/">算法 - 调度场算法（Shunting Yard Algorithm）</a></p>
+</blockquote>
+<pre><code class="language-js">/* ----------------------------------------------------
+    调度场算法，将中缀转换过程后缀表达式
+----------------------------------------------------- */
+var Stack = require("ss-stack");
+
+// 操作符优先级列表
+var PRI_LEFT = 99;
+var PRI_RIGHT = 100;
+var PRI_TOKEN_MAP = {
+    '+': 1,
+    '-': 1,
+    '*': 2,
+    '/': 2,
+    '(': PRI_LEFT,
+    ')': PRI_RIGHT,
+};
+
+// 将中序转换成
+function infixToPostfix(expression){
+    expression = expression.replace(/\s*/g,""); // 去除所有空白字符
+    var opStack = new Stack();
+    var str = '';
+    
+    
+    // 符号栈操作
+    function calcToken(){
+        str += opStack.pop();
+    }
+    
+    for(let token of expression){
+        var tokenPri = PRI_TOKEN_MAP[token] || 0;
+        var peekTokenPri = opStack.peek &amp;&amp; PRI_TOKEN_MAP[opStack.peek] || 0;   
+        
+        
+        // console.log(opStack.stack.toArray());
+        // 首先判断是否操作符
+        if(tokenPri){
+        
+            // 情况 1： 栈顶不是左括号；入栈符号不是右括号
+            // 循环判断当前栈顶符号，且优先级高于或等于将要入栈的元素，且栈顶不是左括号
+            while(opStack.peek &amp;&amp; PRI_TOKEN_MAP[opStack.peek] !== PRI_LEFT &amp;&amp; tokenPri !== PRI_RIGHT &amp;&amp; peekTokenPri &gt;= tokenPri) {
+                calcToken();
+            }
+            
+            // 情况2：右括号准备入栈，
+            if(tokenPri === PRI_RIGHT){
+                // 将符号栈中元素依次弹出，则需要弹栈一直到左括号
+                while(PRI_TOKEN_MAP[opStack.peek] !== PRI_LEFT){
+                    calcToken();
+                }
+                opStack.pop(); // 将左括号弹出，不放在数字栈里
+            } else {
+                // 将当前符号元素入栈
+                opStack.push(token);
+            }   
+        } else { // 不是操作符就直接拼接在字符串上
+            str += token;
+        }
+    }
+    
+    // 将符号栈中剩余的元素依次弹出
+    while(opStack.peek){
+        calcToken();
+    }
+    return str;
+}
+
+console.log(infixToPostfix('1+2*3+4')); // "123*+4+"
+console.log(infixToPostfix('1 + 2 *  (4 + 5 - 6) ')); // "1 2 4 5 + 6 - * +"
+console.log(infixToPostfix('1 + 2 * (3 + (4 + 5 - 6) * 2)')); // "1 2 3 4 5 + 6 - 2 * + * +"
+console.log(infixToPostfix('a + b * c + ( d * e + f ) * g')); // "a b c * + d e * f  + g * +"
+</code></pre>
+<!--kg-card-end: markdown-->
+                </div>
+            </section>
+            <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
+            <section style="text-align: center"><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg"></section>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js" integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js" integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH" crossorigin="anonymous"></script>
+
+
+            <section id="gitalk-component-wrap"></section>
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit">
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/boycgit/">boycgit</a></h4>
+            <p>阅读此作者的<a href="../author/boycgit/">更多文章</a>.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/boycgit/">阅读更多</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+                <article class="read-next-card" style="background-image: url(https://casper.ghost.org/v1.0.0/images/blog-cover.jpg)">
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">— JSCON-简时空 —</small>
+                        <h3 class="read-next-card-header-title"><a href="../tag/shu-ju-jie-gou/">数据结构</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"></path></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="../ss-heap/">前端学数据结构 - 堆（Heap）</a></li>
+                            <li><a href="../algorithm-shunting-yard/">算法 - 调度场算法（Shunting Yard Algorithm）</a></li>
+                            <li><a href="../ds-linked-list/">前端学数据结构 - 链表（Linked List）</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="../tag/shu-ju-jie-gou/">查看所有3篇文章 →</a>
+                    </footer>
+                </article>
+
+                <article class="post-card post tag-node-js tag-yuan-ma tag-jiao-cheng tag-tcp tag-ji-suan-ji-wang-luo">
+        <a class="post-card-image-link" href="../implement-websocket-protocol/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1496055401924-5e7fdc885742?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=24c37e30b5bde3626b5dff19ff0bd456)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../implement-websocket-protocol/">
+            <header class="post-card-header">
+                    <span class="post-card-tags">Node.js</span>
+                <h2 class="post-card-title">Node.js -  200 多行代码实现 Websocket 协议</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>最近正在研究 Websocket 相关的知识，想着如何能自己实现 Websocket 协议。到网上搜罗了一番资料后用 Node.js 实现该协议，本文会从知识储备、具体代码分析以及注意事项角度去讲解如何用 Node.js 实现一个简单的 Websocket 服务，除去注释语句和 console 语句后，大约 200 行代码左右。本文记录了实现过程中的经验和总结。</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 19 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-shu-ju-jie-gou tag-lian-biao tag-he-ji tag-javascript">
+        <a class="post-card-image-link" href="../ds-linked-list/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1488272690691-2636704d6000?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=aa0b60f6056e9e2a3d120b63239f8355)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../ds-linked-list/">
+            <header class="post-card-header">
+                    <span class="post-card-tags">数据结构</span>
+                <h2 class="post-card-title">前端学数据结构 - 链表（Linked List）</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>前端学数据结构系列 - 链表。本文收集了链表相关的参考文章、链表类型、代码实现和实际应用等等，通过本文能基本掌握链表这一数据结构</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 7 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://boycgit.github.io">
+                <img src="../content/images/2018/08/logo.png" alt="JSCON-简时空 icon">
+            <span>JSCON-简时空</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">—</span>
+    <div class="floating-header-title">前端学数据结构 - 栈（Stack）和 队列（Queue）</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
+</svg>
+</div>
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8A%E5%89%8D%E7%AB%AF%E5%AD%A6%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%20-%20%E6%A0%88%EF%BC%88Stack%EF%BC%89%E5%92%8C%20%E9%98%9F%E5%88%97%EF%BC%88Queue%EF%BC%89%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/ss-stack/" onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+            <?xml version="1.0" standalone="no"?><svg t="1534600204727" class="icon" style="" viewbox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/ss-stack/&amp;mhid=txbODQq7nZkhMHcqI9xROqg" onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+            <?xml version="1.0" standalone="no"?><svg t="1534604253879" class="icon" style="" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.min.js"></script>
+
+<script>
+    (function () {
+        /**
+         * Get Node
+         * @param  {String|Element} el
+         * @param  {Boolean} noCache
+         * @return {Element}
+         */
+        var cacheNode = {};
+        function getNode(el, noCache) {
+            if (noCache === void 0) noCache = false;
+
+            if (typeof el === 'string') {
+                if (typeof window.Vue !== 'undefined') {
+                    return find(el);
+                }
+                el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el));
+            }
+
+            return el;
+        }
+
+        /**
+         * Find element
+         * @example
+         * find('nav') => document.querySelector('nav')
+         * find(nav, 'a') => nav.querySelector('a')
+         */
+        function find(el, node) {
+            return node ? el.querySelector(node) : document.querySelector(el);
+        }
+        function create(node, tpl) {
+            node = document.createElement(node);
+            if (tpl) {
+                node.innerHTML = tpl;
+            }
+            return node;
+        }
+        function appendTo(target, el) {
+            return target.appendChild(el);
+        }
+
+        function renderGitalkContainer() {
+            var div = create('div');
+            div.id = 'gitalk-container';
+            var main = getNode('#site-main');
+            div.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            appendTo(find('#gitalk-component-wrap'), div);
+            var script = create('script');
+            var content = "gitalk.render('gitalk-container')";
+        }
+        renderGitalkContainer();
+
+        var gitalk = new Gitalk({
+            clientID: 'a65ee9e3ea5168da1470',
+            clientSecret: 'ebfd520679d1ad61929b1887b2efccd4872389e3',
+            repo: 'boycgit.github.io',
+            owner: 'boycgit',
+            admin: [
+                'boycgit'
+            ],
+            id: location.pathname,
+            // facebook-like distraction free mode
+            distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container');
+
+
+
+        var postImages = document.querySelectorAll('.post-content img');
+        Array.prototype.forEach.call(postImages, function (el, i) {
+            el.outerHTML = `<aholder href="${el.src}" data-lightbox="postImages" data-title="${el.alt}">${el.outerHTML}</aholder>`.replace(/aholder/g, 'a');
+        });
+
+        // 动态添加 js 脚本
+        setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/js/lightbox.min.js";
+            document.getElementsByTagName('body')[0].appendChild(script);
+
+            script.onload = function () {
+
+                console.log('load success');
+            }
+        }, 1000);
+
+    })();
+</script>
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://boycgit.github.io">JSCON-简时空</a> © 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="https://boycgit.github.io">最新文章</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=11f1923694"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });
+</script>
+
+</body>
+</html>

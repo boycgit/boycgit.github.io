@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh">
+<!DOCTYPE html><html lang="zh">
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>算法 - 调度场算法（Shunting Yard Algorithm）</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=11f1923694" />
+
+    <meta name="description" content="在总结 栈（Stack） 这个数据结构时候，栈有一种中缀转后缀的算法，称为调度场算法（Shunting Yard Algorithm）。网上大多是讲解具体的编程实现，都缺乏探讨这个算法的实现思想，所以就花费一些时间从自己实现该算法的角度去摸索并且理解这个算法。" />
+    <link rel="shortcut icon" href="../favicon.png" type="image/png" />
+    <link rel="canonical" href="https://boycgit.github.io/algorithm-shunting-yard/" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+    <link rel="amphtml" href="https://boycgit.github.io/algorithm-shunting-yard/amp/" />
+    
+    <meta property="og:site_name" content="JSCON-简时空" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="算法 - 调度场算法（Shunting Yard Algorithm）" />
+    <meta property="og:description" content="有一种中缀转后缀的算法称为调度场算法（Shunting Yard Algorithm）。算法核心就在于用栈暂存符号以备“调度”，比较新符号和栈顶原有的符号，选择其中更容易结合的（根据优先级、结合方向）出栈，其算法思想和树的后续遍历一致" />
+    <meta property="og:url" content="https://boycgit.github.io/algorithm-shunting-yard/" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1516437202929-3e06ed03f0b0?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;95145a369b4060b4e92c923a92d71196" />
+    <meta property="article:published_time" content="2018-09-21T16:30:08.000Z" />
+    <meta property="article:modified_time" content="2019-06-30T01:56:28.000Z" />
+    <meta property="article:tag" content="算法" />
+    <meta property="article:tag" content="javascript" />
+    <meta property="article:tag" content="数据结构" />
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="算法 - 调度场算法（Shunting Yard Algorithm）" />
+    <meta name="twitter:description" content="有一种中缀转后缀的算法称为调度场算法（Shunting Yard Algorithm）。算法核心就在于用栈暂存符号以备“调度”，比较新符号和栈顶原有的符号，选择其中更容易结合的（根据优先级、结合方向）出栈，其算法思想和树的后续遍历一致" />
+    <meta name="twitter:url" content="https://boycgit.github.io/algorithm-shunting-yard/" />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1516437202929-3e06ed03f0b0?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;95145a369b4060b4e92c923a92d71196" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="boycgit" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="算法, javascript, 数据结构" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="721" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "JSCON-简时空",
+        "logo": "https://boycgit.github.io/content/images/2018/08/logoicon.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "boycgit",
+        "image": {
+            "@type": "ImageObject",
+            "url": "//www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&d=mm&r=x",
+            "width": 250,
+            "height": 250
+        },
+        "url": "https://boycgit.github.io/author/boycgit/",
+        "sameAs": []
+    },
+    "headline": "算法 - 调度场算法（Shunting Yard Algorithm）",
+    "url": "https://boycgit.github.io/algorithm-shunting-yard/",
+    "datePublished": "2018-09-21T16:30:08.000Z",
+    "dateModified": "2019-06-30T01:56:28.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://images.unsplash.com/photo-1516437202929-3e06ed03f0b0?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ&s=95145a369b4060b4e92c923a92d71196",
+        "width": 1080,
+        "height": 721
+    },
+    "keywords": "算法, javascript, 数据结构",
+    "description": "有一种中缀转后缀的算法称为调度场算法（Shunting Yard Algorithm）。算法核心就在于用栈暂存符号以备“调度”，比较新符号和栈顶原有的符号，选择其中更容易结合的（根据优先级、结合方向）出栈，其算法思想和树的后续遍历一致",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://boycgit.github.io/"
+    }
+}
+    </script>
+
+    <script src="../public/ghost-sdk.js?v=11f1923694"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "7c2ea2eb9409"
+});
+</script>
+    <meta name="generator" content="Ghost 2.31" />
+    <link rel="alternate" type="application/rss+xml" title="JSCON-简时空" href="https://boycgit.github.io/rss/" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-69473481-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-69473481-3');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css" integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH" crossorigin="anonymous">
+<style>
+
+/* 结束 */
+
+  .end-block-wrap{
+        color:#338daf;
+        text-align: center;
+    }
+
+    .end-block-wrap img{
+        border: none;
+        max-width: 100%;
+        margin: 0px auto; display: inline-block;
+    }
+
+    .end-block-wrap img.main{
+        width: 30px;
+    }
+
+
+/* 参考文档 */
+.ref-wrap .line-text{
+    display: flex;justify-content:center;align-items:flex-end;
+}
+
+.ref-wrap .line-text::before, .ref-wrap .line-text::after{
+    content: '';
+    display: inline-block;
+    width: 25%; border-bottom: 1px dashed rgb(51, 51, 51); box-sizing: border-box;
+}
+
+.ref-wrap .text.main{
+    font-size: 14px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 0px 10px; 
+    font-weight: bold; 
+    margin-bottom: -5px; 
+    box-sizing: border-box;
+}
+
+.ref-wrap  .text.second{
+    font-size: 16px; 
+    color: rgb(0, 0, 0); 
+    letter-spacing: 1.5px; 
+    padding: 10px; 
+    text-align: center; 
+    box-sizing: border-box;
+}
+/* 求关注 */
+.qr-wrap{
+    margin-right: auto; 
+    margin-left: auto; 
+    width: 360px; 
+    border: none rgb(255, 129, 36); 
+    background: url(https://mpt.135editor.com/mmbiz_gif/ziadDDQxbCJFA2XMwm7VE1RTcS94u8LqVWSjIasMfzY8aG5HolkBhHhwEp0eUpPCEzPYqXYicbRNtROJibbM9P55g/0?wx_fmt=gif) right 0px no-repeat; 
+    background-size: contain; 
+    box-sizing: border-box;
+}
+
+.qr-image{
+    padding: 10px 3px; 
+    width: 150px; 
+    display: inline-block; 
+    box-sizing: border-box;
+}
+
+.qr-image img{
+    width: 150px;
+}
+
+
+</style>
+
+</head>
+<body class="post-template tag-suan-fa tag-javascript tag-shu-ju-jie-gou">
+
+    <div class="site-wrapper">
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/css/lightbox.min.css">
+
+
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://boycgit.github.io"><img src="../content/images/2018/08/logoicon.png" alt="JSCON-简时空" /></a>
+            <ul class="nav" role="menu">
+    <li class="nav-shou-ye" role="menuitem"><a href="https://boycgit.github.io/">首页</a></li>
+    <li class="nav-guan-yu" role="menuitem"><a href="https://boycgit.github.io/about-me/">关于</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://boycgit.github.io/rss/" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"/><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"/></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-suan-fa tag-javascript tag-shu-ju-jie-gou ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="2018-09-22">22 September 2018</time>
+                        <span class="date-divider">/</span> <a href="../tag/suan-fa/index.html">算法</a>
+                </section>
+                <h1 class="post-full-title">算法 - 调度场算法（Shunting Yard Algorithm）</h1>
+            </header>
+
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1516437202929-3e06ed03f0b0?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;95145a369b4060b4e92c923a92d71196)">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <p>在总结 <strong>栈（Stack）</strong> 这个数据结构时候，栈有一种应用是计算算术表达式的 —— 中缀转后缀的。个人对这个算法很感兴趣，就特意找了一下相关的文章，发现中缀表达式转成后缀表达式的算法，有一个专门的名称，叫做 <strong>调度场算法（Shunting Yard Algorithm）</strong>。</p>
+<p>网上大多是讲解具体的编程实现，都缺乏探讨这个算法的实现思想，自己看得非常的迷糊，所以就花费一些时间从自己实现该算法的角度去摸索并且理解这个算法。</p>
+<h1 id="a">A. 参考</h1>
+<h2 id="1">1、中缀转后缀</h2>
+<ul>
+<li><a href="https://www.jianshu.com/p/ed482d1af8bc">计算器的核心算法-JavaScript实现（逆波兰表达式）</a>：很详细的教程，利用两个栈实现计算器，还有 <a href="https://codepen.io/lvanboy/full/LxKVxJ">demo</a>；</li>
+<li><a href="https://www.cnblogs.com/tylerdonet/p/5816464.html">javascript使用栈结构将中缀表达式转换为后缀表达式并计算值</a>：例子详实，推荐</li>
+<li><a href="https://ourcodeworld.com/articles/read/549/how-to-implement-a-basic-mathematical-expression-calculator-in-javascript-with-mathcalc">How to implement a basic mathematical expression calculator in JavaScript with MathCalc</a>：可以参考现有的 <a href="https://paiv.github.io/blog/2016/03/23/js-calc.html">MathCalc</a> 写法</li>
+<li><a href="https://www.thepolyglotdeveloper.com/2015/03/parse-with-the-shunting-yard-algorithm-using-javascript/">Parse With The Shunting Yard Algorithm Using JavaScript</a>：简略地讲述如何将中缀表达式转换成 RPN，博主的另一篇文章 <a href="https://www.thepolyglotdeveloper.com/2015/04/evaluate-a-reverse-polish-notation-equation-with-javascript/">Evaluate A Reverse Polish Notation Equation With JavaScript</a> 讲解如何基于后缀表达式获取运算结果的</li>
+<li><a href="https://blog.csdn.net/u012501459/article/details/47620773">中缀表达式及后缀表达式图解</a>：很详细的图文讲解，每一步都有图示，对初学者很友好；</li>
+<li><a href="http://blog.chxj.name/from-reverse-polish-notation-to-three-pass-compiler-1/">Codewars：从逆波兰表达式到Three-Pass编译器（1）</a>：看作者是如何举一反三，利用 RPN 完成解题；</li>
+<li><a href="https://www.zhihu.com/question/25097763">如何在程序中将中缀表达式转换为后缀表达式？</a>：知乎问答；</li>
+</ul>
+<h2 id="2">2、调度场算法</h2>
+<p>在计算机科学里，将中缀形式转换成后缀形式的算法有一个专门的称谓，<a href="https://en.wikipedia.org/wiki/Shunting-yard_algorithm">调度场算法（Shunting Yard Algorithm）</a>，看不了的请看下面两篇：</p>
+<ul>
+<li><a href="https://www.zhihu.com/question/41103160">什么是逆波兰表达式 ？</a>：知乎问答帖，通俗易懂讲解了逆波兰式的优势，不需要两次操作，只要从头扫描到尾就能求出结果，也不需要递归，只需要一个很小的栈就可以。所以逆波兰表达式算法取得了时间复杂度和空间复杂度上的双重优势。有关的历史可以阅读 <a href="https://www.mathblog.dk/reverse-polish-notation/">History of Reverse Polish Notation</a></li>
+<li><a href="https://liam0205.me/2016/12/14/Shunting-Yard-Algorithm/">调度场算法</a> ：文字介绍比较多</li>
+<li><a href="http://hczhcz.github.io/2014/02/27/shunting-yard-algorithm.html">调度场算法系列</a>：共 3 篇系列文章，循序渐进剖析调度场算法的来龙去脉，推荐</li>
+<li><a href="http://www.oxfordmathcenter.com/drupal7/node/628">The Shunting Yard Algorithm</a>：举例理解调度场算法；</li>
+</ul>
+<h2 id="3">3、转换工具类</h2>
+<p>找了一些在线转换工具，方便快速验证自己实现的转换是否正确</p>
+<ul>
+<li><a href="http://scanftree.com/Data_Structure/prefix-postfix-infix-online-converter">Infix to postfix online converter</a></li>
+<li><a href="https://www.mathblog.dk/tools/infix-postfix-converter/">Infix / Postfix converter</a></li>
+</ul>
+<h1 id="b">B. 讲解</h1>
+<p>接下来，我们以  <code>1 + 2 * (3 + (4 + 5 - 6) * 2)</code> 为例讲解；<br>
+先用上述中的在线工具， 获得中缀表达式对应的后缀表达式是 <code>1 2 3 4 5 + 6 - 2 * + * +</code></p>
+<p>这种后缀表达式对人类理解起来非常的困难，如何让理解的成本低一些呢？</p>
+<h2 id="1">1、回顾小学数学</h2>
+<p>在小学生级别的算术运算符中，四则运算最为重要的一点是 <strong>优先级</strong> —— 优先级高的元素需要先结合运算；优先级高的运算符相当于 <strong>领导</strong>，在计算的时候，也应该贯彻 <strong>让领导先走</strong> 的理念，<strong>优先级高的先结合计算，然后再轮到优先级低的</strong>；</p>
+<p>四则运算我们粗略分成两类：<strong>带括号的</strong> 和 <strong>不带括号的</strong>；</p>
+<p>先讨论不带括号的：</p>
+<ul>
+<li>式子 <code>1*3+5</code> 肯定是先计算乘法 <code>1*3</code> (=3) ，然后再计算加法 <code>3+5</code> (=8)；</li>
+<li>式子 <code>1+3*5</code> 肯定是先计算乘法 <code>3*5</code> (=15)，然后再计算加法 <code>1+15</code> (=16)</li>
+</ul>
+<p>这些道理都懂，很 easy，不过现在让你用 <strong>栈</strong> 编程实现，那该如何做？</p>
+<p>先不着急实现，我们继续看一下稍微复杂的场景 —— <strong>括号的引入</strong>；</p>
+<p>让我们重温一下小学数学，当数学老师在黑板上给出 <code>1 + 2 * (3 + (4 + 5 - 6) * 2)</code> 这个式子，我们一眼瞄过去，发现有括号的，优先级提高，所以计算顺序是：</p>
+<ul>
+<li>先计算 <code>(4 + 5 - 6)</code> （假设计算结果为 A，值为 3）</li>
+<li>然后计算 <code>(3 + A*2)</code>（假设结果为 B，值为 9）</li>
+<li>最后计算 <code>1 + 2*B</code>，得到最终结果（假设结果为 C，值为 19）</li>
+</ul>
+<p>有 2 个发现：</p>
+<ul>
+<li>括号能提升优先级，而且越深的括号优先级越高，越先计算；</li>
+<li>最终每一步里，每个括号里面的运算都是 <strong>没有括号的基本四则运算</strong></li>
+</ul>
+<p>上面讲了一堆的小学数学知识，主要是为了强调运算符的特性，下面会用到。</p>
+<h2 id="2">2、建立两个栈</h2>
+<p>中缀表达式对人类很友好，不过对计算机运算并非那么友好，我们需要将其转换成计算机语言。</p>
+<p>如果从函数的角度来看，四则运算其实可以转换成<strong>函数式编程</strong>；而我们知道，计算机中就是用栈来实现函数的，所以用栈来实现四则运算是合情合理的选择。</p>
+<p>首先，对计算机而言，<code>1 + 2 * (3 + (4 + 5 - 6) * 2)</code> 就是一个字符串，我们挨个读取，然后放到两个栈中：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1KVcYbirpK1RjSZFhXXXSdXXa-285-448.png_640x640.jpg" alt="two stack"></p>
+<p>左边那个专门存放数字，我们称之为 <strong>数字栈</strong> 好了；同样的，右边那个专门存放符号，我们称之为 <strong>符号栈</strong>。</p>
+<p>依据第二个结论，括号能提升优先级，而且 <strong>括号里面是基础的四则运算</strong>，所以我们在上面两个栈中，以 <strong>括号</strong> 为 “边界”，划分出 <strong>子栈</strong> 来：</p>
+<p><img src="https://img.alicdn.com/tfs/TB12TZZbbvpK1RjSZFqXXcXUVXa-672-414.png_640x640.jpg" alt="sub stack"></p>
+<ul>
+<li>有两对括号，所以存在两个子栈；加上整体的栈，可以认为共有 3 个栈</li>
+<li>子栈 2 对应最里面的括号，优先级最高；子栈 1 对应次外层的括号，优先级第二高；最外层整体的栈，优先级最低；</li>
+<li>每个子栈都对应无括号的四则运算：
+<ul>
+<li>子栈 2 对应运算  <code>(4 + 5 - 6)</code> （假设计算结果为 A，值为 3），是无括号的四则运算；</li>
+<li>子栈 1 对应运算 <code>(3 + A*2)</code>（假设结果为 B，值为 9），是无括号的四则运算；</li>
+<li>基础栈对应 <code>1 + 2*B</code>，得到最终结果（假设结果为 C，值为 19），也是无括号的四则运算</li>
+</ul>
+</li>
+</ul>
+<p>这样对应起来之后，我们就会发现，使用 <strong>栈</strong> 和 <strong>子栈</strong> 的概念来处理四则运算真的很贴切！</p>
+<p>先来看看无括号的四则运算（子栈）实现。</p>
+<h3 id="21">2.1、子栈的计算实现</h3>
+<p>由于每个子栈都是无符号四则运算（且计算结果是具体的数值），我们看如何借助栈进行简单的、无括号的四则运算，以 <code>1+ 2 * 3 + 4</code> 为例：</p>
+<p>依据算术表达式，我们绘制出其数字栈和符号栈：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1UvQUbkvoK1RjSZPfXXXPKFXa-245-212.png_640x640.jpg" alt="two stack"></p>
+<p>由于 <code>*</code>（乘法）的优先级比 <code>+</code>（加法）要高，所以肯定要先计算 <code>2*3</code>，那么像上图中符号栈那样把 <code>+</code> 压在 <code>*</code> 是肯定不行的，因为会先弹出 <code>+</code> 号，进行 <code>3 + 4</code> 的运算，那怎么办？</p>
+<p>当某个符号准备入栈（符号栈）的时候要进行判断，<strong>确保栈中 “压” 在自己下的符号的优先级要比自己低，否则需要将栈顶的元素弹出来执行计算</strong>。</p>
+<blockquote>
+<p>为了形象记忆，形象些来记忆，高级领导总不能被 <strong>压在</strong> 低层领导下吧，“让领导先走”</p>
+</blockquote>
+<p>上图中符号栈中，当第三个 <code>+</code> 准备入栈的时候，发现栈顶元素是 <code>*</code> 号，优先级比自己高，需要将该 <code>*</code> 先弹出来，和数字栈中的 <code>2</code> 和 <code>3</code> 执行运算：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1lwQZbcfpK1RjSZFOXXa6nFXa-615-315.png_640x640.jpg" alt="执行乘法运算"></p>
+<p>然后将计算结果 <code>6</code> 放到数字栈中，执行完后 <code>+</code> 还想继续入栈发，唉，此时发现栈顶是 <code>+</code> 元素，优先级和自己的一样！毕竟有个先来后到，虽然等级一样，毕竟人家资历老，所以优先让它先 “走”（执行运算）：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1VMsWbgHqK1RjSZFkXXX.WFXa-941-266.png_640x640.jpg" alt="执行加法运算"></p>
+<p>将计算结果 <code>7</code> 放入到数字栈，此时栈为空，等待良久的 <code>+</code> 符号总算可以入栈了：（同时还有数字 <code>4</code> 压入到数字栈）</p>
+<p><img src="https://img.alicdn.com/tfs/TB1SbgWbmzqK1RjSZFjXXblCFXa-639-147.png_640x640.jpg" alt="加法运算"></p>
+<p>由于此时后续没有符号入栈了，所以挨个弹出符号栈中的运算符，这里只剩下一个 <code>+</code> 号，就将它弹出来然后执行运算，获得最终的计算结果 <code>11</code>。</p>
+<p><img src="https://img.alicdn.com/tfs/TB16cAWbmzqK1RjSZPxXXc4tVXa-485-283.png_400x400.jpg" alt="result"></p>
+<p>到这一步，两个栈都为空，获得的最终数值 <code>11</code> 就是我们要计算的算式的最终结果了。</p>
+<h3 id="22">2.2、复合栈计算</h3>
+<p>下面讨论利用栈完成带括号的四则运算，这种用于处理带括号的栈，我们暂且称之为 <strong>复合栈</strong>（自己创建的概念）</p>
+<p>从之前的讨论我们得知，带括号的部分，相当于是子栈，里面所进行的就是刚讨论过的无括号的四则运算；而且每个子栈的运算结果都是具体数值，放在左边的数字栈中去。</p>
+<p>所以遇到括号，就相当于进入到 <strong>子栈运算环节</strong>，括号越深表明优先级越高，越需要先计算；计算完成之后，肯定变成一个数字，之后再进入到其父单元的四则运算逻辑中；以本文讨论的 <code>1 + 2 * (3 + (4 + 5 - 6) * 2)</code> 为例</p>
+<ul>
+<li>肯定是先计算子栈 2 所对应的 <code>(4 + 5 - 6)</code></li>
+<li>然后再计算子栈 1 所对应的 <code>(3 + 3 * 2)</code></li>
+<li>最后再计算基础栈 <code>1+ 2 * 9</code></li>
+</ul>
+<p>从这里看出，带括号的四则运算就<strong>相当于是子栈运算的递归版本</strong>。</p>
+<p>计算的思路也很套路：</p>
+<ul>
+<li>从左向右挨个读取字符，分别放到数字栈和符号栈中</li>
+<li>在符号栈运行的时候，对比符号的优先级，确保 <strong>高优先级的符号</strong> 压在 <strong>低优先级符号上</strong>；如果不是，则需要弹出高优先级符号，进行即时运算，将运算结果放在左边的数字栈中；</li>
+<li>遇到左括号表明进入子栈，遇到右括号表示该子栈完结，需要将子栈里残余的符号都清空，将该子栈中运算执行完变成 <strong>子计算结果值</strong> 放到数字栈中；</li>
+<li>按照这样的规则一直读完表达式字符；</li>
+<li>将剩下的字符栈挨个弹出来执行计算，获取最终的结果。</li>
+</ul>
+<blockquote>
+<p>注：需要注意括号的优先级，括号的优先级最高，但由于它表示的 <strong>子栈的分隔符</strong>（左括号表示子栈的开始，右括号表示子栈的结束），所以不参与符号优先级的对比</p>
+</blockquote>
+<p>我们分步图示  <code>1 + 2 * (3 + (4 + 5 - 6) * 2)</code>  这个示例中，刚开始我们从左到右读取字符，分别将数字和符合压入栈，直到遇到准备压入 <code>5 - 6</code> 中的 <code>-</code> 符号时，发现栈顶是 同级别的加号 <code>+</code>，需要弹出加号做加法运算 <code>4 + 5</code>：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1GCVhbpzqK1RjSZSgXXcpAVXa-754-560.png_600x600.jpg" alt="弹出加号"></p>
+<p>这里要注意，在压入符号栈的过程中，如果遇到左括号先不用管，也先压入符号栈，左括号的优先级虽然比 <code>+</code> 高，但仍旧被压在 <code>+</code> 下；这么操作的原因是左括号 <strong>它表示的子栈的开始，起分隔子栈的作用，而不参与优先级的比对逻辑</strong>；</p>
+<blockquote>
+<p>四则运算中的括号相当于函数中的 <strong>作用域</strong> ；</p>
+</blockquote>
+<p>继续我们的压栈操作直到遇到 <strong>第一个右括号</strong>，表明是一个子栈结束，<strong>依次弹出符号栈中元素做运算直到遇到左括号为止</strong>：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1fhNpbAzoK1RjSZFlXXai4VXa-930-529.png_600x600.jpg" alt="minus"></p>
+<p>这个过程相当于执行 <code>(9 - 6)</code> 操作，操作至此我们就消灭了 <strong>子栈 2</strong>，整体消灭的过程相当于执行 <code>4 + 5 - 6</code> 无括号的四则运算，然后获得的计算结果 <code>3</code> 放到左边的数字栈；</p>
+<p>继续将读取算术表达式的字符放入数字栈和符号栈，直到最后一个右括号，表明又要结束一个子栈（<strong>子栈 1</strong> ）了；依次弹出符号栈中元素做运算，直到遇到左括号为止：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1qHdmbCzqK1RjSZPcXXbTepXa-727-376.png_600x600.jpg" alt="stack1"></p>
+<p>这个过程相当于执行 <code>3 + 3 * 2</code> 无括号四则运算操作，将计算的结果 <code>9</code> 放入到左边的数字栈：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1yhRrbwHqK1RjSZFgXXa7JXXa-480-176.png_400x400.jpg" alt="stack0"></p>
+<p>此时子栈都已经 “消灭” 完了，剩下最外层的基础栈，肯定无括号，按照无括号四则运算操作分分钟获得最终结果 <code>19</code>。</p>
+<p>最好自己绘制一下这些栈体验上述的流程，这样就能理解栈在其中所起到关键作用；</p>
+<p>在上述运算的过程，是数字栈和符号栈 “生长 - 消亡” 的过程，借助这个过程中我们可以获得一些 “中间产物”；</p>
+<h3 id="23ast">2.3、获取 AST</h3>
+<p>首先就是获得抽象语法树（AST，Abstract Syntax Tree）。</p>
+<p>如果让你完成一项解析器，你首先是要对中缀表达式 <code>1 + 2 * (3 + (4 + 5 - 6) * 2)</code> 进行语法解析，整理成 <strong>抽象语法树</strong>，会成下面那样子：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1Mm6KbSzqK1RjSZPcXXbTepXa-194-388.png" alt="ast"></p>
+<p>在上述复合栈运算的过程中，我们是可以获得上述的语法树。</p>
+<p>这里需要用到二叉树这种数据结构，在每个运算的步骤中我们稍作改动 —— <strong>我们将入栈的数字改成二叉树就行了</strong>，其他地方不变。</p>
+<p>比如计算完 <code>4 + 5</code> 的时候是这样的：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1Nz28bNYaK1RjSZFnXXa80pXa-930-528.png_600x600.jpg" alt="tree1"></p>
+<p>计算完 <code>4 + 5 - 6</code> 的时候如下：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1UA6RbFzqK1RjSZFCXXbbxVXa-918-472.png" alt="tree2"></p>
+<p>...</p>
+<p>一直下去直到两个栈都为空，就获得了完整的一颗抽象语法树。</p>
+<p>稍微总结一下：</p>
+<ul>
+<li>生成子树的时候，以符号为父节点，取出两个数字堆栈的成员为子节点；</li>
+<li>生成的树压回到数字堆栈中；</li>
+<li>运算过程，是<strong>自底向上</strong>产生AST的，即先获得最深部分的子树，然后往上构建从而获得整棵树；</li>
+<li>计算优先级越高的部分，在语法树的位置越深</li>
+</ul>
+<h2 id="3">3、调度场算法</h2>
+<p>上面全是铺垫，现在要讲的才是重点。</p>
+<p>我们上述是采用两个栈完成算术运算，能否合并采用一个栈呢？</p>
+<p>答案是可以的，如何合并呢？直接把符号栈堆放到数字栈上呢？或者，把数字栈放到符号栈上？no no no，是不行的，太简单粗暴了。</p>
+<p><img src="https://img.alicdn.com/tfs/TB1rqMDbMHqK1RjSZFPXXcwapXa-360-732.png_400x400.jpg" alt="combine"></p>
+<p>那怎么合成？</p>
+<h3 id="31">3.1、看成一个整体</h3>
+<p>还是要从复合栈的运算中找思路。</p>
+<p>仍旧以 <code>1+ 2 * 3 + 4</code> 简单的无括号算术运算为例，我们对比一下如何符号不运算，而是直接放入到符号栈会是怎样的：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1RWsNbPDpK1RjSZFrXXa78VXa-1687-957.png" alt="compare"></p>
+<p>图片右上部分是原来的逻辑，将 <code>+</code> 和左边的运算符运算之后放入到数字栈中，而右下角则不进行运算，直接将符号放到数字栈中。想象一下，运算结果值 <code>6</code> 其实就是右下角的 <code>23+</code> 子栈，<strong>后续的运算我们都把 <code>23+</code>看成一个整体</strong>（你就想象成数字 <code>6</code>）就可以了。</p>
+<p>继续下一步的运算 <code>1 + 6</code> （这里的 6 就是 <code>23+</code> 这个子栈整体）后，两种运算方式栈的情况如下：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1aaAPbQvoK1RjSZFNXXcxMVXa-896-804.png" alt="step 2"></p>
+<p>我们发现直接运算后的栈会清爽很多；而符号不参与不运算时，相当于是把右边的符号栈挪到了数字栈，所以看上去左边的栈 “臃肿” 了许多，这是因为节省了运算的步骤。</p>
+<p>继续最后一步 <code>7 + 4</code>，两种运算方式栈的情况如下：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1WOw6bSzqK1RjSZPcXXbTepXa-896-689.png" alt="step3"></p>
+<p>到这一步你会发现，上面那种符号直接运算的情况，就能获得最终运算结果 <code>11</code>；而下面那种符号不直接运算的情况，则是获得混合数字和符号的栈，获得这个栈的操作过程就是著名的 <strong>调度场算法</strong>，而从栈底部往上的字符串 <code>123*+4+</code> 就是 <strong>逆波兰表达式</strong>。</p>
+<blockquote>
+<p>由于调度场算法的时候，左边的数字栈只有压栈操作并没有弹栈操作，所以可以用字符串、数组或者队列来代替，这样就只剩下右边的符号栈了，所以可以只用一个栈实现 <strong>调度场算法</strong>。</p>
+</blockquote>
+<p>获得的逆波兰表达式并非最终的运算结果的，如果需要获得最终结果还需要一次逆向弹栈的操作。因此：</p>
+<ul>
+<li>如果你仅仅是需要获取运算的最终结果，推荐使用符号运算后入栈的方式</li>
+<li>如果想要获得<strong>逆波兰表达式</strong>，就不得不使用调度场算法；</li>
+</ul>
+<p>上面我们讨论无括号的简单四则运算场景下调度场的算法步骤，加入括号之后，我们可以依样画葫芦获得其算法步骤 —— 正如之前我们如何依据子栈结果获得复合栈的运算结果那样。限于篇幅，这儿就不继续展开。</p>
+<h3 id="32">3.2、程序代码实现</h3>
+<p>按照上面的思路，这里我们仅仅列举出将中缀转换过程后缀表达式的函数：</p>
+<pre><code class="language-js">/* ----------------------------------------------------
+    调度场算法，将中缀转换过程后缀表达式
+----------------------------------------------------- */
+var Stack = require(&quot;ss-stack&quot;);
+
+// 操作符优先级列表
+var PRI_LEFT = 99;
+var PRI_RIGHT = 100;
+var PRI_TOKEN_MAP = {
+    '+': 1,
+    '-': 1,
+    '*': 2,
+    '/': 2,
+    '(': PRI_LEFT,
+    ')': PRI_RIGHT,
+};
+
+// 将中序转换成
+function infixToPostfix(expression){
+    expression = expression.replace(/\s*/g,&quot;&quot;); // 去除所有空白字符
+    var opStack = new Stack();
+    var str = '';
+    
+    
+    // 符号栈操作
+    function calcToken(){
+        str += opStack.pop();
+    }
+    
+    for(let token of expression){
+        var tokenPri = PRI_TOKEN_MAP[token] || 0;
+        var peekTokenPri = opStack.peek &amp;&amp; PRI_TOKEN_MAP[opStack.peek] || 0;   
+        
+        
+        // console.log(opStack.stack.toArray());
+        // 首先判断是否操作符
+        if(tokenPri){
+        
+            // 情况 1： 栈顶不是左括号；入栈符号不是右括号
+            // 循环判断当前栈顶符号，且优先级高于或等于将要入栈的元素，且栈顶不是左括号
+            while(opStack.peek &amp;&amp; PRI_TOKEN_MAP[opStack.peek] !== PRI_LEFT &amp;&amp; tokenPri !== PRI_RIGHT &amp;&amp; peekTokenPri &gt;= tokenPri) {
+                calcToken();
+            }
+            
+            // 情况2：右括号准备入栈，
+            if(tokenPri === PRI_RIGHT){
+                // 将符号栈中元素依次弹出，则需要弹栈一直到左括号
+                while(PRI_TOKEN_MAP[opStack.peek] !== PRI_LEFT){
+                    calcToken();
+                }
+                opStack.pop(); // 将左括号弹出，不放在数字栈里
+            } else {
+                // 将当前符号元素入栈
+                opStack.push(token);
+            }   
+        } else { // 不是操作符就直接拼接在字符串上
+            str += token;
+        }
+    }
+    
+    // 将符号栈中剩余的元素依次弹出
+    while(opStack.peek){
+        calcToken();
+    }
+    return str;
+}
+
+console.log(infixToPostfix('1+2*3+4')); // &quot;123*+4+&quot;
+console.log(infixToPostfix('1 + 2 *  (4 + 5 - 6) ')); // &quot;1 2 4 5 + 6 - * +&quot;
+console.log(infixToPostfix('1 + 2 * (3 + (4 + 5 - 6) * 2)')); // &quot;1 2 3 4 5 + 6 - 2 * + * +&quot;
+console.log(infixToPostfix('a + b * c + ( d * e + f ) * g')); // &quot;a b c * + d e * f  + g * +&quot;
+</code></pre>
+<p>代码的运行结果代码放在 <a href="https://runkit.com/boycgit/ss-stack">https://runkit.com/boycgit/ss-stack</a> 这儿了，此外还给出了直接计算出结果的函数，和上述的过程几乎一样，不一样的地方在于 <code>calcToken</code> 的内容，一个是不做计算进行字符拼接，另一个则是做了计算直接放入到数字栈中；</p>
+<blockquote>
+<p>注意：函数实现的时候注意边界条件，尤其是 <strong>括号符号的处理</strong>。</p>
+</blockquote>
+<h2 id="4">4、练习</h2>
+<p>自己手动使用调度栈将 <code>a + b * c + ( d * e + f ) * g</code> 转换成后缀表达式。<br>
+答案： <code>a b c * + d e * f + g * +</code></p>
+<h2 id="5">5、总结</h2>
+<p>在本篇文章中，为了理解调度场算法，我们首先使用两个栈（数字栈和符号栈）来分析运算的过程，从简单的四则运算开始到复杂的带括号的四则运算。</p>
+<p>先分析简单的四则运算，这样能减轻理解上的难度，比较直观地展示栈在算术运算中所发挥的作用；随后我们逐步推演，将两个栈归并到单个栈运算，就完成了调度场算法。在推演的过程中，还自底向上获得了 AST 。</p>
+<p>调度场算法的核心就在于用栈暂存符号以备“调度”，比较新符号和栈顶原有的符号，选择其中更容易结合的（根据优先级、结合方向）出栈——更容易结合就意味着更早地参与计算。理解这点以后，调度场算法就仿佛显而易见、理所当然地存在了。</p>
+<p>如果你学过树（Tree）数据结构和算法，你会发现调度场算法其本质就是上述 AST 二叉树的深度优先遍历算法中的 <strong>后续遍历</strong>算法；这么盘算下来，哟，殊途同归啊，很奇妙的感觉。如果你不好理解调度场算法的话，可以先列出算式对应的 AST，然后在做一把后续遍历就能获得逆波兰式；</p>
+<p>本文完。</p>
+
+                </div>
+            </section>
+            <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
+            <section style="text-align: center"><img
+                    src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg" /></section>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js"
+                integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/contrib/auto-render.min.js"
+                integrity="sha384-aGfk5kvhIq5x1x5YdvCp4upKZYnA8ckafviDpmWEKp4afOZEqOli7gqSnh8I6enH"
+                crossorigin="anonymous"></script>
+
+
+            <section id="gitalk-component-wrap"/>
+
+            <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" />
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="../author/boycgit/index.html">boycgit</a></h4>
+            <p>阅读此作者的<a href='../author/boycgit/index.html'>更多文章</a>.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="../author/boycgit/index.html">阅读更多</a>
+</div>
+
+
+            </footer>
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+
+                <article class="post-card post tag-shu-ju-jie-gou tag-javascript tag-he-ji">
+        <a class="post-card-image-link" href="../ss-heap/index.html">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1520352823777-923f7151a680?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;1da4c8a7ea8cf4a11d88502ea44009d6)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../ss-heap/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">数据结构</span>
+                <h2 class="post-card-title">前端学数据结构 - 堆（Heap）</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>前端学数据结构系列 - 堆（heap）。本文收集了堆的参考文章、代码实现和实际应用等等，通过本文能基本掌握堆这类数据结构</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/index.html" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" /></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 10 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+                <article class="post-card post tag-node-js tag-yuan-ma tag-jiao-cheng tag-tcp tag-ji-suan-ji-wang-luo">
+        <a class="post-card-image-link" href="../implement-websocket-protocol/index.html">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1496055401924-5e7fdc885742?ixlib&#x3D;rb-0.3.5&amp;q&#x3D;80&amp;fm&#x3D;jpg&amp;crop&#x3D;entropy&amp;cs&#x3D;tinysrgb&amp;w&#x3D;1080&amp;fit&#x3D;max&amp;ixid&#x3D;eyJhcHBfaWQiOjExNzczfQ&amp;s&#x3D;24c37e30b5bde3626b5dff19ff0bd456)"></div>
+        </a>
+    <div class="post-card-content">
+        <a class="post-card-content-link" href="../implement-websocket-protocol/index.html">
+            <header class="post-card-header">
+                    <span class="post-card-tags">Node.js</span>
+                <h2 class="post-card-title">Node.js -  200 多行代码实现 Websocket 协议</h2>
+            </header>
+            <section class="post-card-excerpt">
+                <p>最近正在研究 Websocket 相关的知识，想着如何能自己实现 Websocket 协议。到网上搜罗了一番资料后用 Node.js 实现该协议，本文会从知识储备、具体代码分析以及注意事项角度去讲解如何用 Node.js 实现一个简单的 Websocket 服务，除去注释语句和 console 语句后，大约 200 行代码左右。本文记录了实现过程中的经验和总结。</p>
+            </section>
+        </a>
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        boycgit
+                    </div>
+
+                        <a href="../author/boycgit/index.html" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit" /></a>
+                </li>
+            </ul>
+
+            <span class="reading-time">阅读耗时约 19 分钟</span>
+
+        </footer>
+    </div>
+</article>
+
+        </div>
+    </div>
+</aside>
+
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://boycgit.github.io">
+                <img src="../content/images/2018/08/logo.png" alt="JSCON-简时空 icon" />
+            <span>JSCON-简时空</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">算法 - 调度场算法（Shunting Yard Algorithm）</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8A%E7%AE%97%E6%B3%95%20-%20%E8%B0%83%E5%BA%A6%E5%9C%BA%E7%AE%97%E6%B3%95%EF%BC%88Shunting%20Yard%20Algorithm%EF%BC%89%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/algorithm-shunting-yard/"
+            onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1534600204727" class="icon" style="" viewBox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/algorithm-shunting-yard/&mhid=txbODQq7nZkhMHcqI9xROqg"
+            onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1534604253879" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1.3.3/dist/gitalk.min.js"></script>
+
+<script>
+    (function () {
+        /**
+         * Get Node
+         * @param  {String|Element} el
+         * @param  {Boolean} noCache
+         * @return {Element}
+         */
+        var cacheNode = {};
+        function getNode(el, noCache) {
+            if (noCache === void 0) noCache = false;
+
+            if (typeof el === 'string') {
+                if (typeof window.Vue !== 'undefined') {
+                    return find(el);
+                }
+                el = noCache ? find(el) : cacheNode[el] || (cacheNode[el] = find(el));
+            }
+
+            return el;
+        }
+
+        /**
+         * Find element
+         * @example
+         * find('nav') => document.querySelector('nav')
+         * find(nav, 'a') => nav.querySelector('a')
+         */
+        function find(el, node) {
+            return node ? el.querySelector(node) : document.querySelector(el);
+        }
+        function create(node, tpl) {
+            node = document.createElement(node);
+            if (tpl) {
+                node.innerHTML = tpl;
+            }
+            return node;
+        }
+        function appendTo(target, el) {
+            return target.appendChild(el);
+        }
+
+        function renderGitalkContainer() {
+            var div = create('div');
+            div.id = 'gitalk-container';
+            var main = getNode('#site-main');
+            div.style = 'width: ' + main.clientWidth + 'px; margin: 0 auto 20px;';
+            appendTo(find('#gitalk-component-wrap'), div);
+            var script = create('script');
+            var content = "gitalk.render('gitalk-container')";
+        }
+        renderGitalkContainer();
+
+        var gitalk = new Gitalk({
+            clientID: 'a65ee9e3ea5168da1470',
+            clientSecret: 'ebfd520679d1ad61929b1887b2efccd4872389e3',
+            repo: 'boycgit.github.io',
+            owner: 'boycgit',
+            admin: [
+                'boycgit'
+            ],
+            id: location.pathname,
+            // facebook-like distraction free mode
+            distractionFreeMode: false
+        });
+        gitalk.render('gitalk-container');
+
+
+
+        var postImages = document.querySelectorAll('.post-content img');
+        Array.prototype.forEach.call(postImages, function (el, i) {
+            el.outerHTML = `<aholder href="${el.src}" data-lightbox="postImages" data-title="${el.alt}">${el.outerHTML}</aholder>`.replace(/aholder/g, 'a');
+        });
+
+        // 动态添加 js 脚本
+        setTimeout(function(){
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "https://cdn.jsdelivr.net/npm/lightbox2@2.10.0/dist/js/lightbox.min.js";
+            document.getElementsByTagName('body')[0].appendChild(script);
+
+            script.onload = function () {
+
+                console.log('load success');
+            }
+        }, 1000);
+
+    })();
+</script>
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://boycgit.github.io">JSCON-简时空</a> &copy; 2019</section>
+                <nav class="site-footer-nav">
+                    <a href="https://boycgit.github.io">最新文章</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="../assets/js/jquery.fitvids.js?v=11f1923694"></script>
+
+
+    <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('#reading-progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+
+});
+</script>
+
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body);
+  });
+</script>
+
+</body>
+</html>
+</html>
