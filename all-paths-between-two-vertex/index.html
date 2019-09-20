@@ -5,41 +5,42 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>AE教程 - 字幕追踪</title>
+    <title>图算法 -只需“五步” ，获取两节点间的所有路径（非递归方式）</title>
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" type="text/css" href="../assets/built/screen.css?v=a3b4af4713">
 
-    <meta name="description" content="我随手拍了一段直升飞机的视频，想要新增的文字可以跟随运动。本文基于 AE CC 2018 软件，完成此项教程大致需要 10 分钟">
+    <meta name="description" content="在图论中，获取两点之间所有的路径的问题大部分采用递归来实现。而在 JS 中用递归算法很容易会让调用栈溢出，本文提供一种利用双栈（stack）数据结构来非递归实现，以便于在生产环境使用。">
     <link rel="shortcut icon" href="../favicon.png" type="image/png">
-    <link rel="canonical" href="https://boycgit.github.io/ae-text-trace/">
+    <link rel="canonical" href="https://boycgit.github.io/all-paths-between-two-vertex/">
     <meta name="referrer" content="no-referrer-when-downgrade">
-    <link rel="amphtml" href="https://boycgit.github.io/ae-text-trace/amp/">
+    <link rel="amphtml" href="https://boycgit.github.io/all-paths-between-two-vertex/amp/">
     
     <meta property="og:site_name" content="JSCON-简时空">
     <meta property="og:type" content="article">
-    <meta property="og:title" content="AE教程 - 字幕追踪">
-    <meta property="og:description" content="我随手拍了一段直升飞机的视频，想要新增的文字可以跟随运动。本文基于 AE CC 2018 软件，完成此项教程大致需要 10 分钟">
-    <meta property="og:url" content="https://boycgit.github.io/ae-text-trace/">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1522119923992-e7090449fcd7?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=b7c88b8ac9dd2de222497adfed9b4ba7">
-    <meta property="article:published_time" content="2018-08-15T13:15:00.000Z">
-    <meta property="article:modified_time" content="2018-08-18T13:21:49.000Z">
-    <meta property="article:tag" content="AE">
-    <meta property="article:tag" content="教程">
-    <meta property="article:tag" content="特效">
+    <meta property="og:title" content="图算法 -只需“五步” ，获取两节点间的所有路径（非递归方式）">
+    <meta property="og:description" content="在图论中，获取两点之间所有的路径的问题大部分采用递归来实现。而在 JS 中用递归算法很容易会让调用栈溢出，本文提供一种利用双栈（stack）数据结构来非递归实现，以便于在生产环境使用。">
+    <meta property="og:url" content="https://boycgit.github.io/all-paths-between-two-vertex/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1496152184443-edceaf4caa51?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=2000&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
+    <meta property="article:published_time" content="2019-09-20T07:19:56.000Z">
+    <meta property="article:modified_time" content="2019-09-20T07:19:56.000Z">
+    <meta property="article:tag" content="javascript">
+    <meta property="article:tag" content="算法">
+    <meta property="article:tag" content="数据结构">
+    <meta property="article:tag" content="图论">
     
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="AE教程 - 字幕追踪">
-    <meta name="twitter:description" content="我随手拍了一段直升飞机的视频，想要新增的文字可以跟随运动。本文基于 AE CC 2018 软件，完成此项教程大致需要 10 分钟">
-    <meta name="twitter:url" content="https://boycgit.github.io/ae-text-trace/">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1522119923992-e7090449fcd7?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=b7c88b8ac9dd2de222497adfed9b4ba7">
+    <meta name="twitter:title" content="图算法 -只需“五步” ，获取两节点间的所有路径（非递归方式）">
+    <meta name="twitter:description" content="在图论中，获取两点之间所有的路径的问题大部分采用递归来实现。而在 JS 中用递归算法很容易会让调用栈溢出，本文提供一种利用双栈（stack）数据结构来非递归实现，以便于在生产环境使用。">
+    <meta name="twitter:url" content="https://boycgit.github.io/all-paths-between-two-vertex/">
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1496152184443-edceaf4caa51?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=2000&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ">
     <meta name="twitter:label1" content="Written by">
     <meta name="twitter:data1" content="boycgit">
     <meta name="twitter:label2" content="Filed under">
-    <meta name="twitter:data2" content="AE, 教程, 特效">
-    <meta property="og:image:width" content="1080">
-    <meta property="og:image:height" content="712">
+    <meta name="twitter:data2" content="javascript, 算法, 数据结构, 图论">
+    <meta property="og:image:width" content="2000">
+    <meta property="og:image:height" content="1027">
     
     <script type="application/ld+json">
 {
@@ -62,18 +63,18 @@
         "url": "https://boycgit.github.io/author/boycgit/",
         "sameAs": []
     },
-    "headline": "AE教程 - 字幕追踪",
-    "url": "https://boycgit.github.io/ae-text-trace/",
-    "datePublished": "2018-08-15T13:15:00.000Z",
-    "dateModified": "2018-08-18T13:21:49.000Z",
+    "headline": "图算法 -只需“五步” ，获取两节点间的所有路径（非递归方式）",
+    "url": "https://boycgit.github.io/all-paths-between-two-vertex/",
+    "datePublished": "2019-09-20T07:19:56.000Z",
+    "dateModified": "2019-09-20T07:19:56.000Z",
     "image": {
         "@type": "ImageObject",
-        "url": "https://images.unsplash.com/photo-1522119923992-e7090449fcd7?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ&s=b7c88b8ac9dd2de222497adfed9b4ba7",
-        "width": 1080,
-        "height": 712
+        "url": "https://images.unsplash.com/photo-1496152184443-edceaf4caa51?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=2000&fit=max&ixid=eyJhcHBfaWQiOjExNzczfQ",
+        "width": 2000,
+        "height": 1027
     },
-    "keywords": "AE, 教程, 特效",
-    "description": "我随手拍了一段直升飞机的视频，想要新增的文字可以跟随运动。本文基于 AE CC 2018 软件，完成此项教程大致需要 10 分钟",
+    "keywords": "javascript, 算法, 数据结构, 图论",
+    "description": "在图论中，获取两点之间所有的路径的问题大部分采用递归来实现。而在 JS 中用递归算法很容易会让调用栈溢出，本文提供一种利用双栈（stack）数据结构来非递归实现，以便于在生产环境使用。",
     "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "https://boycgit.github.io/"
@@ -175,7 +176,7 @@ ghost.init({
 </style>
 
 </head>
-<body class="post-template tag-ae tag-jiao-cheng tag-te-xiao">
+<body class="post-template tag-javascript tag-suan-fa tag-shu-ju-jie-gou tag-tu-lun">
 
     <div class="site-wrapper">
 
@@ -209,82 +210,131 @@ ghost.init({
 <main id="site-main" class="site-main outer">
     <div class="inner">
 
-        <article class="post-full post tag-ae tag-jiao-cheng tag-te-xiao ">
+        <article class="post-full post tag-javascript tag-suan-fa tag-shu-ju-jie-gou tag-tu-lun ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="2018-08-15">15 August 2018</time>
-                        <span class="date-divider">/</span> <a href="../tag/ae/">AE</a>
+                    <time class="post-full-meta-date" datetime="2019-09-20">20 September 2019</time>
+                        <span class="date-divider">/</span> <a href="../tag/javascript/">javascript</a>
                 </section>
-                <h1 class="post-full-title">AE教程 - 字幕追踪</h1>
+                <h1 class="post-full-title">图算法 -只需“五步” ，获取两节点间的所有路径（非递归方式）</h1>
             </header>
 
-            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1522119923992-e7090449fcd7?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=b7c88b8ac9dd2de222497adfed9b4ba7)">
+            <figure class="post-full-image" style="background-image: url(https://images.unsplash.com/photo-1496152184443-edceaf4caa51?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=2000&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ)">
             </figure>
 
             <section class="post-full-content">
                 <div class="post-content">
-                    <h2 id="">正文部分</h2>
+                    <!--kg-card-begin: markdown--><p>在实现 “图” 数据结构时，会遇到 “<strong>获取两点之间是所有路径</strong>” 这个算法问题，网上的资料大多都是利用递归算法来实现（见文末的参考文章）。</p>
+<p>我们知道在 JS 中用递归算法很容易会让调用栈溢出，为了能在生产环境中使用，必须要用非递归方式的去实现。</p>
+<p>经过一番探索，实现的思路主要来自文章 《<a href="https://blog.csdn.net/lysc_forever/article/details/17500959">求两点间所有路径的遍历算法</a>》 ，只是该文中并没有给出具体的实现细节，需要自己去实现；最终本文的实现结合类似《<a href="https://mp.weixin.qq.com/s?__biz=MzI0MzU5NjQxNA==&amp;mid=2247483745&amp;idx=1&amp;sn=ed320a380ca81e883cdb9c91de6e2a76&amp;chksm=e96bec70de1c6566b05c0119f254aaaf0a0894e715913fd2c39ca48413846a651a4b2c5a7aa7&amp;token=2061671007&amp;lang=zh_CN#rd">算法 - 调度场算法（Shunting Yard Algorithm）</a>》 中所提及的双栈来完成。</p>
+<h2 id="1">1、算法过程</h2>
+<p>以计算下图为例， <strong>节点 3</strong> 到 <strong>节点 6</strong> 所有路径所有可能的路径为 8 条：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190918113252.png" alt="allpath"></p>
+<p>我们具体讲一下如何获取这 8 条路径的过程。</p>
+<p>首先准备两个栈，分别称为 <strong>主栈</strong> 和 <strong>辅栈</strong>：</p>
 <ul>
-<li>基于 AE CC 2018 软件</li>
-<li>完成此项教程大致需要 10 分钟</li>
+<li><strong>主栈</strong>：每个元素是<strong>单个节点（Vertex）</strong>，用于存放当前路径上的节点；</li>
+<li><strong>辅栈</strong>：每个元素用于存放主栈对应元素的 <strong>相邻节点列表（Vertex Array）</strong>；该栈是用来辅助 <strong>主栈</strong> 的，其长度和 <strong>主栈</strong> 一致；</li>
 </ul>
-<p>我随手拍了一段直升飞机的视频，想要新增的文字可以跟随运动。</p>
-<ol>
-<li>
-<p>首先在视频上点击 <strong>跟踪运动</strong> 选项<br>
-<img src="https://ws3.sinaimg.cn/large/006tNc79gy1fp956y51jhj30cn06i0ub.jpg" alt="跟踪运动"></p>
-</li>
-<li>
-<p>页面上将出现一个 <strong>跟踪点1</strong> 标志，然后将其调整如下：<br>
-<img src="https://ws2.sinaimg.cn/large/006tNc79gy1fp95a5to71j30m90ch47w.jpg" alt="编辑跟踪点"></p>
-</li>
-</ol>
-<blockquote>
-<p>跟踪器有两个框，小框是为了确定要跟踪物体的特征范围，大框是为了确定要分析物体运动的画面区域。所以大框尽可能小</p>
-</blockquote>
-<ol start="3">
-<li>
-<p>在弹出的跟踪编辑框中有默认设置，基本不用修改，点击 <strong>向前分析</strong>按钮（就是向右的小三角）<br>
-<img src="https://ws1.sinaimg.cn/large/006tNc79gy1fp95c793mzj30l009j7bi.jpg" alt="点击 向前分析按钮"></p>
-</li>
-<li>
-<p>经过漫长的分析等待，真是漫长啊。。。就分析出路径来了！！激动人心<br>
-<img src="https://ws4.sinaimg.cn/large/006tNc79gy1fp95n6zqmzj30y90m7h65.jpg" alt="分析出路径来了"></p>
-</li>
-<li>
-<p>路径有了，我们得把这宝贵的路径保存到起来。保存到哪里呢？<strong>空对象</strong>！右键选择新建，名字都想好了，就叫<strong>路径参考层</strong>，哈哈<br>
-<img src="https://ws4.sinaimg.cn/large/006tNc79gy1fp95nuc0ovj30fw085mzi.jpg" alt="新建空对象"><br>
-<img src="https://ws1.sinaimg.cn/large/006tNc79gy1fp95p2r11fj30ew07t75l.jpg" alt="就叫路径参考层"></p>
-</li>
-<li>
-<p>回到“跟踪器”面板，来一次路径“压印”，将刚才计算出来的路径压印到刚创建的 <strong>路径参考层</strong> 上吧，操作步骤如下：<br>
-<img src="https://ws3.sinaimg.cn/large/006tNc79gy1fp95ys7i8jj313t0gfgzu.jpg" alt="编辑跟踪器"><br>
-点击 <strong>应用</strong> 之后会弹出应用选项，按如下操作：<br>
-<img src="https://ws1.sinaimg.cn/large/006tNc79gy1fp960ma6wuj30ox0bwalj.jpg" alt="点击确定按钮"><br>
-应用之后，刚才绿色的路径点变成暗红色，且自动选中了 <strong>路径参考层</strong>，如下所示：<br>
-<img src="https://ws2.sinaimg.cn/large/006tNc79gy1fp962gzhl7j30t10gxame.jpg" alt="路径应用成功"></p>
-</li>
-<li>
-<p>很好，距离成功很近了。新建 “文本” 图层，输入想输入的文本（比如 helicopter）；<br>
-<img src="https://ws4.sinaimg.cn/large/006tNc79gy1fp965ivygsj30en07ftar.jpg" alt="输入文本"><br>
-然后将父级设置成 <strong>路径参考层</strong>：<br>
-<img src="https://ws4.sinaimg.cn/large/006tNc79gy1fp966swgncj30hq05qta5.jpg" alt="将父级设置成“路径参考层”"><br>
-将文字拖拽到合适的地方：<br>
-<img src="https://ws4.sinaimg.cn/large/006tNc79gy1fp96ar368wg30u80e4b29.gif" alt="文字拖拽到合适的地方"></p>
-</li>
-<li>
-<p>done，大功告成！<br>
-<img src="https://ws4.sinaimg.cn/large/006tNc79gy1fp96quazszg30dc07i4qp.gif" alt="效果图"></p>
-</li>
-</ol>
-<h2 id="">参考教程</h2>
+<h3 id="step1"><strong>Step 1</strong>: 建栈</h3>
+<p>将 <code>v3</code>（<strong>节点3</strong>）放到主栈，同时将 <code>v3</code> 节点的邻接节点列表 <code>[v1, v7]</code> 放到辅栈中：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190920114822.png" alt="首次建栈"></p>
+<p>主栈和辅栈压入让栈长度增长，我个人称之为 <strong>建栈（build stack）</strong></p>
+<h3 id="step2"><strong>Step 2</strong>: 继续建栈</h3>
+<p>建栈后，我们查看辅栈，其栈顶是节点列表 <code>[v1, v7]</code>：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190920115518.png" alt="查看栈顶"></p>
+<p>我们取出节点列表的第一个元素 <code>v1</code>，将其压入到主栈；同时将剩下的节点列表 <code>[v7]</code> 重新压回到辅栈：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190920123925.png" alt="压栈"></p>
+<p>同时查询 <code>v1</code> 的邻接节点列表是 <code>[v3, v0]</code>，<strong>由于 <code>v3</code> 节点已经在主栈里，需要从这个列表中剔除</strong>（这一步很重要），将剔除后的节点列表 <code>[v0]</code> 压入 <strong>辅栈</strong> 中：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190920124120.png" alt="继续建栈"></p>
+<p>这一步也让主栈和辅栈长度增长了，所以也是 <strong>建栈（build stack）</strong> 过程</p>
+<h3 id="step3"><strong>Step 3</strong>: 削栈</h3>
+<p>继续 <strong>Step 2</strong> 的建栈过程，直到我们的主栈栈顶 <strong>v7</strong>，此时辅栈的栈顶是空列表 <code>[]</code>：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190920125702.png" alt="当主栈是 v7 的时候，辅栈栈顶是空队列"></p>
+<p>由于辅栈的栈顶是空列表 <code>[]</code>，所以没法继续建栈了 —— 这表明这条路径走到尽头了都还没找到目标节点 <strong>v6</strong>。</p>
+<p>走到 <strong>此路不通</strong> 的境地，我们就需要开始回退，看看来时的路上的其他岔路。</p>
+<p>我们将主栈栈顶的 <strong>v7</strong> 弹出，同时也将辅栈的空列表 <code>[]</code> 弹出：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190920130130.png" alt="削栈"></p>
+<p>这一操作将导致 <strong>主栈</strong> 和 <strong>辅栈</strong> 长度减少，该过程我个人称之为 <strong>削栈（cutdown stack）</strong>。</p>
+<h3 id="step4"><strong>Step 4</strong>：获取第一条路径</h3>
+<p>重复上述的 <strong>Step 2</strong>、<strong>Step 3</strong>，采取策略：</p>
 <ul>
-<li><a href="http://bbs.dji.com/thread-82661-1-1.html">如何用AE制作简单而又大气的追踪字幕</a>：大疆社区中的字幕跟随教程</li>
-<li><a href="https://jingyan.baidu.com/article/020278117f09911bcc9ce5af.html">如何利用AE实现动态跟踪</a>：发现有一些很可爱的图片跟着那些明星动来动去呢，其实是动态跟踪啦</li>
-<li><a href="https://helpx.adobe.com/cn/after-effects/using/tracking-stabilizing-motion-cs5.html">跟踪和稳定运动</a>：官方文档</li>
+<li>只要辅栈栈顶是<strong>非空列表</strong>，我们就建栈</li>
+<li>只要辅栈栈顶是<strong>空列表</strong>，我们就削栈</li>
 </ul>
+<p>直到主栈的顶部节点是目标节点 <code>v6</code>：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190920130406.png" alt="主栈栈顶元素是目标元素v6"></p>
+<p>进行到这里，我们停下来观察一番，发现主栈里的内容已经是一条完整的从 <code>v3</code> 到 <code>v6</code> 的路径了：</p>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190920130618.png" alt="获取一条从 v3 到 v6 的路径"></p>
+<p>我们输出当前栈为数组：<code>['v3', 'v1', 'v0', 'v2', 'v5', 'v6']</code>，该数组就表示 <code>v3 -&gt; v1 -&gt; v0 -&gt; v2 -&gt; v5 -&gt; v6</code> 这条路径。</p>
+<p>进行至此，我们终于获取了一条从 <code>v3</code> 到 <code>v6</code> 的路径。</p>
+<p>应该为自己的努力鼓个掌，已经看到胜利的曙光；接下来加个简单的循环就能获取所有的路径。</p>
+<h3 id="step5"><strong>Step 5</strong>: 获取所有路径</h3>
+<p>重复 <strong>Step 2</strong> - <strong>Step 4</strong> 步骤，采取策略如下：</p>
+<ul>
+<li>只要辅栈栈顶是<strong>非空列表</strong>，我们就建栈</li>
+<li>只要辅栈栈顶是<strong>空列表</strong>，我们就削栈</li>
+<li>只要主栈栈顶是<strong>目标节点</strong>，我们输出路径，同时削栈</li>
+</ul>
+<p>重复以上过程，直到<strong>主栈</strong>为空为止。</p>
+<p>随着 <strong>建栈（build stack）</strong>  和 <strong>削栈（cutdown stack）</strong> 过程的进行，主栈和辅栈不断变化着，在这个变化的过程中我们就能不断地获取从 <code>v3</code> 到 <code>v6</code> 的路径，最终就可以获取所有的路径。</p>
+<h2 id="2">2、代码实现</h2>
+<h3 id="21">2.1、伪代码</h3>
+<p>依据上述过程的描述，很方面将文字转换成伪代码：</p>
+<pre><code>BEGIN
 
+  初始化主栈
+  初始化辅栈
+  
+  首次建栈
+  
+  WHILE 主栈不为空 THEN
+  
+    获取辅栈栈顶，为邻接节点列表
+    
+    IF 邻接节点列表不为空 THEN
+      获取邻接节点列表首个元素
+      将该元素压入主栈，剩下列表压入辅栈
+      建栈
+    ELSE
+      削栈
+      CONTINUE
+    END IF
+    
+    IF 主栈栈顶元素 === 目标节点 THEN
+      获取一条路径，保存起来
+      削栈
+    END IF
+    
+  END WHILE
+  
+END
+</code></pre>
+<p>以上是我们拿无向图来做范例，实际上<strong>该算法也适合有向图</strong>。</p>
+<h3 id="22">2.2、实现效果</h3>
+<p>该双栈算法的 JS 实现已经写到代码库 <strong><a href="https://github.com/boycgit/ss-graph/blob/2612ae5ecf7100f08a4aa774febdc543c8439c66/src/graph.ts#L377">ss-graph</a></strong> 中 ，我们直接拿它来做校验，实际运行效果如下：</p>
+<blockquote>
+<p>可前往 <a href="https://runkit.com/boycgit/ss-graph">https://runkit.com/boycgit/ss-graph</a> 自行修改数据体验：</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/boycgit/web-image/master/blog20190920110654.png" alt="运行实际代码，验证算法"></p>
+<h2 id="3">3、总结</h2>
+<p>最近在复习 “图” 这数据结构，在过程中逐步尝试书写代码去实现个中算法。能够体会得到知识点只有经过自己思考和总结后，才能为之后的融会贯通打下基础。</p>
+<p>在本文的学习总结中，有两点体会印象较为深刻：</p>
+<ol>
+<li>能用能递归解决的问题，一般都可以用 <strong>循环 + 栈（Stack）</strong> 的方式来解决。</li>
+<li>当不知道算法如何实现的时候，比较适合归纳总结的学习方法，即先逐步从简单场景开始演示，等摸索到其中规律之后再着手去实现。</li>
+</ol>
+<p>图相关的算法还有很多，有很多经典算法，后续有空会将一些经典的算法实现并整理出来，互有裨益。</p>
+<h2 id="">参考文章</h2>
+<ul>
+<li><a href="https://www.geeksforgeeks.org/find-if-there-is-a-path-between-two-vertices-in-a-given-graph/">Find if there is a path between two vertices in a directed graph</a>：geeksforgeeks 相关面试题，递归实现</li>
+<li><a href="https://www.geeksforgeeks.org/find-paths-given-source-destination/">Print all paths from a given source to a destination</a>：递归实现，查找所有路径</li>
+<li><a href="https://blog.csdn.net/lysc_forever/article/details/17500959">求两点间所有路径的遍历算法</a>：较为通俗易懂；，一个保存路径的栈、一个保存已标记结点的数</li>
+</ul>
+<p>以下是我的公众号，会时常更新 JS(Node.js) 知识和资讯，欢迎扫码关注交流。<br>
+<img src="https://raw.githubusercontent.com/boycgit/web-image/master/blogqrcode2.jpg" alt="个人微信公众号"></p>
+<!--kg-card-end: markdown-->
                 </div>
             </section>
             <p style="text-align: center">下面的是我的公众号二维码图片，欢迎关注，及时获取最新技术文章。</p>
@@ -322,19 +372,38 @@ ghost.init({
 <aside class="read-next outer">
     <div class="inner">
         <div class="read-next-feed">
+                <article class="read-next-card" style="background-image: url(https://casper.ghost.org/v1.0.0/images/blog-cover.jpg)">
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">— JSCON-简时空 —</small>
+                        <h3 class="read-next-card-header-title"><a href="../tag/javascript/">javascript</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"></path></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="../debugging-with-ts-jest/">在 ts + Jest 单元测试中 debugging</a></li>
+                            <li><a href="../typescript-advance-cheatsheet/">速查手册 - TypeScript 高级类型 cheat sheet</a></li>
+                            <li><a href="../react-hooks-capture-value/">理解 React Hooks 的 Capture Value 特性</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="../tag/javascript/">查看所有14篇文章 →</a>
+                    </footer>
+                </article>
 
-                <article class="post-card post tag-jiao-cheng tag-he-ji">
-        <a class="post-card-image-link" href="../es6-mataprogram-list/">
-            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1518117648702-79b0cc9ff9e6?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=efa58b6149cc481fb8fc5f7556449df8)"></div>
+
+                <article class="post-card post tag-javascript tag-jing-yan-zong-jie tag-jiao-cheng">
+        <a class="post-card-image-link" href="../debugging-with-ts-jest/">
+            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1486475554424-2fa50cd59f18?ixlib=rb-1.2.1&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=2000&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ)"></div>
         </a>
     <div class="post-card-content">
-        <a class="post-card-content-link" href="../es6-mataprogram-list/">
+        <a class="post-card-content-link" href="../debugging-with-ts-jest/">
             <header class="post-card-header">
-                    <span class="post-card-tags">教程</span>
-                <h2 class="post-card-title">【资源集合】 ES6 元编程（Proxy &amp; Reflect &amp; Symbol）</h2>
+                    <span class="post-card-tags">javascript</span>
+                <h2 class="post-card-title">在 ts + Jest 单元测试中 debugging</h2>
             </header>
             <section class="post-card-excerpt">
-                <p>本文总结了自己学习 ES6 元编程相关知识（Symbols &amp; Proxy &amp; Reflect）的理解、教程文档 和 代码片段，所以本文并非是一篇传统意义上的教程，更类似于 github awesome 这样列表文章。 由于教程文档和代码片段将随着学习的进行将增多，所以后续还会不定期更新。</p>
+                <p>本文简要介绍了如何在 Jest 单元测试中利用 Chrome Node DevTools 来辅助调试</p>
             </section>
         </a>
         <footer class="post-card-meta">
@@ -350,40 +419,7 @@ ghost.init({
                 </li>
             </ul>
 
-            <span class="reading-time">阅读耗时约 15 分钟</span>
-
-        </footer>
-    </div>
-</article>
-
-                <article class="post-card post tag-mobx tag-javascript tag-yuan-ma-fen-xi tag-yuan-ma">
-        <a class="post-card-image-link" href="../mobx-source-observable/">
-            <div class="post-card-image" style="background-image: url(https://images.unsplash.com/photo-1525433752067-f98594fb10f4?ixlib=rb-0.3.5&amp;q=80&amp;fm=jpg&amp;crop=entropy&amp;cs=tinysrgb&amp;w=1080&amp;fit=max&amp;ixid=eyJhcHBfaWQiOjExNzczfQ&amp;s=0294b05c2cb04b4032abcd4b937e3bbf)"></div>
-        </a>
-    <div class="post-card-content">
-        <a class="post-card-content-link" href="../mobx-source-observable/">
-            <header class="post-card-header">
-                    <span class="post-card-tags">mobx</span>
-                <h2 class="post-card-title">【用故事解读 MobX 源码（五）】 Observable</h2>
-            </header>
-            <section class="post-card-excerpt">
-                <p>网上已有很多关于 MobX 源码解读的文章，但大多阅读成本甚高。本人在找文章时对此深有体会，故将以系列故事的方式展现源码逻辑，尽可能以易懂的方式讲解 MobX 源码；本文分析源码中有关 Observable 的执行逻辑</p>
-            </section>
-        </a>
-        <footer class="post-card-meta">
-
-            <ul class="author-list">
-                <li class="author-list-item">
-
-                    <div class="author-name-tooltip">
-                        boycgit
-                    </div>
-
-                        <a href="../author/boycgit/" class="static-avatar"><img class="author-profile-image" src="http://www.gravatar.com/avatar/8b26b02c66a0e37c2183431d58502c25?s=250&amp;d=mm&amp;r=x" alt="boycgit"></a>
-                </li>
-            </ul>
-
-            <span class="reading-time">阅读耗时约 32 分钟</span>
+            <span class="reading-time">阅读耗时约 3 分钟</span>
 
         </footer>
     </div>
@@ -401,15 +437,15 @@ ghost.init({
         </a>
     </div>
     <span class="floating-header-divider">—</span>
-    <div class="floating-header-title">AE教程 - 字幕追踪</div>
+    <div class="floating-header-title">图算法 -只需“五步” ，获取两节点间的所有路径（非递归方式）</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">分享 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
 </svg>
 </div>
-        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8AAE%E6%95%99%E7%A8%8B%20-%20%E5%AD%97%E5%B9%95%E8%BF%BD%E8%B8%AA%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/ae-text-trace/" onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
+        <a class="floating-header-share-weibo" href="http://service.weibo.com/share/share.php?title=%E7%9C%8B%E5%88%B0%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0%E3%80%8A%E5%9B%BE%E7%AE%97%E6%B3%95%20-%E5%8F%AA%E9%9C%80%E2%80%9C%E4%BA%94%E6%AD%A5%E2%80%9D%20%EF%BC%8C%E8%8E%B7%E5%8F%96%E4%B8%A4%E8%8A%82%E7%82%B9%E9%97%B4%E7%9A%84%E6%89%80%E6%9C%89%E8%B7%AF%E5%BE%84%EF%BC%88%E9%9D%9E%E9%80%92%E5%BD%92%E6%96%B9%E5%BC%8F%EF%BC%89%E3%80%8B%EF%BC%8C%E5%BE%88%E7%B2%BE%E5%BD%A9%EF%BC%8C%E6%83%B3%E5%88%86%E4%BA%AB%E7%BB%99%E5%A4%A7%E4%BC%99%E5%84%BF&amp;url=https://boycgit.github.io/all-paths-between-two-vertex/" onclick="window.open(this.href, 'share-weibo', 'width=550,height=235');return false;">
             <?xml version="1.0" standalone="no"?><svg t="1534600204727" class="icon" style="" viewbox="0 0 1026 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4202" xmlns:xlink="http://www.w3.org/1999/xlink" width="16.03125" height="16"><defs><style type="text/css"></style></defs><path d="M1012.49 451.553v0.159c-6.697 20.66-28.861 31.99-49.449 25.288a39.352 39.352 0 0 1-25.287-49.582l-0.067-0.031c20.536-63.6 7.516-136.156-40.315-189.363-47.892-53.212-118.502-73.554-183.731-59.659-21.222 4.537-42.133-9.047-46.638-30.3-4.506-21.253 9.021-42.194 30.239-46.73 91.709-19.563 191.114 8.98 258.467 83.881 67.36 74.839 85.515 176.85 56.781 266.337z" fill="#ffffff" p-id="4203"></path><path d="M740.429 304.348v-0.03c-18.217 3.973-36.178-7.732-40.06-26.01-3.947-18.31 7.763-36.373 25.98-40.254 44.692-9.548 93.143 4.322 125.885 40.781 32.866 36.496 41.631 86.17 27.607 129.772a33.833 33.833 0 0 1-42.562 21.847c-17.782-5.76-27.484-24.914-21.724-42.69h-0.062c6.887-21.346 2.565-45.635-13.46-63.473-16.026-17.818-39.752-24.546-61.604-19.943z m30.05 192.184c-14.46-4.352-24.352-7.326-16.774-26.352 16.333-41.313 18.027-76.964 0.317-102.385-33.31-47.734-124.451-45.133-228.838-1.28 0-0.061-32.799 14.367-24.412-11.704 16.056-51.774 13.645-95.186-11.361-120.192-56.658-56.878-207.304 2.12-336.477 131.64C56.187 463.32 0 566.14 0 655.1 0 825.18 217.503 928.594 430.28 928.594c278.917 0 464.527-162.504 464.527-291.59 0-77.936-65.546-122.193-124.329-140.472zM430.842 867.62c-169.774 16.84-316.35-60.155-327.368-171.96-11.049-111.74 117.72-216.034 287.488-232.873 169.805-16.84 316.355 60.16 327.368 171.904 11.018 111.866-117.683 216.09-287.488 232.929z" fill="#ffffff" p-id="4204"></path><path d="M447.805 548.859c-80.783-21.09-172.119 19.287-207.206 90.65-35.743 72.862-1.188 153.681 80.44 180.1 84.578 27.357 184.233-14.525 218.88-93.148 34.181-76.81-8.478-155.94-92.114-177.602zM386.12 734.792c-16.43 26.29-51.584 37.806-78.065 25.661-26.107-11.889-33.833-42.44-17.403-68.045 16.215-25.538 50.207-36.869 76.498-25.856 26.604 11.392 35.087 41.687 18.97 68.24z" fill="#ffffff" p-id="4205"></path></svg>        </a>
-        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/ae-text-trace/&amp;mhid=txbODQq7nZkhMHcqI9xROqg" onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
+        <a class="floating-header-share-weixin" href="https://cli.im/api/qrcode/code?text=https://boycgit.github.io/all-paths-between-two-vertex/&amp;mhid=txbODQq7nZkhMHcqI9xROqg" onclick="window.open(this.href, 'share-weixin','width=480,height=600');return false;">
             <?xml version="1.0" standalone="no"?><svg t="1534604253879" class="icon" style="" viewbox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5477" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16"><defs><style type="text/css"></style></defs><path d="M693.12 347.232c11.776 0 23.36 0.896 35.008 2.176C696.768 203.36 540.672 94.88 362.432 94.88 163.2 94.88 0 230.624 0 403.104c0 99.521 54.272 181.248 145.024 244.736L108.8 756.832l126.72-63.488c45.312 8.896 81.664 18.112 126.912 18.112 11.393 0 22.656-0.513 33.792-1.345-7.04-24.256-11.199-49.6-11.199-76.031C385.088 475.744 521.024 347.232 693.12 347.232zM498.304 248.992c27.393 0 45.376 17.984 45.376 45.248 0 27.136-17.983 45.312-45.376 45.312-27.071 0-54.336-18.176-54.336-45.312C443.968 266.912 471.168 248.992 498.304 248.992zM244.672 339.552c-27.2 0-54.592-18.176-54.592-45.312 0-27.264 27.392-45.248 54.592-45.248 27.2 0 45.248 17.92 45.248 45.248C289.92 321.376 271.872 339.552 244.672 339.552z" p-id="5478" fill="#ffffff"></path><path d="M1024 629.728c0-144.896-145.023-262.976-307.904-262.976-172.479 0-308.224 118.144-308.224 262.976 0 145.28 135.808 262.977 308.224 262.977 36.097 0 72.513-9.024 108.736-18.112l99.392 54.528-27.264-90.624C969.729 783.84 1024 711.456 1024 629.728zM616.128 584.352c-17.984 0-36.224-17.92-36.224-36.224 0-18.048 18.239-36.225 36.224-36.225 27.521 0 45.376 18.177 45.376 36.225C661.504 566.432 643.648 584.352 616.128 584.352zM815.488 584.352c-17.856 0-36.032-17.92-36.032-36.224 0-18.048 18.112-36.225 36.032-36.225 27.264 0 45.376 18.177 45.376 36.225C860.864 566.432 842.752 584.352 815.488 584.352z" p-id="5479" fill="#ffffff"></path></svg>        </a>
     </div>
     <progress id="reading-progress" class="progress" value="0">
